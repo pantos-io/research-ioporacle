@@ -1,0 +1,33 @@
+{
+  "name": "ioporaclecontracts",
+  "version": "1.0.0",
+  "description": "",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "compile": "truffle compile",
+    "lint": "npm run lint:js && npm run lint:sol",
+    "lint:fix": "npm run lint:js:fix && npm run lint:sol:fix",
+    "lint:js": "eslint .",
+    "lint:js:fix": "eslint . --fix",
+    "lint:sol": "solhint contracts/**/*.sol",
+    "lint:sol:fix": "prettier --write contracts/**/*.sol && solhint contracts/**/*.sol --fix",
+    "test": "truffle test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "^3.2.0"
+  },
+  "devDependencies": {
+    "@openzeppelin/test-helpers": "^0.5.9",
+    "eslint": "^7.14.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier-plugin-solidity": "^1.0.0-beta.1",
+    "solhint": "^3.3.2",
+    "solhint-plugin-prettier": "0.0.5",
+    "truffle-assertions": "^0.9.2"
+  }
+}
