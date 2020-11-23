@@ -1,6 +1,6 @@
 pragma solidity >=0.4.22 <0.8.0;
 
-contract IopOracle {
+contract IopOracleContract {
     struct IopNode {
         address addr;
         string ipAddr;
@@ -23,13 +23,23 @@ contract IopOracle {
         return (iopNodeIndices[iopNodes[_addr].index] == _addr);
     }
 
-    function findIopNode(address _addr)
+    function findIopNodeByAddress(address _addr)
         external
         view
         returns (address, string memory)
     {
         require(iopNodeIsRegistered(_addr), "not found");
         IopNode memory iopNode = iopNodes[_addr];
+        return (iopNode.addr, iopNode.ipAddr);
+    }
+
+    function findIopNodeByIndex(uint256 _index)
+        external
+        view
+        returns (address, string memory)
+    {
+        require(_index >= 0 && _index < iopNodeIndices.length, "not found");
+        IopNode memory iopNode = iopNodes[iopNodeIndices[_index]];
         return (iopNode.addr, iopNode.ipAddr);
     }
 

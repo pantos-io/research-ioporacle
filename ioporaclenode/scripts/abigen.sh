@@ -5,4 +5,4 @@ if ! which abigen >/dev/null; then
   exit 1
 fi
 
-abigen --sol ../../ioporaclecontracts/contracts/IopOracle.sol --pkg iop --out ../pkg/iop/ioporaclecontract.go
+abigen --sol ../../ioporaclecontracts/contracts/IopOracleContract.sol --pkg iop --out ../pkg/iop/ioporaclecontract.go

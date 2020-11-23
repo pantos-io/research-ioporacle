@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"math/big"
 )
 
 type TransactionVerifier interface {
@@ -13,11 +14,13 @@ type TransactionVerifier interface {
 
 type transactionVerifierImpl struct {
 	ethClient *ethclient.Client
+	iopOracle *IopOracleContract
 }
 
-func NewTransactionVerifier(ethClient *ethclient.Client) *transactionVerifierImpl {
+func NewTransactionVerifier(ethClient *ethclient.Client, iopOracle *IopOracleContract) *transactionVerifierImpl {
 	return &transactionVerifierImpl{
 		ethClient: ethClient,
+		iopOracle: iopOracle,
 	}
 }
 
@@ -35,4 +38,18 @@ func (t transactionVerifierImpl) VerifyTransaction(ctx context.Context, txHash c
 	}
 	confirmed := blockNumber - receipt.BlockNumber.Uint64()
 	return confirmed >= confirmations, nil
+}
+
+func (t transactionVerifierImpl) VerifyTransactionRemote(ctx context.Context, txHash common.Hash, confirmations uint64) (bool, error) {
+	count, err := t.iopOracle.CountIopNodes(nil)
+	if err != nil {
+		return false, fmt.Errorf("count iop nodes: %w", err)
+	}
+	for i := int64(0); i < count.Int64(); i++ {
+		_, _, err := t.iopOracle.FindIopNodeByIndex(nil, big.NewInt(i))
+		if err != nil {
+			return false, fmt.Errorf("count iop nodes: %w", err)
+		}
+	}
+	return false, err
 }
