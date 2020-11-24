@@ -13,14 +13,14 @@ type TransactionVerifier interface {
 }
 
 type transactionVerifierImpl struct {
-	ethClient *ethclient.Client
-	iopOracle *IopOracleContract
+	ethClient      *ethclient.Client
+	oracleContract *OracleContract
 }
 
-func NewTransactionVerifier(ethClient *ethclient.Client, iopOracle *IopOracleContract) *transactionVerifierImpl {
+func NewTransactionVerifier(ethClient *ethclient.Client, oracleContract *OracleContract) *transactionVerifierImpl {
 	return &transactionVerifierImpl{
-		ethClient: ethClient,
-		iopOracle: iopOracle,
+		ethClient:      ethClient,
+		oracleContract: oracleContract,
 	}
 }
 
@@ -41,12 +41,12 @@ func (t transactionVerifierImpl) VerifyTransaction(ctx context.Context, txHash c
 }
 
 func (t transactionVerifierImpl) VerifyTransactionRemote(ctx context.Context, txHash common.Hash, confirmations uint64) (bool, error) {
-	count, err := t.iopOracle.CountIopNodes(nil)
+	count, err := t.oracleContract.CountIopNodes(nil)
 	if err != nil {
 		return false, fmt.Errorf("count iop nodes: %w", err)
 	}
 	for i := int64(0); i < count.Int64(); i++ {
-		_, _, err := t.iopOracle.FindIopNodeByIndex(nil, big.NewInt(i))
+		_, _, err := t.oracleContract.FindIopNodeByIndex(nil, big.NewInt(i))
 		if err != nil {
 			return false, fmt.Errorf("count iop nodes: %w", err)
 		}

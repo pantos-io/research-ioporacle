@@ -1,4 +1,4 @@
-module oraclenode
+module ioporaclenode
 
 go 1.15
 

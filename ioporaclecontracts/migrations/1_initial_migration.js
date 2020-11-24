@@ -1,7 +1,7 @@
 const Migrations = artifacts.require("Migrations");
-const IopOracleContract = artifacts.require("IopOracleContract");
+const OracleContract = artifacts.require("OracleContract");
 
 module.exports = function (deployer) {
   deployer.deploy(Migrations);
-  deployer.deploy(IopOracleContract);
+  deployer.deploy(OracleContract);
 };

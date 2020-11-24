@@ -93,5 +93,5 @@ var _OracleNode_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "ioporaclenode.proto",
+	Metadata: "oraclenode.proto",
 }

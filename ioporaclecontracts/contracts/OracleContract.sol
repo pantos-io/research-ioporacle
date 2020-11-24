@@ -1,6 +1,6 @@
 pragma solidity >=0.4.22 <0.8.0;
 
-contract IopOracleContract {
+contract OracleContract {
     struct IopNode {
         address addr;
         string ipAddr;
