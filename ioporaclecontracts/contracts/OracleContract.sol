@@ -10,12 +10,16 @@ contract OracleContract {
     mapping(address => IopNode) private iopNodes;
     address[] private iopNodeIndices;
 
+    bool public result;
+    event VerifyTransactionLog(uint256 id, string hash, uint256 confirmations);
+
     function registerIopNode(string calldata _ipAddr) external payable {
         require(!iopNodeIsRegistered(msg.sender), "already registered");
         IopNode storage iopNode = iopNodes[msg.sender];
         iopNode.addr = msg.sender;
         iopNode.ipAddr = _ipAddr;
-        iopNode.index = iopNodeIndices.push(iopNode.addr) - 1;
+        iopNode.index = iopNodeIndices.length;
+        iopNodeIndices.push(iopNode.addr);
     }
 
     function iopNodeIsRegistered(address _addr) public view returns (bool) {
@@ -45,5 +49,15 @@ contract OracleContract {
 
     function countIopNodes() external view returns (uint256) {
         return iopNodeIndices.length;
+    }
+
+    function verifyTransaction(string calldata _hash, uint256 _confirmations)
+        external
+    {
+        emit VerifyTransactionLog(1, _hash, _confirmations);
+    }
+
+    function verifyTransactionResult(bool _result) external {
+        result = _result;
     }
 }
