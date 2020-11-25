@@ -13,11 +13,6 @@ import (
 	"net"
 )
 
-type oracleNodeEntry struct {
-	address common.Address
-	ipAddr  string
-}
-
 type oracleNode struct {
 	UnimplementedOracleNodeServer
 	server         *grpc.Server
@@ -72,9 +67,16 @@ func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
 	for {
 		select {
 		case event := <-sink:
-			err = n.handleVerifyTransactionLog(ctx, event)
+			isLeader, err := n.oracleContract.IsLeader(nil, n.account)
 			if err != nil {
-				log.Errorf("handle verify transaction log: %v", err)
+				log.Errorf("is leader: %v", err)
+				continue
+			}
+			if isLeader {
+				err = n.handleVerifyTransactionLog(ctx, event)
+				if err != nil {
+					log.Errorf("handle verify transaction log: %v", err)
+				}
 			}
 		case err = <-sub.Err():
 			return err

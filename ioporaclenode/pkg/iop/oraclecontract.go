@@ -26,8 +26,15 @@ var (
 	_ = event.NewSubscription
 )
 
+// OracleContractIopNode is an auto generated low-level Go binding around an user-defined struct.
+type OracleContractIopNode struct {
+	Addr   common.Address
+	IpAddr string
+	Index  *big.Int
+}
+
 // OracleContractABI is the input ABI used to generate the binding from.
-const OracleContractABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"hash\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"confirmations\",\"type\":\"uint256\"}],\"name\":\"VerifyTransactionLog\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[],\"name\":\"countIopNodes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"findIopNodeByAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"findIopNodeByIndex\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"iopNodeIsRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipAddr\",\"type\":\"string\"}],\"name\":\"registerIopNode\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"string\",\"name\":\"_hash\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"_confirmations\",\"type\":\"uint256\"}],\"name\":\"verifyTransaction\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"}],\"name\":\"verifyTransactionResult\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+const OracleContractABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"a\",\"type\":\"uint256\"}],\"name\":\"Test\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"hash\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"confirmations\",\"type\":\"uint256\"}],\"name\":\"VerifyTransactionLog\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[],\"name\":\"countIopNodes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"findIopNodeByAddress\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structOracleContract.IopNode\",\"name\":\"\",\"type\":\"tuple\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"findIopNodeByIndex\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structOracleContract.IopNode\",\"name\":\"\",\"type\":\"tuple\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"iopNodeIsRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"isLeader\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipAddr\",\"type\":\"string\"}],\"name\":\"registerIopNode\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"result\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"string\",\"name\":\"_hash\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"_confirmations\",\"type\":\"uint256\"}],\"name\":\"verifyTransaction\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"}],\"name\":\"verifyTransactionResult\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // OracleContractFuncSigs maps the 4-byte function signature to its string representation.
 var OracleContractFuncSigs = map[string]string{
@@ -35,13 +42,15 @@ var OracleContractFuncSigs = map[string]string{
 	"76ac6e0b": "findIopNodeByAddress(address)",
 	"7206c984": "findIopNodeByIndex(uint256)",
 	"338780e0": "iopNodeIsRegistered(address)",
+	"db512e85": "isLeader(address)",
 	"6f1daed3": "registerIopNode(string)",
+	"65372147": "result()",
 	"ff84d3e9": "verifyTransaction(string,uint256)",
 	"fd9f77ec": "verifyTransactionResult(bool)",
 }
 
 // OracleContractBin is the compiled bytecode used for deploying new contracts.
-var OracleContractBin = "0x608060405234801561001057600080fd5b506107d3806100206000396000f3fe6080604052600436106100705760003560e01c806376ac6e0b1161004e57806376ac6e0b146101e9578063f1551da71461021c578063fd9f77ec14610243578063ff84d3e91461026f57610070565b8063338780e0146100755780636f1daed3146100bc5780637206c9841461012e575b600080fd5b34801561008157600080fd5b506100a86004803603602081101561009857600080fd5b50356001600160a01b03166102ec565b604080519115158252519081900360200190f35b61012c600480360360208110156100d257600080fd5b8101906020810181356401000000008111156100ed57600080fd5b8201836020820111156100ff57600080fd5b8035906020019184600183028401116401000000008311171561012157600080fd5b509092509050610347565b005b34801561013a57600080fd5b506101586004803603602081101561015157600080fd5b5035610422565b60405180836001600160a01b03166001600160a01b0316815260200180602001828103825283818151815260200191508051906020019080838360005b838110156101ad578181015183820152602001610195565b50505050905090810190601f1680156101da5780820380516001836020036101000a031916815260200191505b50935050505060405180910390f35b3480156101f557600080fd5b506101586004803603602081101561020c57600080fd5b50356001600160a01b031661056d565b34801561022857600080fd5b5061023161064c565b60408051918252519081900360200190f35b34801561024f57600080fd5b5061012c6004803603602081101561026657600080fd5b50351515610653565b34801561027b57600080fd5b5061012c6004803603604081101561029257600080fd5b8101906020810181356401000000008111156102ad57600080fd5b8201836020820111156102bf57600080fd5b803590602001918460018302840111640100000000831117156102e157600080fd5b919350915035610666565b6001546000906102fe57506000610342565b6001600160a01b03821660008181526020819052604090206002015460018054909190811061032957fe5b6000918252602090912001546001600160a01b03161490505b919050565b610350336102ec565b15610397576040805162461bcd60e51b8152602060048201526012602482015271185b1c9958591e481c9959da5cdd195c995960721b604482015290519081900360640190fd5b33600081815260208190526040902080546001600160a01b03191690911781556103c56001820184846106dc565b5080546001805480820182556000919091527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf6810180546001600160a01b0319166001600160a01b03909316929092179091556002909101555050565b600060606001548310610468576040805162461bcd60e51b81526020600482015260096024820152681b9bdd08199bdd5b9960ba1b604482015290519081900360640190fd5b61047061075a565b6000806001868154811061048057fe5b60009182526020808320909101546001600160a01b039081168452838201949094526040928301909120825160608101845281549094168452600181810180548551601f6002600019958416156101000295909501909216939093049081018590048502830185019095528482529193858401939192918301828280156105485780601f1061051d57610100808354040283529160200191610548565b820191906000526020600020905b81548152906001019060200180831161052b57829003601f168201915b5050509183525050600291909101546020918201528151910151909350915050915091565b6000606061057a836102ec565b6105b7576040805162461bcd60e51b81526020600482015260096024820152681b9bdd08199bdd5b9960ba1b604482015290519081900360640190fd5b6105bf61075a565b6001600160a01b0384811660009081526020818152604091829020825160608101845281549094168452600180820180548551600261010094831615949094026000190190911692909204601f81018590048502830185019095528482529193858401939192918301828280156105485780601f1061051d57610100808354040283529160200191610548565b6001545b90565b6002805460ff1916911515919091179055565b7fd2b9ae20b01dc42907609e33ebc81783e68018abdd61e1c616f3ce800d470d28600184848460405180858152602001806020018381526020018281038252858582818152602001925080828437600083820152604051601f909101601f191690920182900397509095505050505050a1505050565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061071d5782800160ff1982351617855561074a565b8280016001018555821561074a579182015b8281111561074a57823582559160200191906001019061072f565b50610756929150610784565b5090565b604051806060016040528060006001600160a01b0316815260200160608152602001600081525090565b61065091905b80821115610756576000815560010161078a56fea265627a7a72315820356f1f30eb1604f7b6882d2ecbe61f938e59523ab6092d385cc9d71ef6d69a6c64736f6c63430005100032"
+var OracleContractBin = "0x608060405234801561001057600080fd5b50610a25806100206000396000f3fe6080604052600436106100865760003560e01c806376ac6e0b1161005957806376ac6e0b14610118578063db512e8514610138578063f1551da714610158578063fd9f77ec1461017a578063ff84d3e91461019a57610086565b8063338780e01461008b57806365372147146100c15780636f1daed3146100d65780637206c984146100eb575b600080fd5b34801561009757600080fd5b506100ab6100a63660046106a1565b6101ba565b6040516100b891906108b2565b60405180910390f35b3480156100cd57600080fd5b506100ab610215565b6100e96100e43660046106dd565b61021e565b005b3480156100f757600080fd5b5061010b610106366004610774565b6102d9565b6040516100b89190610919565b34801561012457600080fd5b5061010b6101333660046106a1565b6103fe565b34801561014457600080fd5b506100ab6101533660046106a1565b6104c0565b34801561016457600080fd5b5061016d610512565b6040516100b89190610931565b34801561018657600080fd5b506100e96101953660046106bf565b610519565b3480156101a657600080fd5b506100e96101b536600461071f565b61052c565b6001546000906101cc57506000610210565b6001600160a01b0382166000818152602081905260409020600201546001805490919081106101f757fe5b6000918252602090912001546001600160a01b03161490505b919050565b60025460ff1681565b610227336101ba565b1561024d5760405162461bcd60e51b8152600401610244906108f9565b60405180910390fd5b33600081815260208190526040902080546001600160a01b031916909117815561027b60018201848461056f565b506001805460028301819055915482820182556000919091527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf690910180546001600160a01b0319166001600160a01b039092169190911790555050565b6102e16105ed565b60015482106103025760405162461bcd60e51b815260040161024490610909565b61030a6105ed565b6000806001858154811061031a57fe5b60009182526020808320909101546001600160a01b039081168452838201949094526040928301909120825160608101845281549094168452600181810180548551601f6002600019958416156101000295909501909216939093049081018590048502830185019095528482529193858401939192918301828280156103e25780601f106103b7576101008083540402835291602001916103e2565b820191906000526020600020905b8154815290600101906020018083116103c557829003601f168201915b5050509183525050600291909101546020909101529392505050565b6104066105ed565b61040f826101ba565b61042b5760405162461bcd60e51b815260040161024490610909565b6104336105ed565b6001600160a01b0383811660009081526020818152604091829020825160608101845281549094168452600180820180548551600261010094831615949094026000190190911692909204601f81018590048502830185019095528482529193858401939192918301828280156103e25780601f106103b7576101008083540402835291602001916103e2565b60006104ca6105ed565b6104d3836103fe565b60015490915060009060060243816104e757fe5b0690506006826040015102811015801561050a5750600682604001516001010281105b949350505050565b6001545b90565b6002805460ff1916911515919091179055565b7fd2b9ae20b01dc42907609e33ebc81783e68018abdd61e1c616f3ce800d470d28600184848460405161056294939291906108c0565b60405180910390a1505050565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f106105b05782800160ff198235161785556105dd565b828001600101855582156105dd579182015b828111156105dd5782358255916020019190600101906105c2565b506105e9929150610617565b5090565b604051806060016040528060006001600160a01b0316815260200160608152602001600081525090565b61051691905b808211156105e9576000815560010161061d565b803561063c816109b9565b92915050565b803561063c816109d0565b60008083601f84011261065f57600080fd5b50813567ffffffffffffffff81111561067757600080fd5b60208301915083600182028301111561068f57600080fd5b9250929050565b803561063c816109d9565b6000602082840312156106b357600080fd5b600061050a8484610631565b6000602082840312156106d157600080fd5b600061050a8484610642565b600080602083850312156106f057600080fd5b823567ffffffffffffffff81111561070757600080fd5b6107138582860161064d565b92509250509250929050565b60008060006040848603121561073457600080fd5b833567ffffffffffffffff81111561074b57600080fd5b6107578682870161064d565b9350935050602061076a86828701610696565b9150509250925092565b60006020828403121561078657600080fd5b600061050a8484610696565b61079b8161094c565b82525050565b61079b81610957565b61079b81610968565b60006107bf8385610943565b93506107cc838584610973565b6107d5836109af565b9093019392505050565b60006107ea8261093f565b6107f48185610943565b935061080481856020860161097f565b6107d5816109af565b600061081a601283610943565b71185b1c9958591e481c9959da5cdd195c995960721b815260200192915050565b6000610848600983610943565b681b9bdd08199bdd5b9960ba1b815260200192915050565b805160009060608401906108748582610792565b506020830151848203602086015261088c82826107df565b91505060408301516108a160408601826108a9565b509392505050565b61079b81610516565b6020810161063c82846107a1565b606081016108ce82876107aa565b81810360208301526108e18185876107b3565b90506108f060408301846108a9565b95945050505050565b6020808252810161063c8161080d565b6020808252810161063c8161083b565b6020808252810161092a8184610860565b9392505050565b6020810161063c82846108a9565b5190565b90815260200190565b600061063c8261095c565b151590565b6001600160a01b031690565b600061063c82610516565b82818337506000910152565b60005b8381101561099a578181015183820152602001610982565b838111156109a9576000848401525b50505050565b601f01601f191690565b6109c28161094c565b81146109cd57600080fd5b50565b6109c281610957565b6109c28161051656fea365627a7a723158204bf299544188764794841a157bbe408e9bcb09dafef1988d9df35f62586745376c6578706572696d656e74616cf564736f6c63430005100040"
 
 // DeployOracleContract deploys a new Ethereum contract, binding an instance of OracleContract to it.
 func DeployOracleContract(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *OracleContract, error) {
@@ -232,65 +241,63 @@ func (_OracleContract *OracleContractCallerSession) CountIopNodes() (*big.Int, e
 
 // FindIopNodeByAddress is a free data retrieval call binding the contract method 0x76ac6e0b.
 //
-// Solidity: function findIopNodeByAddress(address _addr) view returns(address, string)
-func (_OracleContract *OracleContractCaller) FindIopNodeByAddress(opts *bind.CallOpts, _addr common.Address) (common.Address, string, error) {
+// Solidity: function findIopNodeByAddress(address _addr) view returns((address,string,uint256))
+func (_OracleContract *OracleContractCaller) FindIopNodeByAddress(opts *bind.CallOpts, _addr common.Address) (OracleContractIopNode, error) {
 	var out []interface{}
 	err := _OracleContract.contract.Call(opts, &out, "findIopNodeByAddress", _addr)
 
 	if err != nil {
-		return *new(common.Address), *new(string), err
+		return *new(OracleContractIopNode), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-	out1 := *abi.ConvertType(out[1], new(string)).(*string)
+	out0 := *abi.ConvertType(out[0], new(OracleContractIopNode)).(*OracleContractIopNode)
 
-	return out0, out1, err
+	return out0, err
 
 }
 
 // FindIopNodeByAddress is a free data retrieval call binding the contract method 0x76ac6e0b.
 //
-// Solidity: function findIopNodeByAddress(address _addr) view returns(address, string)
-func (_OracleContract *OracleContractSession) FindIopNodeByAddress(_addr common.Address) (common.Address, string, error) {
+// Solidity: function findIopNodeByAddress(address _addr) view returns((address,string,uint256))
+func (_OracleContract *OracleContractSession) FindIopNodeByAddress(_addr common.Address) (OracleContractIopNode, error) {
 	return _OracleContract.Contract.FindIopNodeByAddress(&_OracleContract.CallOpts, _addr)
 }
 
 // FindIopNodeByAddress is a free data retrieval call binding the contract method 0x76ac6e0b.
 //
-// Solidity: function findIopNodeByAddress(address _addr) view returns(address, string)
-func (_OracleContract *OracleContractCallerSession) FindIopNodeByAddress(_addr common.Address) (common.Address, string, error) {
+// Solidity: function findIopNodeByAddress(address _addr) view returns((address,string,uint256))
+func (_OracleContract *OracleContractCallerSession) FindIopNodeByAddress(_addr common.Address) (OracleContractIopNode, error) {
 	return _OracleContract.Contract.FindIopNodeByAddress(&_OracleContract.CallOpts, _addr)
 }
 
 // FindIopNodeByIndex is a free data retrieval call binding the contract method 0x7206c984.
 //
-// Solidity: function findIopNodeByIndex(uint256 _index) view returns(address, string)
-func (_OracleContract *OracleContractCaller) FindIopNodeByIndex(opts *bind.CallOpts, _index *big.Int) (common.Address, string, error) {
+// Solidity: function findIopNodeByIndex(uint256 _index) view returns((address,string,uint256))
+func (_OracleContract *OracleContractCaller) FindIopNodeByIndex(opts *bind.CallOpts, _index *big.Int) (OracleContractIopNode, error) {
 	var out []interface{}
 	err := _OracleContract.contract.Call(opts, &out, "findIopNodeByIndex", _index)
 
 	if err != nil {
-		return *new(common.Address), *new(string), err
+		return *new(OracleContractIopNode), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-	out1 := *abi.ConvertType(out[1], new(string)).(*string)
+	out0 := *abi.ConvertType(out[0], new(OracleContractIopNode)).(*OracleContractIopNode)
 
-	return out0, out1, err
+	return out0, err
 
 }
 
 // FindIopNodeByIndex is a free data retrieval call binding the contract method 0x7206c984.
 //
-// Solidity: function findIopNodeByIndex(uint256 _index) view returns(address, string)
-func (_OracleContract *OracleContractSession) FindIopNodeByIndex(_index *big.Int) (common.Address, string, error) {
+// Solidity: function findIopNodeByIndex(uint256 _index) view returns((address,string,uint256))
+func (_OracleContract *OracleContractSession) FindIopNodeByIndex(_index *big.Int) (OracleContractIopNode, error) {
 	return _OracleContract.Contract.FindIopNodeByIndex(&_OracleContract.CallOpts, _index)
 }
 
 // FindIopNodeByIndex is a free data retrieval call binding the contract method 0x7206c984.
 //
-// Solidity: function findIopNodeByIndex(uint256 _index) view returns(address, string)
-func (_OracleContract *OracleContractCallerSession) FindIopNodeByIndex(_index *big.Int) (common.Address, string, error) {
+// Solidity: function findIopNodeByIndex(uint256 _index) view returns((address,string,uint256))
+func (_OracleContract *OracleContractCallerSession) FindIopNodeByIndex(_index *big.Int) (OracleContractIopNode, error) {
 	return _OracleContract.Contract.FindIopNodeByIndex(&_OracleContract.CallOpts, _index)
 }
 
@@ -323,6 +330,68 @@ func (_OracleContract *OracleContractSession) IopNodeIsRegistered(_addr common.A
 // Solidity: function iopNodeIsRegistered(address _addr) view returns(bool)
 func (_OracleContract *OracleContractCallerSession) IopNodeIsRegistered(_addr common.Address) (bool, error) {
 	return _OracleContract.Contract.IopNodeIsRegistered(&_OracleContract.CallOpts, _addr)
+}
+
+// IsLeader is a free data retrieval call binding the contract method 0xdb512e85.
+//
+// Solidity: function isLeader(address addr) view returns(bool)
+func (_OracleContract *OracleContractCaller) IsLeader(opts *bind.CallOpts, addr common.Address) (bool, error) {
+	var out []interface{}
+	err := _OracleContract.contract.Call(opts, &out, "isLeader", addr)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// IsLeader is a free data retrieval call binding the contract method 0xdb512e85.
+//
+// Solidity: function isLeader(address addr) view returns(bool)
+func (_OracleContract *OracleContractSession) IsLeader(addr common.Address) (bool, error) {
+	return _OracleContract.Contract.IsLeader(&_OracleContract.CallOpts, addr)
+}
+
+// IsLeader is a free data retrieval call binding the contract method 0xdb512e85.
+//
+// Solidity: function isLeader(address addr) view returns(bool)
+func (_OracleContract *OracleContractCallerSession) IsLeader(addr common.Address) (bool, error) {
+	return _OracleContract.Contract.IsLeader(&_OracleContract.CallOpts, addr)
+}
+
+// Result is a free data retrieval call binding the contract method 0x65372147.
+//
+// Solidity: function result() view returns(bool)
+func (_OracleContract *OracleContractCaller) Result(opts *bind.CallOpts) (bool, error) {
+	var out []interface{}
+	err := _OracleContract.contract.Call(opts, &out, "result")
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// Result is a free data retrieval call binding the contract method 0x65372147.
+//
+// Solidity: function result() view returns(bool)
+func (_OracleContract *OracleContractSession) Result() (bool, error) {
+	return _OracleContract.Contract.Result(&_OracleContract.CallOpts)
+}
+
+// Result is a free data retrieval call binding the contract method 0x65372147.
+//
+// Solidity: function result() view returns(bool)
+func (_OracleContract *OracleContractCallerSession) Result() (bool, error) {
+	return _OracleContract.Contract.Result(&_OracleContract.CallOpts)
 }
 
 // RegisterIopNode is a paid mutator transaction binding the contract method 0x6f1daed3.
@@ -386,6 +455,139 @@ func (_OracleContract *OracleContractSession) VerifyTransactionResult(_result bo
 // Solidity: function verifyTransactionResult(bool _result) returns()
 func (_OracleContract *OracleContractTransactorSession) VerifyTransactionResult(_result bool) (*types.Transaction, error) {
 	return _OracleContract.Contract.VerifyTransactionResult(&_OracleContract.TransactOpts, _result)
+}
+
+// OracleContractTestIterator is returned from FilterTest and is used to iterate over the raw logs and unpacked data for Test events raised by the OracleContract contract.
+type OracleContractTestIterator struct {
+	Event *OracleContractTest // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *OracleContractTestIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(OracleContractTest)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(OracleContractTest)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *OracleContractTestIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *OracleContractTestIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// OracleContractTest represents a Test event raised by the OracleContract contract.
+type OracleContractTest struct {
+	A   *big.Int
+	Raw types.Log // Blockchain specific contextual infos
+}
+
+// FilterTest is a free log retrieval operation binding the contract event 0x63a242a632efe33c0e210e04e4173612a17efa4f16aa4890bc7e46caece80de0.
+//
+// Solidity: event Test(uint256 a)
+func (_OracleContract *OracleContractFilterer) FilterTest(opts *bind.FilterOpts) (*OracleContractTestIterator, error) {
+
+	logs, sub, err := _OracleContract.contract.FilterLogs(opts, "Test")
+	if err != nil {
+		return nil, err
+	}
+	return &OracleContractTestIterator{contract: _OracleContract.contract, event: "Test", logs: logs, sub: sub}, nil
+}
+
+// WatchTest is a free log subscription operation binding the contract event 0x63a242a632efe33c0e210e04e4173612a17efa4f16aa4890bc7e46caece80de0.
+//
+// Solidity: event Test(uint256 a)
+func (_OracleContract *OracleContractFilterer) WatchTest(opts *bind.WatchOpts, sink chan<- *OracleContractTest) (event.Subscription, error) {
+
+	logs, sub, err := _OracleContract.contract.WatchLogs(opts, "Test")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(OracleContractTest)
+				if err := _OracleContract.contract.UnpackLog(event, "Test", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseTest is a log parse operation binding the contract event 0x63a242a632efe33c0e210e04e4173612a17efa4f16aa4890bc7e46caece80de0.
+//
+// Solidity: event Test(uint256 a)
+func (_OracleContract *OracleContractFilterer) ParseTest(log types.Log) (*OracleContractTest, error) {
+	event := new(OracleContractTest)
+	if err := _OracleContract.contract.UnpackLog(event, "Test", log); err != nil {
+		return nil, err
+	}
+	return event, nil
 }
 
 // OracleContractVerifyTransactionLogIterator is returned from FilterVerifyTransactionLog and is used to iterate over the raw logs and unpacked data for VerifyTransactionLog events raised by the OracleContract contract.

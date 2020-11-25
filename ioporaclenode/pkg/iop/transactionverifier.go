@@ -63,11 +63,11 @@ func (t *transactionVerifierImpl) VerifyTransactionRemote(ctx context.Context, t
 
 	for _, v := range nodes {
 		wg.Add(1)
-		go func(node oracleNodeEntry) {
+		go func(node OracleContractIopNode) {
 			defer wg.Done()
-			conn, err := grpc.Dial(node.ipAddr, grpc.WithInsecure())
+			conn, err := grpc.Dial(node.IpAddr, grpc.WithInsecure())
 			if err != nil {
-				log.Errorf("dial %s: %v", node.ipAddr, err)
+				log.Errorf("dial %s: %v", node.IpAddr, err)
 				return
 			}
 			client := NewOracleNodeClient(conn)
@@ -79,10 +79,10 @@ func (t *transactionVerifierImpl) VerifyTransactionRemote(ctx context.Context, t
 			cancel()
 			_ = conn.Close()
 			if err != nil {
-				log.Errorf("verify transaction %s: %v", node.ipAddr, err)
+				log.Errorf("verify transaction %s: %v", node.IpAddr, err)
 				return
 			}
-			results[node.ipAddr] = result.Result
+			results[node.IpAddr] = result.Result
 
 			mutex.Lock()
 			frequency[result.Result] += 1
@@ -101,21 +101,18 @@ func (t *transactionVerifierImpl) VerifyTransactionRemote(ctx context.Context, t
 	return false, fmt.Errorf("no majority")
 }
 
-func (t *transactionVerifierImpl) FindIopNodes() (map[common.Address]oracleNodeEntry, error) {
+func (t *transactionVerifierImpl) FindIopNodes() (map[common.Address]OracleContractIopNode, error) {
 	count, err := t.oracleContract.CountIopNodes(nil)
 	if err != nil {
 		return nil, fmt.Errorf("count iop nodes: %w", err)
 	}
-	nodeEntries := make(map[common.Address]oracleNodeEntry)
+	nodeEntries := make(map[common.Address]OracleContractIopNode)
 	for i := int64(0); i < count.Int64(); i++ {
-		addr, ipAddr, err := t.oracleContract.FindIopNodeByIndex(nil, big.NewInt(i))
+		node, err := t.oracleContract.FindIopNodeByIndex(nil, big.NewInt(i))
 		if err != nil {
 			return nil, fmt.Errorf("count iop nodes: %w", err)
 		}
-		nodeEntries[addr] = oracleNodeEntry{
-			address: addr,
-			ipAddr:  ipAddr,
-		}
+		nodeEntries[node.Addr] = node
 	}
 	delete(nodeEntries, t.account)
 	return nodeEntries, nil
