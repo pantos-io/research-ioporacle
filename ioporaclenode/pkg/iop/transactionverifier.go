@@ -15,7 +15,7 @@ import (
 
 type TransactionVerifier interface {
 	VerifyTransaction(ctx context.Context, txHash common.Hash, confirmations uint64) (bool, error)
-	VerifyTransactionRemote(ctx context.Context, txHash common.Hash, confirmations uint64) (bool, error)
+	VerifyTransactionRemote(ctx context.Context, txHash common.Hash, confirmations uint64) (bool, []common.Address, error)
 }
 
 type transactionVerifierImpl struct {
@@ -45,18 +45,17 @@ func (t *transactionVerifierImpl) VerifyTransaction(ctx context.Context, txHash 
 		return false, fmt.Errorf("blocknumber: %w", err)
 	}
 	confirmed := blockNumber - receipt.BlockNumber.Uint64()
-	log.Infof("%d", confirmed)
 	return confirmed >= confirmations, nil
 }
 
-func (t *transactionVerifierImpl) VerifyTransactionRemote(ctx context.Context, txHash common.Hash, confirmations uint64) (bool, error) {
+func (t *transactionVerifierImpl) VerifyTransactionRemote(ctx context.Context, txHash common.Hash, confirmations uint64) (bool, []common.Address, error) {
 	nodes, err := t.FindIopNodes()
 	if err != nil {
-		return false, fmt.Errorf("find nodes: %w", err)
+		return false, nil, fmt.Errorf("find nodes: %w", err)
 	}
 
-	results := make(map[string]bool)
-	frequency := make(map[bool]int)
+	positiveResults := make([]common.Address, 0)
+	negativeResults := make([]common.Address, 0)
 
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
@@ -82,23 +81,25 @@ func (t *transactionVerifierImpl) VerifyTransactionRemote(ctx context.Context, t
 				log.Errorf("verify transaction %s: %v", node.IpAddr, err)
 				return
 			}
-			results[node.IpAddr] = result.Result
-
 			mutex.Lock()
-			frequency[result.Result] += 1
+			if result.Result {
+				positiveResults = append(positiveResults, node.Addr)
+			} else {
+				negativeResults = append(negativeResults, node.Addr)
+			}
 			mutex.Unlock()
 		}(v)
 	}
 
 	wg.Wait()
-	majority := int(math.Ceil(float64(len(nodes)) / 2.0))
-	if frequency[true] > majority {
-		return true, nil
-	} else if frequency[false] > majority {
-		return false, nil
+	majority := int(math.Ceil(float64(len(nodes)+2) / 2.0))
+	if len(positiveResults) >= majority {
+		return true, positiveResults, nil
+	} else if len(negativeResults) >= majority {
+		return false, negativeResults, nil
 	}
 
-	return false, fmt.Errorf("no majority")
+	return false, nil, fmt.Errorf("no majority")
 }
 
 func (t *transactionVerifierImpl) FindIopNodes() (map[common.Address]OracleContractOracleNode, error) {

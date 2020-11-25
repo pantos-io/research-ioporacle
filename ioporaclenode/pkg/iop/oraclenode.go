@@ -6,11 +6,15 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto/ecies"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"math/big"
+	"math/rand"
 	"net"
+	"time"
 )
 
 type oracleNode struct {
@@ -87,12 +91,12 @@ func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
 }
 
 func (n *oracleNode) handleVerifyTransactionLog(ctx context.Context, event *OracleContractVerifyTransactionLog) error {
-	result, err := n.txVerifier.VerifyTransactionRemote(ctx, common.HexToHash(event.Hash), event.Confirmations.Uint64())
+	result, witnesses, err := n.txVerifier.VerifyTransactionRemote(ctx, common.HexToHash(event.Hash), event.Confirmations.Uint64())
 	if err != nil {
 		return fmt.Errorf("verify transaction remote: %w", err)
 	}
 	auth := bind.NewKeyedTransactor(n.privateKey)
-	_, err = n.oracleContract.SubmitVerification(auth, result)
+	_, err = n.oracleContract.SubmitVerification(auth, event.Id, result, witnesses)
 	if err != nil {
 		return fmt.Errorf("verify transaction result: %v", err)
 	}
@@ -100,14 +104,25 @@ func (n *oracleNode) handleVerifyTransactionLog(ctx context.Context, event *Orac
 }
 
 func (n *oracleNode) VerifyTransaction(ctx context.Context, request *VerifyTransactionRequest) (*VerifyTransactionResponse, error) {
-	log.Infof("%v", request)
 	result, err := n.txVerifier.VerifyTransaction(ctx, common.HexToHash(request.Tx), request.Confirmations)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "verify transaction: %v", err)
 	}
+	encodedResult, err := n.oracleContract.EncodeResult(nil, big.NewInt(request.Id), result)
+	resultSignature, err := ecies.Encrypt(
+		rand.New(rand.NewSource(time.Now().UnixNano())),
+		ecies.ImportECDSAPublic(n.privateKey.Public().(*ecdsa.PublicKey)),
+		encodedResult,
+		nil,
+		nil,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("encrypt hashed verification result: %w", err)
+	}
 	return &VerifyTransactionResponse{
-		Id:     request.Id,
-		Result: result,
+		Id:        request.Id,
+		Result:    result,
+		Signature: resultSignature,
 	}, nil
 }
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.8.0;
 pragma experimental ABIEncoderV2;
 
@@ -8,13 +9,39 @@ contract OracleContract {
         uint256 index;
     }
 
+    struct VerificationRequest {
+        uint256 id;
+        string hash;
+        uint256 confirmations;
+        uint256 index;
+    }
+
+    struct VerificationResult {
+        uint256 id;
+        uint256 request;
+        bool result;
+        address[] witnesses;
+    }
+
     uint256 private constant BLOCK_RANGE = 6;
 
     mapping(address => OracleNode) private oracleNodes;
     address[] private oracleNodeIndices;
 
-    bool public result;
+    mapping(uint256 => VerificationRequest) private verificationRequests;
+    uint256[] private verificationRequestIndices;
+    uint256 private requestCounter;
+
+    mapping(uint256 => VerificationResult) private verificationResults;
+    uint256 private resultCounter;
+
     event VerifyTransactionLog(uint256 id, string hash, uint256 confirmations);
+    event SubmitVerificationLog(
+        uint256 id,
+        uint256 request,
+        bool result,
+        address[] witnesses
+    );
 
     function registerOracleNode(string calldata _ipAddr) external payable {
         require(!oracleNodeIsRegistered(msg.sender), "already registered");
@@ -57,11 +84,51 @@ contract OracleContract {
     function verifyTransaction(string calldata _hash, uint256 _confirmations)
         external
     {
-        emit VerifyTransactionLog(1, _hash, _confirmations);
+        uint256 id = ++requestCounter;
+        VerificationRequest storage verificationRequest =
+            verificationRequests[id];
+        verificationRequest.id = id;
+        verificationRequest.hash = _hash;
+        verificationRequest.confirmations = _confirmations;
+        verificationRequest.index = verificationRequestIndices.length;
+        verificationRequestIndices.push(id);
+        emit VerifyTransactionLog(id, _hash, _confirmations);
     }
 
-    function submitVerification(bool _result) external {
-        result = _result;
+    function submitVerification(
+        uint256 _id,
+        bool _result,
+        address[] memory _witnesses
+    ) public {
+        uint256 id = ++resultCounter;
+        VerificationResult storage verificationResult = verificationResults[id];
+        verificationResult.id = id;
+        verificationResult.request = _id;
+        verificationResult.result = _result;
+        verificationResult.witnesses = _witnesses;
+        emit SubmitVerificationLog(id, _id, _result, _witnesses);
+    }
+
+    function findVerification(uint256 _id)
+        public
+        view
+        returns (VerificationResult memory)
+    {
+        require(verificationExists(_id), "not found");
+        VerificationResult memory verificationResult = verificationResults[_id];
+        return verificationResult;
+    }
+
+    function verificationExists(uint256 _id) public view returns (bool) {
+        return verificationResults[_id].id != 0;
+    }
+
+    function encodeResult(uint256 _id, bool _result)
+        public
+        pure
+        returns (bytes memory)
+    {
+        return abi.encodePacked(_id, _result);
     }
 
     function isLeader(address addr) public view returns (bool) {
