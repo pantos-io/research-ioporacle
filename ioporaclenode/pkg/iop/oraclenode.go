@@ -92,7 +92,7 @@ func (n *oracleNode) handleVerifyTransactionLog(ctx context.Context, event *Orac
 		return fmt.Errorf("verify transaction remote: %w", err)
 	}
 	auth := bind.NewKeyedTransactor(n.privateKey)
-	_, err = n.oracleContract.VerifyTransactionResult(auth, result)
+	_, err = n.oracleContract.SubmitVerification(auth, result)
 	if err != nil {
 		return fmt.Errorf("verify transaction result: %v", err)
 	}
@@ -112,14 +112,14 @@ func (n *oracleNode) VerifyTransaction(ctx context.Context, request *VerifyTrans
 }
 
 func (n *oracleNode) register(ipAddr string) error {
-	isRegistered, err := n.oracleContract.IopNodeIsRegistered(nil, n.account)
+	isRegistered, err := n.oracleContract.OracleNodeIsRegistered(nil, n.account)
 	if err != nil {
 		return fmt.Errorf("is registered: %w", err)
 	}
 
 	auth := bind.NewKeyedTransactor(n.privateKey)
 	if !isRegistered {
-		_, err = n.oracleContract.RegisterIopNode(auth, ipAddr)
+		_, err = n.oracleContract.RegisterOracleNode(auth, ipAddr)
 		if err != nil {
 			return fmt.Errorf("register iop node: %w", err)
 		}

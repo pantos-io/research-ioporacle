@@ -15,7 +15,7 @@ import (
 var (
 	addrFlag     = flag.String("address", "127.0.0.1:25565", "server address")
 	ethFlag      = flag.String("eth", "ws://127.0.0.1:7545", "eth node address")
-	contractFlag = flag.String("contract", "0x5ea54a26420904c558647ec5fF5bA5424e6367f0", "contract address")
+	contractFlag = flag.String("contract", "0xCE86157EBC1f36ce2a971f56a8eC23e64176b4Eb", "contract address")
 	keyFlag      = flag.String("key", "e63ff25be694842b3d25f3c8981dbe44b36b23a6effdbe04f9ee11e7965c922b", "private key")
 )
 
