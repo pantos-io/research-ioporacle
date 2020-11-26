@@ -6,15 +6,13 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto/ecies"
+	"github.com/ethereum/go-ethereum/crypto"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"math/big"
-	"math/rand"
 	"net"
-	"time"
 )
 
 type oracleNode struct {
@@ -109,20 +107,18 @@ func (n *oracleNode) VerifyTransaction(ctx context.Context, request *VerifyTrans
 		return nil, status.Errorf(codes.Internal, "verify transaction: %v", err)
 	}
 	encodedResult, err := n.oracleContract.EncodeResult(nil, big.NewInt(request.Id), result)
-	resultSignature, err := ecies.Encrypt(
-		rand.New(rand.NewSource(time.Now().UnixNano())),
-		ecies.ImportECDSAPublic(n.privateKey.Public().(*ecdsa.PublicKey)),
-		encodedResult,
-		nil,
-		nil,
-	)
 	if err != nil {
-		return nil, fmt.Errorf("encrypt hashed verification result: %w", err)
+		return nil, fmt.Errorf("encode result: %w", err)
+	}
+	hash := crypto.Keccak256Hash(encodedResult)
+	signature, err := crypto.Sign(hash.Bytes(), n.privateKey)
+	if err != nil {
+		return nil, fmt.Errorf("sign result: %w", err)
 	}
 	return &VerifyTransactionResponse{
 		Id:        request.Id,
 		Result:    result,
-		Signature: resultSignature,
+		Signature: signature,
 	}, nil
 }
 
