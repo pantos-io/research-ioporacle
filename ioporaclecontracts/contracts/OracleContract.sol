@@ -39,14 +39,17 @@ contract OracleContract {
     mapping(uint256 => VerificationResult) private verificationResults;
     uint256 private resultCounter;
 
+    event RegisterOracleNodeLog(address indexed sender);
     event VerifyTransactionLog(uint256 id, string hash, uint256 confirmations);
     event SubmitVerificationLog(
+        address indexed sender,
         uint256 id,
         uint256 request,
         bool result,
         address[] witnesses,
         uint256 finalized
     );
+    event TransferRewardLog(uint256 indexed request);
 
     function registerOracleNode(string calldata _ipAddr) external payable {
         require(!oracleNodeIsRegistered(msg.sender), "already registered");
@@ -55,6 +58,7 @@ contract OracleContract {
         iopNode.ipAddr = _ipAddr;
         iopNode.index = oracleNodeIndices.length;
         oracleNodeIndices.push(iopNode.addr);
+        emit RegisterOracleNodeLog(msg.sender);
     }
 
     function oracleNodeIsRegistered(address _addr) public view returns (bool) {
@@ -118,6 +122,7 @@ contract OracleContract {
         verificationResult.witnesses = _witnesses;
         verificationResult.finalized = block.number + FINAL_RANGE;
         emit SubmitVerificationLog(
+            msg.sender,
             id,
             _id,
             _result,
@@ -135,6 +140,7 @@ contract OracleContract {
         for (uint256 i = 0; i < result.witnesses.length; i++) {
             address(uint160(result.witnesses[i])).transfer(PRICE);
         }
+        emit TransferRewardLog(_id);
     }
 
     function findVerification(uint256 _id)

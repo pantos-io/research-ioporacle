@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -19,15 +21,17 @@ type oracleNode struct {
 	UnimplementedOracleNodeServer
 	server         *grpc.Server
 	txVerifier     TransactionVerifier
+	ethClient      *ethclient.Client
 	oracleContract *OracleContract
 	privateKey     *ecdsa.PrivateKey
 	account        common.Address
 }
 
-func NewOracleNode(txVerifier TransactionVerifier, oracleContract *OracleContract, privateKey *ecdsa.PrivateKey, account common.Address) *oracleNode {
+func NewOracleNode(ethClient *ethclient.Client, txVerifier TransactionVerifier, oracleContract *OracleContract, privateKey *ecdsa.PrivateKey, account common.Address) *oracleNode {
 	grpcServer := grpc.NewServer()
 	node := &oracleNode{
 		server:         grpcServer,
+		ethClient:      ethClient,
 		txVerifier:     txVerifier,
 		oracleContract: oracleContract,
 		privateKey:     privateKey,
@@ -42,6 +46,12 @@ func (n *oracleNode) Serve(lis net.Listener) error {
 		err := n.watchVerifyTransactionLog(context.Background())
 		if err != nil {
 			log.Errorf("watch verify transaction log: %v", err)
+		}
+	}()
+	go func() {
+		err := n.watchSubmitVerificationLog(context.Background())
+		if err != nil {
+			log.Errorf("watch submit verification log: %v", err)
 		}
 	}()
 	err := n.register(lis.Addr().String())
@@ -74,11 +84,12 @@ func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
 				log.Errorf("is leader: %v", err)
 				continue
 			}
-			if isLeader {
-				err = n.handleVerifyTransactionLog(ctx, event)
-				if err != nil {
-					log.Errorf("handle verify transaction log: %v", err)
-				}
+			if !isLeader {
+				continue
+			}
+			err = n.handleVerifyTransactionLog(ctx, event)
+			if err != nil {
+				log.Errorf("handle verify transaction log: %v", err)
 			}
 		case err = <-sub.Err():
 			return err
@@ -99,6 +110,67 @@ func (n *oracleNode) handleVerifyTransactionLog(ctx context.Context, event *Orac
 		return fmt.Errorf("verify transaction result: %v", err)
 	}
 	return nil
+}
+
+func (n *oracleNode) watchSubmitVerificationLog(ctx context.Context) error {
+	sink := make(chan *OracleContractSubmitVerificationLog)
+	defer close(sink)
+
+	sub, err := n.oracleContract.WatchSubmitVerificationLog(
+		&bind.WatchOpts{
+			Context: context.Background(),
+		},
+		sink,
+		[]common.Address{n.account},
+	)
+	if err != nil {
+		return err
+	}
+	defer sub.Unsubscribe()
+
+	for {
+		select {
+		case event := <-sink:
+			err = n.handleSubmitVerificationLog(ctx, event)
+			if err != nil {
+				log.Errorf("handle verify transaction log: %v", err)
+			}
+		case err = <-sub.Err():
+			return err
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
+}
+
+func (n *oracleNode) handleSubmitVerificationLog(ctx context.Context, event *OracleContractSubmitVerificationLog) error {
+	sink := make(chan *types.Header)
+	defer close(sink)
+
+	sub, err := n.ethClient.SubscribeNewHead(context.Background(), sink)
+	if err != nil {
+		return err
+	}
+	defer sub.Unsubscribe()
+
+	for {
+		select {
+		case head := <-sink:
+			if head.Number.Cmp(event.Finalized) != 0 {
+				continue
+			}
+			auth := bind.NewKeyedTransactor(n.privateKey)
+			_, err := n.oracleContract.TransferReward(auth, event.Request)
+			if err != nil {
+				return fmt.Errorf("transfer reward %w, err")
+			}
+			return nil
+		case err = <-sub.Err():
+			return err
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
 }
 
 func (n *oracleNode) VerifyTransaction(ctx context.Context, request *VerifyTransactionRequest) (*VerifyTransactionResponse, error) {

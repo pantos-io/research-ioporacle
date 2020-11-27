@@ -15,7 +15,7 @@ import (
 var (
 	addrFlag     = flag.String("address", "127.0.0.1:25565", "server address")
 	ethFlag      = flag.String("eth", "ws://127.0.0.1:7545", "eth node address")
-	contractFlag = flag.String("contract", "0x86d31a6D7737426122F6095E8BC00f8E26b2b1E3", "contract address")
+	contractFlag = flag.String("contract", "0x7Cc0B7C76564BCFaB9a49292332798B3dbfd06e6", "contract address")
 	keyFlag      = flag.String("key", "e63ff25be694842b3d25f3c8981dbe44b36b23a6effdbe04f9ee11e7965c922b", "private key")
 )
 
@@ -44,7 +44,7 @@ func main() {
 	}
 
 	txVerifier := iop.NewTransactionVerifier(ethClient, contract, account)
-	oracleNode := iop.NewOracleNode(txVerifier, contract, key, account)
+	oracleNode := iop.NewOracleNode(ethClient, txVerifier, contract, key, account)
 
 	go func() {
 		if err := oracleNode.Serve(lis); err != nil {
