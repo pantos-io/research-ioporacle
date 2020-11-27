@@ -77,7 +77,7 @@ contract OracleContract {
     }
 
     function findOracleNodeByIndex(uint256 _index)
-        external
+        public
         view
         returns (OracleNode memory)
     {
@@ -172,5 +172,15 @@ contract OracleContract {
         return
             chosen >= iopNode.index * BLOCK_RANGE &&
             chosen < (iopNode.index + 1) * BLOCK_RANGE;
+    }
+
+    function getLeader() public view returns (OracleNode memory) {
+        for (uint256 i = 0; i < oracleNodeIndices.length; i++) {
+            OracleNode memory iopNode = oracleNodes[oracleNodeIndices[i]];
+            if (isLeader(iopNode.addr)) {
+                return iopNode;
+            }
+        }
+        revert("no leader");
     }
 }
