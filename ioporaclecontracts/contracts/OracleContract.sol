@@ -21,9 +21,13 @@ contract OracleContract {
         uint256 request;
         bool result;
         address[] witnesses;
+        uint256 finalized;
+        bool rewardTransfered;
     }
 
     uint256 private constant BLOCK_RANGE = 6;
+    uint256 private constant FINAL_RANGE = 6;
+    uint256 private constant PRICE = 0.001 ether;
 
     mapping(address => OracleNode) private oracleNodes;
     address[] private oracleNodeIndices;
@@ -40,7 +44,8 @@ contract OracleContract {
         uint256 id,
         uint256 request,
         bool result,
-        address[] witnesses
+        address[] witnesses,
+        uint256 finalized
     );
 
     function registerOracleNode(string calldata _ipAddr) external payable {
@@ -83,7 +88,12 @@ contract OracleContract {
 
     function verifyTransaction(string calldata _hash, uint256 _confirmations)
         external
+        payable
     {
+        require(
+            msg.value >= oracleNodeIndices.length * PRICE,
+            "msg value too low"
+        );
         uint256 id = ++requestCounter;
         VerificationRequest storage verificationRequest =
             verificationRequests[id];
@@ -106,7 +116,25 @@ contract OracleContract {
         verificationResult.request = _id;
         verificationResult.result = _result;
         verificationResult.witnesses = _witnesses;
-        emit SubmitVerificationLog(id, _id, _result, _witnesses);
+        verificationResult.finalized = block.number + FINAL_RANGE;
+        emit SubmitVerificationLog(
+            id,
+            _id,
+            _result,
+            _witnesses,
+            verificationResult.finalized
+        );
+    }
+
+    function transferReward(uint256 _id) external {
+        VerificationResult memory result = findVerification(_id);
+        require(result.finalized <= block.number, "not finalized");
+        require(!result.rewardTransfered, "reward already transfered");
+        result.rewardTransfered = true;
+        verificationResults[result.id] = result;
+        for (uint256 i = 0; i < result.witnesses.length; i++) {
+            address(uint160(result.witnesses[i])).transfer(PRICE);
+        }
     }
 
     function findVerification(uint256 _id)
