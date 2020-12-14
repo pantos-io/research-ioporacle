@@ -114,6 +114,7 @@ contract OracleContract {
         bool _result,
         address[] memory _witnesses
     ) public {
+        require(isLeader(msg.sender), "not the leader");
         uint256 id = ++resultCounter;
         VerificationResult storage verificationResult = verificationResults[id];
         verificationResult.id = id;
