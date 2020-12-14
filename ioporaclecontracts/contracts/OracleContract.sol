@@ -2,12 +2,11 @@
 pragma solidity >=0.4.22 <0.8.0;
 pragma experimental ABIEncoderV2;
 
+import "./RegistryContract.sol";
+import "@openzeppelin/contracts/cryptography/ECDSA.sol";
+
 contract OracleContract {
-    struct OracleNode {
-        address addr;
-        string ipAddr;
-        uint256 index;
-    }
+    using ECDSA for bytes32;
 
     struct VerificationRequest {
         uint256 id;
@@ -20,17 +19,9 @@ contract OracleContract {
         uint256 id;
         uint256 request;
         bool result;
-        address[] witnesses;
-        uint256 finalized;
-        bool rewardTransfered;
     }
 
-    uint256 private constant BLOCK_RANGE = 6;
-    uint256 private constant FINAL_RANGE = 6;
     uint256 private constant PRICE = 0.001 ether;
-
-    mapping(address => OracleNode) private oracleNodes;
-    address[] private oracleNodeIndices;
 
     mapping(uint256 => VerificationRequest) private verificationRequests;
     uint256[] private verificationRequestIndices;
@@ -39,55 +30,18 @@ contract OracleContract {
     mapping(uint256 => VerificationResult) private verificationResults;
     uint256 private resultCounter;
 
-    event RegisterOracleNodeLog(address indexed sender);
     event VerifyTransactionLog(uint256 id, string hash, uint256 confirmations);
     event SubmitVerificationLog(
         address indexed sender,
         uint256 id,
         uint256 request,
-        bool result,
-        address[] witnesses,
-        uint256 finalized
+        bool result
     );
-    event TransferRewardLog(uint256 indexed request);
 
-    function registerOracleNode(string calldata _ipAddr) external payable {
-        require(!oracleNodeIsRegistered(msg.sender), "already registered");
-        OracleNode storage iopNode = oracleNodes[msg.sender];
-        iopNode.addr = msg.sender;
-        iopNode.ipAddr = _ipAddr;
-        iopNode.index = oracleNodeIndices.length;
-        oracleNodeIndices.push(iopNode.addr);
-        emit RegisterOracleNodeLog(msg.sender);
-    }
+    RegistryContract private registryContract;
 
-    function oracleNodeIsRegistered(address _addr) public view returns (bool) {
-        if (oracleNodeIndices.length == 0) return false;
-        return (oracleNodeIndices[oracleNodes[_addr].index] == _addr);
-    }
-
-    function findOracleNodeByAddress(address _addr)
-        public
-        view
-        returns (OracleNode memory)
-    {
-        require(oracleNodeIsRegistered(_addr), "not found");
-        OracleNode memory iopNode = oracleNodes[_addr];
-        return iopNode;
-    }
-
-    function findOracleNodeByIndex(uint256 _index)
-        public
-        view
-        returns (OracleNode memory)
-    {
-        require(_index >= 0 && _index < oracleNodeIndices.length, "not found");
-        OracleNode memory iopNode = oracleNodes[oracleNodeIndices[_index]];
-        return iopNode;
-    }
-
-    function countOracleNodes() external view returns (uint256) {
-        return oracleNodeIndices.length;
+    constructor(address _registryContract) public {
+        registryContract = RegistryContract(_registryContract);
     }
 
     function verifyTransaction(string calldata _hash, uint256 _confirmations)
@@ -95,7 +49,7 @@ contract OracleContract {
         payable
     {
         require(
-            msg.value >= oracleNodeIndices.length * PRICE,
+            msg.value >= registryContract.countOracleNodes() * PRICE,
             "msg value too low"
         );
         uint256 id = ++requestCounter;
@@ -112,36 +66,32 @@ contract OracleContract {
     function submitVerification(
         uint256 _id,
         bool _result,
-        address[] memory _witnesses
+        bytes[] memory _signatures
     ) public {
-        require(isLeader(msg.sender), "not the leader");
+        require(registryContract.isLeader(msg.sender), "not the leader");
+
         uint256 id = ++resultCounter;
+
         VerificationResult storage verificationResult = verificationResults[id];
         verificationResult.id = id;
         verificationResult.request = _id;
         verificationResult.result = _result;
-        verificationResult.witnesses = _witnesses;
-        verificationResult.finalized = block.number + FINAL_RANGE;
-        emit SubmitVerificationLog(
-            msg.sender,
-            id,
-            _id,
-            _result,
-            _witnesses,
-            verificationResult.finalized
-        );
-    }
 
-    function transferReward(uint256 _id) external {
-        VerificationResult memory result = findVerification(_id);
-        require(result.finalized <= block.number, "not finalized");
-        require(!result.rewardTransfered, "reward already transfered");
-        result.rewardTransfered = true;
-        verificationResults[result.id] = result;
-        for (uint256 i = 0; i < result.witnesses.length; i++) {
-            address(uint160(result.witnesses[i])).transfer(PRICE);
+        bytes32 hash = keccak256(encodeResult(_id, _result));
+
+        uint256 witnessCount = 0;
+        for (uint256 i = 0; i < _signatures.length; i++) {
+            address witness = hash.recover(_signatures[i]);
+            if (registryContract.oracleNodeIsRegistered(witness)) {
+                witnessCount += 1;
+                address(uint160(witness)).transfer(PRICE);
+            }
         }
-        emit TransferRewardLog(_id);
+
+        uint256 majority = (registryContract.countOracleNodes() + 1) / 2;
+        require(witnessCount > majority, "no majority");
+
+        emit SubmitVerificationLog(msg.sender, id, _id, _result);
     }
 
     function findVerification(uint256 _id)
@@ -164,24 +114,5 @@ contract OracleContract {
         returns (bytes memory)
     {
         return abi.encodePacked(_id, _result);
-    }
-
-    function isLeader(address addr) public view returns (bool) {
-        OracleNode memory iopNode = findOracleNodeByAddress(addr);
-        uint256 chosen =
-            block.number % (oracleNodeIndices.length * BLOCK_RANGE);
-        return
-            chosen >= iopNode.index * BLOCK_RANGE &&
-            chosen < (iopNode.index + 1) * BLOCK_RANGE;
-    }
-
-    function getLeader() public view returns (OracleNode memory) {
-        for (uint256 i = 0; i < oracleNodeIndices.length; i++) {
-            OracleNode memory iopNode = oracleNodes[oracleNodeIndices[i]];
-            if (isLeader(iopNode.addr)) {
-                return iopNode;
-            }
-        }
-        revert("no leader");
     }
 }

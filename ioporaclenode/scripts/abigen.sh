@@ -7,4 +7,5 @@ if ! which abigen >/dev/null; then
   exit 1
 fi
 
-abigen --sol ../../ioporaclecontracts/contracts/OracleContract.sol --pkg iop --out ../pkg/iop/oraclecontract.go
+abigen --abi ../../ioporaclecontracts/build/contracts/abi/OracleContract.abi --pkg iop --type OracleContract --out ../pkg/iop/oraclecontract.go
+abigen --abi ../../ioporaclecontracts/build/contracts/abi/RegistryContract.abi --pkg iop --type RegistryContract --out ../pkg/iop/registrycontract.go
