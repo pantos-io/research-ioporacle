@@ -15,8 +15,8 @@ import (
 var (
 	addrFlag             = flag.String("address", "127.0.0.1:25565", "server address")
 	ethFlag              = flag.String("eth", "ws://127.0.0.1:7545", "eth node address")
-	oracleContractFlag   = flag.String("oracleContract", "0x45489337BFcdc944667b24ef8F4F252Dd206c27A", "oracle contract address")
-	registryContractFlag = flag.String("registryContract", "0xa409953b6Fc60B75ab31e3617D8eeFE1B3B5e55c", "registry contract address")
+	oracleContractFlag   = flag.String("oracleContract", "0x94367f58cC0296196543E378cA81Fec50c929b2C", "oracle contract address")
+	registryContractFlag = flag.String("registryContract", "0x71427B1163DBc43214f5C8597A395bc1AD117269", "registry contract address")
 	keyFlag              = flag.String("key", "e63ff25be694842b3d25f3c8981dbe44b36b23a6effdbe04f9ee11e7965c922b", "private key")
 )
 
@@ -27,7 +27,7 @@ func main() {
 		log.Fatalf("dial eth client: %v", err)
 	}
 
-	oracleContract, err := iop.NewOracleContract(common.HexToAddress(*oracleContractFlag), ethClient)
+	oracleContract, err := iop.NewECDSAOracleContract(common.HexToAddress(*oracleContractFlag), ethClient)
 	if err != nil {
 		log.Fatalf("oracle contract: %v", err)
 	}

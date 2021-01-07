@@ -22,13 +22,13 @@ type oracleNode struct {
 	txVerifier       TransactionVerifier
 	aggregator       Aggregator
 	ethClient        *ethclient.Client
-	oracleContract   *OracleContract
+	oracleContract   *ECDSAOracleContract
 	registryContract *RegistryContract
 	privateKey       *ecdsa.PrivateKey
 	account          common.Address
 }
 
-func NewOracleNode(ethClient *ethclient.Client, txVerifier TransactionVerifier, aggregator Aggregator, oracleContract *OracleContract, registryContract *RegistryContract, privateKey *ecdsa.PrivateKey, account common.Address) *oracleNode {
+func NewOracleNode(ethClient *ethclient.Client, txVerifier TransactionVerifier, aggregator Aggregator, oracleContract *ECDSAOracleContract, registryContract *RegistryContract, privateKey *ecdsa.PrivateKey, account common.Address) *oracleNode {
 	grpcServer := grpc.NewServer()
 	node := &oracleNode{
 		server:           grpcServer,
@@ -59,7 +59,7 @@ func (n *oracleNode) Serve(lis net.Listener) error {
 }
 
 func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
-	sink := make(chan *OracleContractVerifyTransactionLog)
+	sink := make(chan *ECDSAOracleContractVerifyTransactionLog)
 	defer close(sink)
 
 	sub, err := n.oracleContract.WatchVerifyTransactionLog(
@@ -96,13 +96,12 @@ func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
 	}
 }
 
-func (n *oracleNode) handleVerifyTransactionLog(ctx context.Context, event *OracleContractVerifyTransactionLog) error {
+func (n *oracleNode) handleVerifyTransactionLog(ctx context.Context, event *ECDSAOracleContractVerifyTransactionLog) error {
 	result, signatures, err := n.aggregator.Aggregate(ctx, event.Id, common.HexToHash(event.Hash), event.Confirmations.Uint64())
 	if err != nil {
 		return fmt.Errorf("verify transaction remote: %w", err)
 	}
 	auth := bind.NewKeyedTransactor(n.privateKey)
-	log.Infof("%d", len(signatures))
 	_, err = n.oracleContract.SubmitVerification(auth, event.Id, result, signatures)
 	if err != nil {
 		return fmt.Errorf("verify transaction result: %v", err)

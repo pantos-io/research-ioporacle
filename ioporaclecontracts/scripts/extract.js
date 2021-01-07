@@ -1,6 +1,6 @@
 const fs = require("fs");
 const oracleContract = JSON.parse(
-  fs.readFileSync("../build/contracts/OracleContract.json", "utf8")
+  fs.readFileSync("../build/contracts/ECDSAOracleContract.json", "utf8")
 );
 
 const registryContract = JSON.parse(
@@ -16,13 +16,13 @@ fs.mkdir("../build/contracts/bin", { recursive: true }, err => {
 });
 
 fs.writeFile(
-  "../build/contracts/abi/OracleContract.abi",
+  "../build/contracts/abi/ECDSAOracleContract.abi",
   JSON.stringify(oracleContract.abi),
   function(err) {
     if (err) {
       return console.error(err);
     }
-    console.log("OracleContract ABI written successfully!");
+    console.log("ECDSAOracleContract ABI written successfully!");
   }
 );
 
@@ -33,7 +33,7 @@ fs.writeFile(
     if (err) {
       return console.error(err);
     }
-    console.log("OracleContract BIN written successfully!");
+    console.log("ECDSAOracleContract BIN written successfully!");
   }
 );
 

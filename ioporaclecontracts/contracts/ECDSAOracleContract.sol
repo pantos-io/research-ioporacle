@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import "./RegistryContract.sol";
 import "@openzeppelin/contracts/cryptography/ECDSA.sol";
 
-contract OracleContract {
+contract ECDSAOracleContract {
     using ECDSA for bytes32;
 
     struct VerificationRequest {
@@ -84,12 +84,11 @@ contract OracleContract {
             address witness = hash.recover(_signatures[i]);
             if (registryContract.oracleNodeIsRegistered(witness)) {
                 witnessCount += 1;
-                address(uint160(witness)).transfer(PRICE);
             }
         }
 
         uint256 majority = (registryContract.countOracleNodes() + 1) / 2;
-        require(witnessCount > majority, "no majority");
+        require(witnessCount >= majority, "no majority");
 
         emit SubmitVerificationLog(msg.sender, id, _id, _result);
     }

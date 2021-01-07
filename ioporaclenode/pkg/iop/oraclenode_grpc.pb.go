@@ -62,7 +62,7 @@ type UnsafeOracleNodeServer interface {
 }
 
 func RegisterOracleNodeServer(s grpc.ServiceRegistrar, srv OracleNodeServer) {
-	s.RegisterService(&_OracleNode_serviceDesc, srv)
+	s.RegisterService(&OracleNode_ServiceDesc, srv)
 }
 
 func _OracleNode_VerifyTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -83,7 +83,10 @@ func _OracleNode_VerifyTransaction_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-var _OracleNode_serviceDesc = grpc.ServiceDesc{
+// OracleNode_ServiceDesc is the grpc.ServiceDesc for OracleNode service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var OracleNode_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "iop.OracleNode",
 	HandlerType: (*OracleNodeServer)(nil),
 	Methods: []grpc.MethodDesc{
