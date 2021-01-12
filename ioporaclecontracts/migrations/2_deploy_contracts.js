@@ -1,4 +1,5 @@
 const ECDSAOracleContract = artifacts.require("ECDSAOracleContract");
+const BLSOracleContract = artifacts.require("BLSOracleContract");
 const MerkleOracleContract = artifacts.require("MerkleOracleContract");
 const RegistryContract = artifacts.require("RegistryContract");
 
@@ -7,7 +8,11 @@ module.exports = function(deployer) {
     return deployer
       .deploy(ECDSAOracleContract, RegistryContract.address)
       .then(function() {
-        return deployer.deploy(MerkleOracleContract, RegistryContract.address);
+        return deployer
+          .deploy(MerkleOracleContract, RegistryContract.address)
+          .then(function() {
+            return deployer.deploy(BLSOracleContract, RegistryContract.address);
+          });
       });
   });
 };

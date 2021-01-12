@@ -19,7 +19,8 @@
   "license": "ISC",
   "dependencies": {
     "@openzeppelin/contracts": "^3.2.0",
-    "cdlbot-solidity": "file:../../../cdlbot-solidity"
+    "cdlbot-solidity": "file:../../../cdlbot-solidity",
+    "elliptic-curve-solidity": "^0.2.4"
   },
   "devDependencies": {
     "@openzeppelin/test-helpers": "^0.5.9",
