@@ -6,7 +6,7 @@ import "./RegistryContract.sol";
 import "cdlbot-solidity/contracts/crypto/BN256G1.sol";
 import "cdlbot-solidity/contracts/crypto/BN256G2.sol";
 
-contract BLSOracleContract {
+contract OracleContract {
     struct VerificationResult {
         uint256 id;
         bool result;
