@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -22,13 +21,13 @@ type oracleNode struct {
 	txVerifier       TransactionVerifier
 	aggregator       Aggregator
 	ethClient        *ethclient.Client
-	oracleContract   *ECDSAOracleContract
+	oracleContract   *OracleContract
 	registryContract *RegistryContract
 	privateKey       *ecdsa.PrivateKey
 	account          common.Address
 }
 
-func NewOracleNode(ethClient *ethclient.Client, txVerifier TransactionVerifier, aggregator Aggregator, oracleContract *ECDSAOracleContract, registryContract *RegistryContract, privateKey *ecdsa.PrivateKey, account common.Address) *oracleNode {
+func NewOracleNode(ethClient *ethclient.Client, txVerifier TransactionVerifier, aggregator Aggregator, oracleContract *OracleContract, registryContract *RegistryContract, privateKey *ecdsa.PrivateKey, account common.Address) *oracleNode {
 	grpcServer := grpc.NewServer()
 	node := &oracleNode{
 		server:           grpcServer,
@@ -59,7 +58,7 @@ func (n *oracleNode) Serve(lis net.Listener) error {
 }
 
 func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
-	sink := make(chan *ECDSAOracleContractVerifyTransactionLog)
+	sink := make(chan *OracleContractVerifyTransactionLog)
 	defer close(sink)
 
 	sub, err := n.oracleContract.WatchVerifyTransactionLog(
@@ -67,6 +66,8 @@ func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
 			Context: context.Background(),
 		},
 		sink,
+		nil,
+		nil,
 	)
 	if err != nil {
 		return err
@@ -96,13 +97,13 @@ func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
 	}
 }
 
-func (n *oracleNode) handleVerifyTransactionLog(ctx context.Context, event *ECDSAOracleContractVerifyTransactionLog) error {
-	result, signatures, err := n.aggregator.Aggregate(ctx, event.Id, common.HexToHash(event.Hash), event.Confirmations.Uint64())
+func (n *oracleNode) handleVerifyTransactionLog(ctx context.Context, event *OracleContractVerifyTransactionLog) error {
+	result, _, err := n.aggregator.Aggregate(ctx, event.Id, common.BytesToHash(event.Hash[:]), event.Confirmations.Uint64())
 	if err != nil {
 		return fmt.Errorf("verify transaction remote: %w", err)
 	}
 	auth := bind.NewKeyedTransactor(n.privateKey)
-	_, err = n.oracleContract.SubmitVerification(auth, event.Id, result, signatures)
+	_, err = n.oracleContract.SubmitVerification(auth, event.Id, result, [2]*big.Int{big.NewInt(0), big.NewInt(0)})
 	if err != nil {
 		return fmt.Errorf("verify transaction result: %v", err)
 	}
@@ -115,22 +116,10 @@ func (n *oracleNode) VerifyTransaction(ctx context.Context, request *VerifyTrans
 		return nil, status.Errorf(codes.Internal, "verify transaction: %v", err)
 	}
 
-	encodedResult, err := n.oracleContract.EncodeResult(nil, big.NewInt(request.Id), result)
-	if err != nil {
-		return nil, fmt.Errorf("encode result: %w", err)
-	}
-	hash := crypto.Keccak256Hash(encodedResult)
-
-	signature, err := crypto.Sign(hash.Bytes(), n.privateKey)
-	if err != nil {
-		return nil, fmt.Errorf("sign result: %w", err)
-	}
-	signature[64] += 27 // Ethereum needs a v value of 27 || 28
-
 	return &VerifyTransactionResponse{
 		Id:        request.Id,
 		Result:    result,
-		Signature: signature,
+		Signature: nil,
 	}, nil
 }
 
