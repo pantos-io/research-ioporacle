@@ -30,11 +30,12 @@ var (
 type RegistryContractOracleNode struct {
 	Addr   common.Address
 	IpAddr string
+	PubKey []byte
 	Index  *big.Int
 }
 
 // RegistryContractABI is the input ABI used to generate the binding from.
-const RegistryContractABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RegisterOracleNodeLog\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipAddr\",\"type\":\"string\"}],\"name\":\"registerOracleNode\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\",\"payable\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"oracleNodeIsRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"findOracleNodeByAddress\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"findOracleNodeByIndex\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"countOracleNodes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"isLeader\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"getLeader\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true}]"
+const RegistryContractABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RegisterOracleNodeLog\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"_pubKey\",\"type\":\"bytes\"}],\"name\":\"registerOracleNode\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\",\"payable\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"oracleNodeIsRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"findOracleNodeByAddress\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"findOracleNodeByIndex\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"countOracleNodes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"isLeader\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"getLeader\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true}]"
 
 // RegistryContract is an auto generated Go binding around an Ethereum contract.
 type RegistryContract struct {
@@ -211,7 +212,7 @@ func (_RegistryContract *RegistryContractCallerSession) CountOracleNodes() (*big
 
 // FindOracleNodeByAddress is a free data retrieval call binding the contract method 0x655a102f.
 //
-// Solidity: function findOracleNodeByAddress(address _addr) view returns((address,string,uint256))
+// Solidity: function findOracleNodeByAddress(address _addr) view returns((address,string,bytes,uint256))
 func (_RegistryContract *RegistryContractCaller) FindOracleNodeByAddress(opts *bind.CallOpts, _addr common.Address) (RegistryContractOracleNode, error) {
 	var out []interface{}
 	err := _RegistryContract.contract.Call(opts, &out, "findOracleNodeByAddress", _addr)
@@ -228,21 +229,21 @@ func (_RegistryContract *RegistryContractCaller) FindOracleNodeByAddress(opts *b
 
 // FindOracleNodeByAddress is a free data retrieval call binding the contract method 0x655a102f.
 //
-// Solidity: function findOracleNodeByAddress(address _addr) view returns((address,string,uint256))
+// Solidity: function findOracleNodeByAddress(address _addr) view returns((address,string,bytes,uint256))
 func (_RegistryContract *RegistryContractSession) FindOracleNodeByAddress(_addr common.Address) (RegistryContractOracleNode, error) {
 	return _RegistryContract.Contract.FindOracleNodeByAddress(&_RegistryContract.CallOpts, _addr)
 }
 
 // FindOracleNodeByAddress is a free data retrieval call binding the contract method 0x655a102f.
 //
-// Solidity: function findOracleNodeByAddress(address _addr) view returns((address,string,uint256))
+// Solidity: function findOracleNodeByAddress(address _addr) view returns((address,string,bytes,uint256))
 func (_RegistryContract *RegistryContractCallerSession) FindOracleNodeByAddress(_addr common.Address) (RegistryContractOracleNode, error) {
 	return _RegistryContract.Contract.FindOracleNodeByAddress(&_RegistryContract.CallOpts, _addr)
 }
 
 // FindOracleNodeByIndex is a free data retrieval call binding the contract method 0x272132e9.
 //
-// Solidity: function findOracleNodeByIndex(uint256 _index) view returns((address,string,uint256))
+// Solidity: function findOracleNodeByIndex(uint256 _index) view returns((address,string,bytes,uint256))
 func (_RegistryContract *RegistryContractCaller) FindOracleNodeByIndex(opts *bind.CallOpts, _index *big.Int) (RegistryContractOracleNode, error) {
 	var out []interface{}
 	err := _RegistryContract.contract.Call(opts, &out, "findOracleNodeByIndex", _index)
@@ -259,21 +260,21 @@ func (_RegistryContract *RegistryContractCaller) FindOracleNodeByIndex(opts *bin
 
 // FindOracleNodeByIndex is a free data retrieval call binding the contract method 0x272132e9.
 //
-// Solidity: function findOracleNodeByIndex(uint256 _index) view returns((address,string,uint256))
+// Solidity: function findOracleNodeByIndex(uint256 _index) view returns((address,string,bytes,uint256))
 func (_RegistryContract *RegistryContractSession) FindOracleNodeByIndex(_index *big.Int) (RegistryContractOracleNode, error) {
 	return _RegistryContract.Contract.FindOracleNodeByIndex(&_RegistryContract.CallOpts, _index)
 }
 
 // FindOracleNodeByIndex is a free data retrieval call binding the contract method 0x272132e9.
 //
-// Solidity: function findOracleNodeByIndex(uint256 _index) view returns((address,string,uint256))
+// Solidity: function findOracleNodeByIndex(uint256 _index) view returns((address,string,bytes,uint256))
 func (_RegistryContract *RegistryContractCallerSession) FindOracleNodeByIndex(_index *big.Int) (RegistryContractOracleNode, error) {
 	return _RegistryContract.Contract.FindOracleNodeByIndex(&_RegistryContract.CallOpts, _index)
 }
 
 // GetLeader is a free data retrieval call binding the contract method 0x4c051f14.
 //
-// Solidity: function getLeader() view returns((address,string,uint256))
+// Solidity: function getLeader() view returns((address,string,bytes,uint256))
 func (_RegistryContract *RegistryContractCaller) GetLeader(opts *bind.CallOpts) (RegistryContractOracleNode, error) {
 	var out []interface{}
 	err := _RegistryContract.contract.Call(opts, &out, "getLeader")
@@ -290,14 +291,14 @@ func (_RegistryContract *RegistryContractCaller) GetLeader(opts *bind.CallOpts) 
 
 // GetLeader is a free data retrieval call binding the contract method 0x4c051f14.
 //
-// Solidity: function getLeader() view returns((address,string,uint256))
+// Solidity: function getLeader() view returns((address,string,bytes,uint256))
 func (_RegistryContract *RegistryContractSession) GetLeader() (RegistryContractOracleNode, error) {
 	return _RegistryContract.Contract.GetLeader(&_RegistryContract.CallOpts)
 }
 
 // GetLeader is a free data retrieval call binding the contract method 0x4c051f14.
 //
-// Solidity: function getLeader() view returns((address,string,uint256))
+// Solidity: function getLeader() view returns((address,string,bytes,uint256))
 func (_RegistryContract *RegistryContractCallerSession) GetLeader() (RegistryContractOracleNode, error) {
 	return _RegistryContract.Contract.GetLeader(&_RegistryContract.CallOpts)
 }
@@ -364,25 +365,25 @@ func (_RegistryContract *RegistryContractCallerSession) OracleNodeIsRegistered(_
 	return _RegistryContract.Contract.OracleNodeIsRegistered(&_RegistryContract.CallOpts, _addr)
 }
 
-// RegisterOracleNode is a paid mutator transaction binding the contract method 0x67cf3e48.
+// RegisterOracleNode is a paid mutator transaction binding the contract method 0xdf74f12c.
 //
-// Solidity: function registerOracleNode(string _ipAddr) payable returns()
-func (_RegistryContract *RegistryContractTransactor) RegisterOracleNode(opts *bind.TransactOpts, _ipAddr string) (*types.Transaction, error) {
-	return _RegistryContract.contract.Transact(opts, "registerOracleNode", _ipAddr)
+// Solidity: function registerOracleNode(string _ipAddr, bytes _pubKey) payable returns()
+func (_RegistryContract *RegistryContractTransactor) RegisterOracleNode(opts *bind.TransactOpts, _ipAddr string, _pubKey []byte) (*types.Transaction, error) {
+	return _RegistryContract.contract.Transact(opts, "registerOracleNode", _ipAddr, _pubKey)
 }
 
-// RegisterOracleNode is a paid mutator transaction binding the contract method 0x67cf3e48.
+// RegisterOracleNode is a paid mutator transaction binding the contract method 0xdf74f12c.
 //
-// Solidity: function registerOracleNode(string _ipAddr) payable returns()
-func (_RegistryContract *RegistryContractSession) RegisterOracleNode(_ipAddr string) (*types.Transaction, error) {
-	return _RegistryContract.Contract.RegisterOracleNode(&_RegistryContract.TransactOpts, _ipAddr)
+// Solidity: function registerOracleNode(string _ipAddr, bytes _pubKey) payable returns()
+func (_RegistryContract *RegistryContractSession) RegisterOracleNode(_ipAddr string, _pubKey []byte) (*types.Transaction, error) {
+	return _RegistryContract.Contract.RegisterOracleNode(&_RegistryContract.TransactOpts, _ipAddr, _pubKey)
 }
 
-// RegisterOracleNode is a paid mutator transaction binding the contract method 0x67cf3e48.
+// RegisterOracleNode is a paid mutator transaction binding the contract method 0xdf74f12c.
 //
-// Solidity: function registerOracleNode(string _ipAddr) payable returns()
-func (_RegistryContract *RegistryContractTransactorSession) RegisterOracleNode(_ipAddr string) (*types.Transaction, error) {
-	return _RegistryContract.Contract.RegisterOracleNode(&_RegistryContract.TransactOpts, _ipAddr)
+// Solidity: function registerOracleNode(string _ipAddr, bytes _pubKey) payable returns()
+func (_RegistryContract *RegistryContractTransactorSession) RegisterOracleNode(_ipAddr string, _pubKey []byte) (*types.Transaction, error) {
+	return _RegistryContract.Contract.RegisterOracleNode(&_RegistryContract.TransactOpts, _ipAddr, _pubKey)
 }
 
 // RegistryContractRegisterOracleNodeLogIterator is returned from FilterRegisterOracleNodeLog and is used to iterate over the raw logs and unpacked data for RegisterOracleNodeLog events raised by the RegistryContract contract.

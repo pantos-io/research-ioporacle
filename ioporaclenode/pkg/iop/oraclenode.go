@@ -4,10 +4,15 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	log "github.com/sirupsen/logrus"
+	"go.dedis.ch/kyber/v3"
+	"go.dedis.ch/kyber/v3/pairing"
+	"go.dedis.ch/kyber/v3/share"
+	"go.dedis.ch/kyber/v3/sign/tbls"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -23,11 +28,25 @@ type oracleNode struct {
 	ethClient        *ethclient.Client
 	oracleContract   *OracleContract
 	registryContract *RegistryContract
-	privateKey       *ecdsa.PrivateKey
+	ecdsaPrivateKey  *ecdsa.PrivateKey
+	blsPrivateKey    kyber.Scalar
+	blsPublicKey     kyber.Point
 	account          common.Address
+	suite            pairing.Suite
+	priShare         *share.PriShare
 }
 
-func NewOracleNode(ethClient *ethclient.Client, txVerifier TransactionVerifier, aggregator Aggregator, oracleContract *OracleContract, registryContract *RegistryContract, privateKey *ecdsa.PrivateKey, account common.Address) *oracleNode {
+func NewOracleNode(
+	ethClient *ethclient.Client,
+	txVerifier TransactionVerifier,
+	aggregator Aggregator,
+	oracleContract *OracleContract,
+	registryContract *RegistryContract,
+	ecdsaPrivateKey *ecdsa.PrivateKey,
+	blsPrivateKey kyber.Scalar,
+	account common.Address,
+	suite pairing.Suite,
+) *oracleNode {
 	grpcServer := grpc.NewServer()
 	node := &oracleNode{
 		server:           grpcServer,
@@ -36,8 +55,11 @@ func NewOracleNode(ethClient *ethclient.Client, txVerifier TransactionVerifier, 
 		aggregator:       aggregator,
 		oracleContract:   oracleContract,
 		registryContract: registryContract,
-		privateKey:       privateKey,
+		ecdsaPrivateKey:  ecdsaPrivateKey,
+		blsPrivateKey:    blsPrivateKey,
+		blsPublicKey:     suite.G2().Point().Mul(blsPrivateKey, nil),
 		account:          account,
+		suite:            suite,
 	}
 	RegisterOracleNodeServer(grpcServer, node)
 	return node
@@ -102,7 +124,7 @@ func (n *oracleNode) handleVerifyTransactionLog(ctx context.Context, event *Orac
 	if err != nil {
 		return fmt.Errorf("verify transaction remote: %w", err)
 	}
-	auth := bind.NewKeyedTransactor(n.privateKey)
+	auth := bind.NewKeyedTransactor(n.ecdsaPrivateKey)
 	_, err = n.oracleContract.SubmitVerification(auth, event.Id, result, [2]*big.Int{big.NewInt(0), big.NewInt(0)})
 	if err != nil {
 		return fmt.Errorf("verify transaction result: %v", err)
@@ -116,10 +138,32 @@ func (n *oracleNode) VerifyTransaction(ctx context.Context, request *VerifyTrans
 		return nil, status.Errorf(codes.Internal, "verify transaction: %v", err)
 	}
 
+	uint256Ty, _ := abi.NewType("uint256", "", nil)
+	boolTy, _ := abi.NewType("bool", "", nil)
+
+	arguments := abi.Arguments{
+		{
+			Type: uint256Ty,
+		},
+		{
+			Type: boolTy,
+		},
+	}
+
+	message, _ := arguments.Pack(
+		big.NewInt(request.Id),
+		result,
+	)
+
+	sig, err := tbls.Sign(n.suite, n.priShare, message)
+	if err != nil {
+		return nil, fmt.Errorf("tbls sign: %v", err)
+	}
+
 	return &VerifyTransactionResponse{
 		Id:        request.Id,
 		Result:    result,
-		Signature: nil,
+		Signature: sig,
 	}, nil
 }
 
@@ -129,9 +173,14 @@ func (n *oracleNode) register(ipAddr string) error {
 		return fmt.Errorf("is registered: %w", err)
 	}
 
-	auth := bind.NewKeyedTransactor(n.privateKey)
+	b, err := n.blsPublicKey.MarshalBinary()
+	if err != nil {
+		return fmt.Errorf("marshal bls public key: %v", err)
+	}
+
+	auth := bind.NewKeyedTransactor(n.ecdsaPrivateKey)
 	if !isRegistered {
-		_, err = n.registryContract.RegisterOracleNode(auth, ipAddr)
+		_, err = n.registryContract.RegisterOracleNode(auth, ipAddr, b)
 		if err != nil {
 			return fmt.Errorf("register iop node: %w", err)
 		}

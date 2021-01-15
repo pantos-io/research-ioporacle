@@ -6,6 +6,7 @@ contract RegistryContract {
     struct OracleNode {
         address addr;
         string ipAddr;
+        bytes pubKey;
         uint256 index;
     }
 
@@ -16,11 +17,15 @@ contract RegistryContract {
 
     event RegisterOracleNodeLog(address indexed sender);
 
-    function registerOracleNode(string calldata _ipAddr) external payable {
+    function registerOracleNode(
+        string calldata _ipAddr,
+        bytes calldata _pubKey
+    ) external payable {
         require(!oracleNodeIsRegistered(msg.sender), "already registered");
         OracleNode storage iopNode = oracleNodes[msg.sender];
         iopNode.addr = msg.sender;
         iopNode.ipAddr = _ipAddr;
+        iopNode.pubKey = _pubKey;
         iopNode.index = oracleNodeIndices.length;
         oracleNodeIndices.push(iopNode.addr);
         emit RegisterOracleNodeLog(msg.sender);
