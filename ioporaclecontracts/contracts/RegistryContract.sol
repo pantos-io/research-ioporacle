@@ -11,11 +11,13 @@ contract RegistryContract {
     }
 
     uint256 private constant BLOCK_RANGE = 6;
+    uint256 private constant KEY_GEN_INTERVAL = 7;
 
     mapping(address => OracleNode) private oracleNodes;
     address[] private oracleNodeIndices;
 
     event RegisterOracleNodeLog(address indexed sender);
+    event DistributedKeyGenerationLog(uint256 threshold);
 
     function registerOracleNode(
         string calldata _ipAddr,
@@ -28,6 +30,11 @@ contract RegistryContract {
         iopNode.pubKey = _pubKey;
         iopNode.index = oracleNodeIndices.length;
         oracleNodeIndices.push(iopNode.addr);
+
+        if (oracleNodeIndices.length % KEY_GEN_INTERVAL == 0) {
+            emit DistributedKeyGenerationLog((oracleNodeIndices.length + 1) / 2);
+        }
+
         emit RegisterOracleNodeLog(msg.sender);
     }
 

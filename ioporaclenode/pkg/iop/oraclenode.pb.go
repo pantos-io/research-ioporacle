@@ -146,6 +146,791 @@ func (x *VerifyTransactionResponse) GetSignature() []byte {
 	return nil
 }
 
+type ProcessDealRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Deal *Deal `protobuf:"bytes,1,opt,name=deal,proto3" json:"deal,omitempty"`
+}
+
+func (x *ProcessDealRequest) Reset() {
+	*x = ProcessDealRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ProcessDealRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProcessDealRequest) ProtoMessage() {}
+
+func (x *ProcessDealRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProcessDealRequest.ProtoReflect.Descriptor instead.
+func (*ProcessDealRequest) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ProcessDealRequest) GetDeal() *Deal {
+	if x != nil {
+		return x.Deal
+	}
+	return nil
+}
+
+type ProcessDealResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Response *Response `protobuf:"bytes,1,opt,name=response,proto3" json:"response,omitempty"`
+}
+
+func (x *ProcessDealResponse) Reset() {
+	*x = ProcessDealResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ProcessDealResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProcessDealResponse) ProtoMessage() {}
+
+func (x *ProcessDealResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProcessDealResponse.ProtoReflect.Descriptor instead.
+func (*ProcessDealResponse) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ProcessDealResponse) GetResponse() *Response {
+	if x != nil {
+		return x.Response
+	}
+	return nil
+}
+
+type ProcessResponseRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Response *Response `protobuf:"bytes,1,opt,name=response,proto3" json:"response,omitempty"`
+}
+
+func (x *ProcessResponseRequest) Reset() {
+	*x = ProcessResponseRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ProcessResponseRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProcessResponseRequest) ProtoMessage() {}
+
+func (x *ProcessResponseRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProcessResponseRequest.ProtoReflect.Descriptor instead.
+func (*ProcessResponseRequest) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ProcessResponseRequest) GetResponse() *Response {
+	if x != nil {
+		return x.Response
+	}
+	return nil
+}
+
+type ProcessResponseResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Justification *Justification `protobuf:"bytes,1,opt,name=justification,proto3" json:"justification,omitempty"`
+}
+
+func (x *ProcessResponseResponse) Reset() {
+	*x = ProcessResponseResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ProcessResponseResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProcessResponseResponse) ProtoMessage() {}
+
+func (x *ProcessResponseResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProcessResponseResponse.ProtoReflect.Descriptor instead.
+func (*ProcessResponseResponse) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ProcessResponseResponse) GetJustification() *Justification {
+	if x != nil {
+		return x.Justification
+	}
+	return nil
+}
+
+type ProcessJustificationRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Justification *Justification `protobuf:"bytes,1,opt,name=justification,proto3" json:"justification,omitempty"`
+}
+
+func (x *ProcessJustificationRequest) Reset() {
+	*x = ProcessJustificationRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ProcessJustificationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProcessJustificationRequest) ProtoMessage() {}
+
+func (x *ProcessJustificationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProcessJustificationRequest.ProtoReflect.Descriptor instead.
+func (*ProcessJustificationRequest) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ProcessJustificationRequest) GetJustification() *Justification {
+	if x != nil {
+		return x.Justification
+	}
+	return nil
+}
+
+type ProcessJustificationResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *ProcessJustificationResponse) Reset() {
+	*x = ProcessJustificationResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ProcessJustificationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProcessJustificationResponse) ProtoMessage() {}
+
+func (x *ProcessJustificationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProcessJustificationResponse.ProtoReflect.Descriptor instead.
+func (*ProcessJustificationResponse) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{7}
+}
+
+type Deal struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Index     uint32         `protobuf:"varint,1,opt,name=index,proto3" json:"index,omitempty"`
+	Deal      *EncryptedDeal `protobuf:"bytes,2,opt,name=deal,proto3" json:"deal,omitempty"`
+	Signature []byte         `protobuf:"bytes,3,opt,name=signature,proto3" json:"signature,omitempty"`
+}
+
+func (x *Deal) Reset() {
+	*x = Deal{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Deal) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Deal) ProtoMessage() {}
+
+func (x *Deal) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Deal.ProtoReflect.Descriptor instead.
+func (*Deal) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *Deal) GetIndex() uint32 {
+	if x != nil {
+		return x.Index
+	}
+	return 0
+}
+
+func (x *Deal) GetDeal() *EncryptedDeal {
+	if x != nil {
+		return x.Deal
+	}
+	return nil
+}
+
+func (x *Deal) GetSignature() []byte {
+	if x != nil {
+		return x.Signature
+	}
+	return nil
+}
+
+type EncryptedDeal struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	DhKey     []byte `protobuf:"bytes,1,opt,name=dhKey,proto3" json:"dhKey,omitempty"`
+	Signature []byte `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
+	Nonce     []byte `protobuf:"bytes,3,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	Cipher    []byte `protobuf:"bytes,4,opt,name=cipher,proto3" json:"cipher,omitempty"`
+}
+
+func (x *EncryptedDeal) Reset() {
+	*x = EncryptedDeal{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *EncryptedDeal) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EncryptedDeal) ProtoMessage() {}
+
+func (x *EncryptedDeal) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EncryptedDeal.ProtoReflect.Descriptor instead.
+func (*EncryptedDeal) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *EncryptedDeal) GetDhKey() []byte {
+	if x != nil {
+		return x.DhKey
+	}
+	return nil
+}
+
+func (x *EncryptedDeal) GetSignature() []byte {
+	if x != nil {
+		return x.Signature
+	}
+	return nil
+}
+
+func (x *EncryptedDeal) GetNonce() []byte {
+	if x != nil {
+		return x.Nonce
+	}
+	return nil
+}
+
+func (x *EncryptedDeal) GetCipher() []byte {
+	if x != nil {
+		return x.Cipher
+	}
+	return nil
+}
+
+type Response struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Index    uint32       `protobuf:"varint,1,opt,name=index,proto3" json:"index,omitempty"`
+	Response *VSSResponse `protobuf:"bytes,2,opt,name=response,proto3" json:"response,omitempty"`
+}
+
+func (x *Response) Reset() {
+	*x = Response{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Response) ProtoMessage() {}
+
+func (x *Response) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Response.ProtoReflect.Descriptor instead.
+func (*Response) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *Response) GetIndex() uint32 {
+	if x != nil {
+		return x.Index
+	}
+	return 0
+}
+
+func (x *Response) GetResponse() *VSSResponse {
+	if x != nil {
+		return x.Response
+	}
+	return nil
+}
+
+type VSSResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SessionID []byte `protobuf:"bytes,1,opt,name=sessionID,proto3" json:"sessionID,omitempty"`
+	Index     uint32 `protobuf:"varint,2,opt,name=index,proto3" json:"index,omitempty"`
+	Status    bool   `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
+	Signature []byte `protobuf:"bytes,4,opt,name=signature,proto3" json:"signature,omitempty"`
+}
+
+func (x *VSSResponse) Reset() {
+	*x = VSSResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *VSSResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VSSResponse) ProtoMessage() {}
+
+func (x *VSSResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VSSResponse.ProtoReflect.Descriptor instead.
+func (*VSSResponse) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *VSSResponse) GetSessionID() []byte {
+	if x != nil {
+		return x.SessionID
+	}
+	return nil
+}
+
+func (x *VSSResponse) GetIndex() uint32 {
+	if x != nil {
+		return x.Index
+	}
+	return 0
+}
+
+func (x *VSSResponse) GetStatus() bool {
+	if x != nil {
+		return x.Status
+	}
+	return false
+}
+
+func (x *VSSResponse) GetSignature() []byte {
+	if x != nil {
+		return x.Signature
+	}
+	return nil
+}
+
+type Justification struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Index         uint32            `protobuf:"varint,1,opt,name=index,proto3" json:"index,omitempty"`
+	Justification *VSSJustification `protobuf:"bytes,2,opt,name=justification,proto3" json:"justification,omitempty"`
+}
+
+func (x *Justification) Reset() {
+	*x = Justification{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[12]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Justification) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Justification) ProtoMessage() {}
+
+func (x *Justification) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[12]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Justification.ProtoReflect.Descriptor instead.
+func (*Justification) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *Justification) GetIndex() uint32 {
+	if x != nil {
+		return x.Index
+	}
+	return 0
+}
+
+func (x *Justification) GetJustification() *VSSJustification {
+	if x != nil {
+		return x.Justification
+	}
+	return nil
+}
+
+type VSSJustification struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SessionID []byte         `protobuf:"bytes,1,opt,name=sessionID,proto3" json:"sessionID,omitempty"`
+	Index     uint32         `protobuf:"varint,2,opt,name=index,proto3" json:"index,omitempty"`
+	Deal      *ClearTextDeal `protobuf:"bytes,3,opt,name=deal,proto3" json:"deal,omitempty"`
+	Signature []byte         `protobuf:"bytes,4,opt,name=signature,proto3" json:"signature,omitempty"`
+}
+
+func (x *VSSJustification) Reset() {
+	*x = VSSJustification{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[13]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *VSSJustification) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VSSJustification) ProtoMessage() {}
+
+func (x *VSSJustification) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[13]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VSSJustification.ProtoReflect.Descriptor instead.
+func (*VSSJustification) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *VSSJustification) GetSessionID() []byte {
+	if x != nil {
+		return x.SessionID
+	}
+	return nil
+}
+
+func (x *VSSJustification) GetIndex() uint32 {
+	if x != nil {
+		return x.Index
+	}
+	return 0
+}
+
+func (x *VSSJustification) GetDeal() *ClearTextDeal {
+	if x != nil {
+		return x.Deal
+	}
+	return nil
+}
+
+func (x *VSSJustification) GetSignature() []byte {
+	if x != nil {
+		return x.Signature
+	}
+	return nil
+}
+
+type ClearTextDeal struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SessionID   []byte    `protobuf:"bytes,1,opt,name=sessionID,proto3" json:"sessionID,omitempty"`
+	PriShare    *PriShare `protobuf:"bytes,2,opt,name=priShare,proto3" json:"priShare,omitempty"`
+	T           uint32    `protobuf:"varint,3,opt,name=t,proto3" json:"t,omitempty"`
+	Commitments [][]byte  `protobuf:"bytes,4,rep,name=commitments,proto3" json:"commitments,omitempty"`
+}
+
+func (x *ClearTextDeal) Reset() {
+	*x = ClearTextDeal{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ClearTextDeal) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClearTextDeal) ProtoMessage() {}
+
+func (x *ClearTextDeal) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClearTextDeal.ProtoReflect.Descriptor instead.
+func (*ClearTextDeal) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ClearTextDeal) GetSessionID() []byte {
+	if x != nil {
+		return x.SessionID
+	}
+	return nil
+}
+
+func (x *ClearTextDeal) GetPriShare() *PriShare {
+	if x != nil {
+		return x.PriShare
+	}
+	return nil
+}
+
+func (x *ClearTextDeal) GetT() uint32 {
+	if x != nil {
+		return x.T
+	}
+	return 0
+}
+
+func (x *ClearTextDeal) GetCommitments() [][]byte {
+	if x != nil {
+		return x.Commitments
+	}
+	return nil
+}
+
+type PriShare struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Index uint32 `protobuf:"varint,1,opt,name=index,proto3" json:"index,omitempty"`
+	Value []byte `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *PriShare) Reset() {
+	*x = PriShare{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_oraclenode_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PriShare) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PriShare) ProtoMessage() {}
+
+func (x *PriShare) ProtoReflect() protoreflect.Message {
+	mi := &file_oraclenode_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PriShare.ProtoReflect.Descriptor instead.
+func (*PriShare) Descriptor() ([]byte, []int) {
+	return file_oraclenode_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *PriShare) GetIndex() uint32 {
+	if x != nil {
+		return x.Index
+	}
+	return 0
+}
+
+func (x *PriShare) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
 var File_oraclenode_proto protoreflect.FileDescriptor
 
 var file_oraclenode_proto_rawDesc = []byte{
@@ -162,15 +947,108 @@ var file_oraclenode_proto_rawDesc = []byte{
 	0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74,
 	0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x1c,
 	0x0a, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28,
-	0x0c, 0x52, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x32, 0x62, 0x0a, 0x0a,
-	0x4f, 0x72, 0x61, 0x63, 0x6c, 0x65, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x54, 0x0a, 0x11, 0x56, 0x65,
-	0x72, 0x69, 0x66, 0x79, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12,
-	0x1d, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x56, 0x65, 0x72, 0x69, 0x66, 0x79, 0x54, 0x72, 0x61, 0x6e,
-	0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1e,
-	0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x56, 0x65, 0x72, 0x69, 0x66, 0x79, 0x54, 0x72, 0x61, 0x6e, 0x73,
-	0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00,
-	0x42, 0x07, 0x5a, 0x05, 0x2e, 0x3b, 0x69, 0x6f, 0x70, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x0c, 0x52, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x22, 0x33, 0x0a, 0x12,
+	0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x44, 0x65, 0x61, 0x6c, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x1d, 0x0a, 0x04, 0x64, 0x65, 0x61, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x09, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x44, 0x65, 0x61, 0x6c, 0x52, 0x04, 0x64, 0x65, 0x61,
+	0x6c, 0x22, 0x40, 0x0a, 0x13, 0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x44, 0x65, 0x61, 0x6c,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x29, 0x0a, 0x08, 0x72, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x69, 0x6f, 0x70,
+	0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x08, 0x72, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x43, 0x0a, 0x16, 0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x29, 0x0a,
+	0x08, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x0d, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x08,
+	0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x53, 0x0a, 0x17, 0x50, 0x72, 0x6f, 0x63,
+	0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x38, 0x0a, 0x0d, 0x6a, 0x75, 0x73, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x69, 0x6f, 0x70,
+	0x2e, 0x4a, 0x75, 0x73, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x0d,
+	0x6a, 0x75, 0x73, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x57, 0x0a,
+	0x1b, 0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x4a, 0x75, 0x73, 0x74, 0x69, 0x66, 0x69, 0x63,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x38, 0x0a, 0x0d,
+	0x6a, 0x75, 0x73, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x4a, 0x75, 0x73, 0x74, 0x69, 0x66,
+	0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x0d, 0x6a, 0x75, 0x73, 0x74, 0x69, 0x66, 0x69,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x1e, 0x0a, 0x1c, 0x50, 0x72, 0x6f, 0x63, 0x65, 0x73,
+	0x73, 0x4a, 0x75, 0x73, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x62, 0x0a, 0x04, 0x44, 0x65, 0x61, 0x6c, 0x12, 0x14,
+	0x0a, 0x05, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x69,
+	0x6e, 0x64, 0x65, 0x78, 0x12, 0x26, 0x0a, 0x04, 0x64, 0x65, 0x61, 0x6c, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x12, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x45, 0x6e, 0x63, 0x72, 0x79, 0x70, 0x74,
+	0x65, 0x64, 0x44, 0x65, 0x61, 0x6c, 0x52, 0x04, 0x64, 0x65, 0x61, 0x6c, 0x12, 0x1c, 0x0a, 0x09,
+	0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0c, 0x52,
+	0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x22, 0x71, 0x0a, 0x0d, 0x45, 0x6e,
+	0x63, 0x72, 0x79, 0x70, 0x74, 0x65, 0x64, 0x44, 0x65, 0x61, 0x6c, 0x12, 0x14, 0x0a, 0x05, 0x64,
+	0x68, 0x4b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x64, 0x68, 0x4b, 0x65,
+	0x79, 0x12, 0x1c, 0x0a, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x0c, 0x52, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x12,
+	0x14, 0x0a, 0x05, 0x6e, 0x6f, 0x6e, 0x63, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05,
+	0x6e, 0x6f, 0x6e, 0x63, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x63, 0x69, 0x70, 0x68, 0x65, 0x72, 0x18,
+	0x04, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x06, 0x63, 0x69, 0x70, 0x68, 0x65, 0x72, 0x22, 0x4e, 0x0a,
+	0x08, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x69, 0x6e, 0x64,
+	0x65, 0x78, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x12,
+	0x2c, 0x0a, 0x08, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x10, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x56, 0x53, 0x53, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x52, 0x08, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x77, 0x0a,
+	0x0b, 0x56, 0x53, 0x53, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1c, 0x0a, 0x09,
+	0x73, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52,
+	0x09, 0x73, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x49, 0x44, 0x12, 0x14, 0x0a, 0x05, 0x69, 0x6e,
+	0x64, 0x65, 0x78, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x69, 0x6e, 0x64, 0x65, 0x78,
+	0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08,
+	0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x73, 0x69, 0x67, 0x6e,
+	0x61, 0x74, 0x75, 0x72, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x09, 0x73, 0x69, 0x67,
+	0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x22, 0x62, 0x0a, 0x0d, 0x4a, 0x75, 0x73, 0x74, 0x69, 0x66,
+	0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x69, 0x6e, 0x64, 0x65, 0x78,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x12, 0x3b, 0x0a,
+	0x0d, 0x6a, 0x75, 0x73, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x56, 0x53, 0x53, 0x4a, 0x75,
+	0x73, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x0d, 0x6a, 0x75, 0x73,
+	0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x8c, 0x01, 0x0a, 0x10, 0x56,
+	0x53, 0x53, 0x4a, 0x75, 0x73, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12,
+	0x1c, 0x0a, 0x09, 0x73, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0c, 0x52, 0x09, 0x73, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x49, 0x44, 0x12, 0x14, 0x0a,
+	0x05, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x69, 0x6e,
+	0x64, 0x65, 0x78, 0x12, 0x26, 0x0a, 0x04, 0x64, 0x65, 0x61, 0x6c, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x12, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x43, 0x6c, 0x65, 0x61, 0x72, 0x54, 0x65, 0x78,
+	0x74, 0x44, 0x65, 0x61, 0x6c, 0x52, 0x04, 0x64, 0x65, 0x61, 0x6c, 0x12, 0x1c, 0x0a, 0x09, 0x73,
+	0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x09,
+	0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x22, 0x88, 0x01, 0x0a, 0x0d, 0x43, 0x6c,
+	0x65, 0x61, 0x72, 0x54, 0x65, 0x78, 0x74, 0x44, 0x65, 0x61, 0x6c, 0x12, 0x1c, 0x0a, 0x09, 0x73,
+	0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x09,
+	0x73, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x49, 0x44, 0x12, 0x29, 0x0a, 0x08, 0x70, 0x72, 0x69,
+	0x53, 0x68, 0x61, 0x72, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x69, 0x6f,
+	0x70, 0x2e, 0x50, 0x72, 0x69, 0x53, 0x68, 0x61, 0x72, 0x65, 0x52, 0x08, 0x70, 0x72, 0x69, 0x53,
+	0x68, 0x61, 0x72, 0x65, 0x12, 0x0c, 0x0a, 0x01, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0d, 0x52,
+	0x01, 0x74, 0x12, 0x20, 0x0a, 0x0b, 0x63, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x6d, 0x65, 0x6e, 0x74,
+	0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0c, 0x52, 0x0b, 0x63, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x6d,
+	0x65, 0x6e, 0x74, 0x73, 0x22, 0x36, 0x0a, 0x08, 0x50, 0x72, 0x69, 0x53, 0x68, 0x61, 0x72, 0x65,
+	0x12, 0x14, 0x0a, 0x05, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52,
+	0x05, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x32, 0xd5, 0x02, 0x0a,
+	0x0a, 0x4f, 0x72, 0x61, 0x63, 0x6c, 0x65, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x54, 0x0a, 0x11, 0x56,
+	0x65, 0x72, 0x69, 0x66, 0x79, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x12, 0x1d, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x56, 0x65, 0x72, 0x69, 0x66, 0x79, 0x54, 0x72, 0x61,
+	0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x1e, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x56, 0x65, 0x72, 0x69, 0x66, 0x79, 0x54, 0x72, 0x61, 0x6e,
+	0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x00, 0x12, 0x42, 0x0a, 0x0b, 0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x44, 0x65, 0x61, 0x6c,
+	0x12, 0x17, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x44, 0x65,
+	0x61, 0x6c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e, 0x69, 0x6f, 0x70, 0x2e,
+	0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x44, 0x65, 0x61, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x4e, 0x0a, 0x0f, 0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1b, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x50,
+	0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x50, 0x72, 0x6f, 0x63,
+	0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x5d, 0x0a, 0x14, 0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73,
+	0x4a, 0x75, 0x73, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x20, 0x2e,
+	0x69, 0x6f, 0x70, 0x2e, 0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x4a, 0x75, 0x73, 0x74, 0x69,
+	0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x21, 0x2e, 0x69, 0x6f, 0x70, 0x2e, 0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x4a, 0x75, 0x73,
+	0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x00, 0x42, 0x07, 0x5a, 0x05, 0x2e, 0x3b, 0x69, 0x6f, 0x70, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -185,19 +1063,49 @@ func file_oraclenode_proto_rawDescGZIP() []byte {
 	return file_oraclenode_proto_rawDescData
 }
 
-var file_oraclenode_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_oraclenode_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_oraclenode_proto_goTypes = []interface{}{
-	(*VerifyTransactionRequest)(nil),  // 0: iop.VerifyTransactionRequest
-	(*VerifyTransactionResponse)(nil), // 1: iop.VerifyTransactionResponse
+	(*VerifyTransactionRequest)(nil),     // 0: iop.VerifyTransactionRequest
+	(*VerifyTransactionResponse)(nil),    // 1: iop.VerifyTransactionResponse
+	(*ProcessDealRequest)(nil),           // 2: iop.ProcessDealRequest
+	(*ProcessDealResponse)(nil),          // 3: iop.ProcessDealResponse
+	(*ProcessResponseRequest)(nil),       // 4: iop.ProcessResponseRequest
+	(*ProcessResponseResponse)(nil),      // 5: iop.ProcessResponseResponse
+	(*ProcessJustificationRequest)(nil),  // 6: iop.ProcessJustificationRequest
+	(*ProcessJustificationResponse)(nil), // 7: iop.ProcessJustificationResponse
+	(*Deal)(nil),                         // 8: iop.Deal
+	(*EncryptedDeal)(nil),                // 9: iop.EncryptedDeal
+	(*Response)(nil),                     // 10: iop.Response
+	(*VSSResponse)(nil),                  // 11: iop.VSSResponse
+	(*Justification)(nil),                // 12: iop.Justification
+	(*VSSJustification)(nil),             // 13: iop.VSSJustification
+	(*ClearTextDeal)(nil),                // 14: iop.ClearTextDeal
+	(*PriShare)(nil),                     // 15: iop.PriShare
 }
 var file_oraclenode_proto_depIdxs = []int32{
-	0, // 0: iop.OracleNode.VerifyTransaction:input_type -> iop.VerifyTransactionRequest
-	1, // 1: iop.OracleNode.VerifyTransaction:output_type -> iop.VerifyTransactionResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	8,  // 0: iop.ProcessDealRequest.deal:type_name -> iop.Deal
+	10, // 1: iop.ProcessDealResponse.response:type_name -> iop.Response
+	10, // 2: iop.ProcessResponseRequest.response:type_name -> iop.Response
+	12, // 3: iop.ProcessResponseResponse.justification:type_name -> iop.Justification
+	12, // 4: iop.ProcessJustificationRequest.justification:type_name -> iop.Justification
+	9,  // 5: iop.Deal.deal:type_name -> iop.EncryptedDeal
+	11, // 6: iop.Response.response:type_name -> iop.VSSResponse
+	13, // 7: iop.Justification.justification:type_name -> iop.VSSJustification
+	14, // 8: iop.VSSJustification.deal:type_name -> iop.ClearTextDeal
+	15, // 9: iop.ClearTextDeal.priShare:type_name -> iop.PriShare
+	0,  // 10: iop.OracleNode.VerifyTransaction:input_type -> iop.VerifyTransactionRequest
+	2,  // 11: iop.OracleNode.ProcessDeal:input_type -> iop.ProcessDealRequest
+	4,  // 12: iop.OracleNode.ProcessResponse:input_type -> iop.ProcessResponseRequest
+	6,  // 13: iop.OracleNode.ProcessJustification:input_type -> iop.ProcessJustificationRequest
+	1,  // 14: iop.OracleNode.VerifyTransaction:output_type -> iop.VerifyTransactionResponse
+	3,  // 15: iop.OracleNode.ProcessDeal:output_type -> iop.ProcessDealResponse
+	5,  // 16: iop.OracleNode.ProcessResponse:output_type -> iop.ProcessResponseResponse
+	7,  // 17: iop.OracleNode.ProcessJustification:output_type -> iop.ProcessJustificationResponse
+	14, // [14:18] is the sub-list for method output_type
+	10, // [10:14] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_oraclenode_proto_init() }
@@ -230,6 +1138,174 @@ func file_oraclenode_proto_init() {
 				return nil
 			}
 		}
+		file_oraclenode_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ProcessDealRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_oraclenode_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ProcessDealResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_oraclenode_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ProcessResponseRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_oraclenode_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ProcessResponseResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_oraclenode_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ProcessJustificationRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_oraclenode_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ProcessJustificationResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_oraclenode_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Deal); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_oraclenode_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*EncryptedDeal); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_oraclenode_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Response); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_oraclenode_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*VSSResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_oraclenode_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Justification); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_oraclenode_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*VSSJustification); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_oraclenode_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ClearTextDeal); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_oraclenode_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PriShare); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -237,7 +1313,7 @@ func file_oraclenode_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_oraclenode_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -4,18 +4,96 @@ package iop;
 option go_package = ".;iop";
 
 message VerifyTransactionRequest {
-    int64 id = 1;
-    string tx = 2;
-    uint64 confirmations = 3;
+  int64 id = 1;
+  string tx = 2;
+  uint64 confirmations = 3;
 }
 
 message VerifyTransactionResponse {
-    int64 id = 1;
-    bool result = 2;
-    bytes signature = 3;
+  int64 id = 1;
+  bool result = 2;
+  bytes signature = 3;
+}
+
+message ProcessDealRequest {
+  Deal deal = 1;
+}
+
+message ProcessDealResponse {
+  Response response = 1;
+}
+
+message ProcessResponseRequest {
+  Response response = 1;
+}
+
+message ProcessResponseResponse {
+  Justification justification = 1;
+}
+
+message ProcessJustificationRequest {
+  Justification justification = 1;
+}
+
+message ProcessJustificationResponse {
+}
+
+message Deal {
+  uint32 index = 1;
+  EncryptedDeal deal = 2;
+  bytes signature = 3;
+}
+
+message EncryptedDeal {
+  bytes dhKey = 1;
+  bytes signature = 2;
+  bytes nonce = 3;
+  bytes cipher = 4;
+}
+
+message Response {
+  uint32 index = 1;
+  VSSResponse response = 2;
+}
+
+message VSSResponse {
+  bytes sessionID = 1;
+  uint32 index = 2;
+  bool status = 3;
+  bytes signature = 4;
+}
+
+message Justification {
+  uint32 index = 1;
+  VSSJustification justification = 2;
+}
+
+message VSSJustification {
+  bytes sessionID = 1;
+  uint32 index = 2;
+  ClearTextDeal deal = 3;
+  bytes signature = 4;
+}
+
+message ClearTextDeal {
+  bytes sessionID = 1;
+  PriShare priShare = 2;
+  uint32 t = 3;
+  repeated bytes commitments = 4;
+}
+
+message PriShare {
+  uint32 index = 1;
+  bytes value = 2;
 }
 
 service OracleNode {
-    rpc VerifyTransaction (VerifyTransactionRequest) returns (VerifyTransactionResponse) {
-    }
+  rpc VerifyTransaction(VerifyTransactionRequest) returns (VerifyTransactionResponse) {
+  }
+  rpc ProcessDeal(ProcessDealRequest) returns (ProcessDealResponse){
+  }
+  rpc ProcessResponse(ProcessResponseRequest) returns (ProcessResponseResponse){
+  }
+  rpc ProcessJustification(ProcessJustificationRequest) returns (ProcessJustificationResponse){
+  }
 }
