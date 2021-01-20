@@ -17,7 +17,7 @@ var (
 	addrFlag             = flag.String("address", "127.0.0.1:25565", "server address")
 	ethFlag              = flag.String("eth", "ws://127.0.0.1:7545", "eth node address")
 	oracleContractFlag   = flag.String("oracleContract", "0x94367f58cC0296196543E378cA81Fec50c929b2C", "oracle contract address")
-	registryContractFlag = flag.String("registryContract", "0x5170F94a5324494617175aFdC8b0709fE5A61e11", "registry contract address")
+	registryContractFlag = flag.String("registryContract", "0xe3A8Eb651C392201A58cf14827CdAa410Efe49D5", "registry contract address")
 	ecdsaPrivateKeyFlag  = flag.String("ecdsaPrivateKey", "0xe63ff25be694842b3d25f3c8981dbe44b36b23a6effdbe04f9ee11e7965c922b", "private key")
 	blsPrivateKeyFlag    = flag.String("blsPrivateKey", "0x2e931ebbc908ec1993a789166f5690ee2ea34830df69a0fd0fc6a456b4aa8a46", "value of the private share")
 )

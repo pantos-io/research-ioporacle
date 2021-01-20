@@ -39,6 +39,7 @@ type oracleNode struct {
 	account          common.Address
 	suite            pairing.Suite
 	distKey          *dkg.DistKeyShare
+	clients          map[int]OracleNodeClient
 }
 
 func NewOracleNode(
@@ -108,7 +109,7 @@ func (n *oracleNode) watchDistributedKeyGenerationLog(ctx context.Context) error
 	for {
 		select {
 		case event := <-sink:
-			err = n.handleDistributedKeyGenerationLog(ctx, event)
+			err = n.handleDistributedKeyGenerationLog(event)
 			if err != nil {
 				log.Errorf("handle distributed key generation log: %v", err)
 			}
@@ -120,10 +121,26 @@ func (n *oracleNode) watchDistributedKeyGenerationLog(ctx context.Context) error
 	}
 }
 
-func (n *oracleNode) handleDistributedKeyGenerationLog(ctx context.Context, event *RegistryContractDistributedKeyGenerationLog) error {
-	pubKeys, err := n.registryContract.FindPubKeys()
+func (n *oracleNode) handleDistributedKeyGenerationLog(event *RegistryContractDistributedKeyGenerationLog) error {
+
+	nodes, err := n.registryContract.FindIopNodes()
 	if err != nil {
-		return fmt.Errorf("find public keys: %w", err)
+		return fmt.Errorf("find nodes: %w", err)
+	}
+
+	pubKeys := make([]kyber.Point, len(nodes))
+	for i, node := range nodes {
+		pubKey := bn256.NewSuiteG2().Point()
+		err = pubKey.UnmarshalBinary(node.PubKey)
+		if err != nil {
+			return fmt.Errorf("unmarshal public key: %w", err)
+		}
+		pubKeys[i] = pubKey
+	}
+
+	n.clients, err = n.connect(nodes)
+	if err != nil {
+		return fmt.Errorf("connect to nodes: %w", err)
 	}
 
 	distKeyGenerator, err := dkg.NewDistKeyGenerator(bn256.NewSuiteG2(), n.blsPrivateKey, pubKeys, int(event.Threshold.Int64()))
@@ -132,10 +149,14 @@ func (n *oracleNode) handleDistributedKeyGenerationLog(ctx context.Context, even
 	}
 	n.dkg = distKeyGenerator
 
-	err = n.sendDeals(ctx)
+	time.Sleep(5 * time.Second)
+
+	deals, err := n.dkg.Deals()
 	if err != nil {
-		return fmt.Errorf("send deals: %w", err)
+		return fmt.Errorf("deals: %w", err)
 	}
+
+	n.broadCastDeals(deals)
 
 	timeout := time.After(30 * time.Second)
 
@@ -156,19 +177,17 @@ loop:
 	log.Infof("qualified shares: %v\n", n.dkg.QualifiedShares())
 	log.Infof("QUAL: %v\n", n.dkg.QUAL())
 
-	distrKey, err := n.dkg.DistKeyShare()
+	n.distKey, err = n.dkg.DistKeyShare()
 	if err != nil {
 		return fmt.Errorf("distributed key share: %w", err)
 	}
-
-	n.distKey = distrKey
 
 	log.Infof("Public Key: %v", n.distKey.Public())
 
 	return nil
 }
 
-func (n *oracleNode) initOtherNodes() (map[int]OracleNodeClient, error) {
+func (n *oracleNode) connect(nodes []RegistryContractOracleNode) (map[int]OracleNodeClient, error) {
 	nodes, err := n.registryContract.FindIopNodes()
 	if err != nil {
 		return nil, fmt.Errorf("find nodes: %w", err)
@@ -184,39 +203,29 @@ func (n *oracleNode) initOtherNodes() (map[int]OracleNodeClient, error) {
 			log.Errorf("dial %s: %v", nodes[i].IpAddr, err)
 			continue
 		}
-		log.Printf("Init node %s", nodes[i].Addr.String())
+
+		log.Printf("Connected to node %s", nodes[i].Addr.String())
 		otherNodes[i] = NewOracleNodeClient(conn)
 	}
 	return otherNodes, nil
 }
 
-func (n *oracleNode) sendDeals(ctx context.Context) error {
-	deals, err := n.dkg.Deals()
-	if err != nil {
-		return fmt.Errorf("deals: %w", err)
-	}
-
-	otherNodes, err := n.initOtherNodes()
-	if err != nil {
-		return fmt.Errorf("init other nodes: %w", err)
-	}
-
+func (n *oracleNode) broadCastDeals(deals map[int]*dkg.Deal) {
+	log.Infof("Broadcasting deals")
 	for i, deal := range deals {
-		ctxTimeout, cancel := context.WithTimeout(ctx, 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		request := &ProcessDealRequest{
 			Deal: dealToPb(deal),
 		}
-		log.Infof("Sending deal to node %d", i)
-		_, err := otherNodes[i].ProcessDeal(ctxTimeout, request)
+		_, err := n.clients[i].ProcessDeal(ctx, request)
 		if err != nil {
 			log.Errorf("process deal: %v", err)
 		}
 		cancel()
 	}
-	return nil
 }
 
-func (n *oracleNode) ProcessDeal(ctx context.Context, request *ProcessDealRequest) (*ProcessDealResponse, error) {
+func (n *oracleNode) ProcessDeal(_ context.Context, request *ProcessDealRequest) (*ProcessDealResponse, error) {
 	log.Infof("Process deal from node %d", request.Deal.Index)
 
 	response, err := n.dkg.ProcessDeal(pbToDeal(request.Deal))
@@ -224,58 +233,50 @@ func (n *oracleNode) ProcessDeal(ctx context.Context, request *ProcessDealReques
 		return nil, fmt.Errorf("process deal: %w", err)
 	}
 
-	err = n.sendResponse(context.Background(), response)
-	if err != nil {
-		log.Errorf("send response: %v", err)
-	}
+	n.broadCastResponse(response)
 
 	return &ProcessDealResponse{
 		Response: responseToPb(response),
 	}, nil
 }
 
-func (n *oracleNode) sendResponse(ctx context.Context, response *dkg.Response) error {
-	otherNodes, err := n.initOtherNodes()
-	if err != nil {
-		return fmt.Errorf("init other nodes: %w", err)
-	}
-	for i, otherNode := range otherNodes {
+func (n *oracleNode) broadCastResponse(response *dkg.Response) {
+	log.Infof("Broadcasting response with dealer %d and verifier %d", response.Index, response.Response.Index)
+	for _, otherNode := range n.clients {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		request := &ProcessResponseRequest{
+			Response: responseToPb(response),
+		}
 		otherNode := otherNode
-		i := i
 		go func() {
-			ctxTimeout, cancel := context.WithTimeout(ctx, 10*time.Second)
-			request := &ProcessResponseRequest{
-				Response: responseToPb(response),
-			}
-			log.Infof("Sending response to dealer %d with verifier %d to other node %d", response.Index, response.Response.Index, i)
-			_, err := otherNode.ProcessResponse(ctxTimeout, request)
+			_, err := otherNode.ProcessResponse(ctx, request)
 			if err != nil {
 				log.Errorf("process response: %v", err)
 			}
-			log.Infof("Sent response to dealer %d with verifier %d to other node %d", response.Index, response.Response.Index, i)
 			cancel()
 		}()
 	}
-
-	return nil
 }
 
 func (n *oracleNode) ProcessResponse(ctx context.Context, request *ProcessResponseRequest) (*ProcessResponseResponse, error) {
-	log.Infof("Process response to dealer %d with verifier %d", request.Response.Index, request.Response.Response.Index)
+	log.Infof("Process response with dealer %d and verifier %d", request.Response.Index, request.Response.Response.Index)
 
-	_, err := n.dkg.ProcessResponse(pbToResponse(request.Response))
-	for errors.Is(err, vss.ErrNoDealBeforeResponse) {
-		if err != nil {
-			log.Infof("No deal response to dealer %d with verifier %d. Retry later.", request.Response.Index, request.Response.Response.Index)
+	for {
+		select {
+		case <-ctx.Done():
+			return &ProcessResponseResponse{}, ctx.Err()
+		default:
+			_, err := n.dkg.ProcessResponse(pbToResponse(request.Response))
+			if errors.Is(err, vss.ErrNoDealBeforeResponse) {
+				continue
+			} else if err != nil {
+				return &ProcessResponseResponse{}, fmt.Errorf("process response: %w", err)
+			}
+			return &ProcessResponseResponse{
+				Justification: nil,
+			}, nil
 		}
-		_, err = n.dkg.ProcessResponse(pbToResponse(request.Response))
-		time.Sleep(1 * time.Second)
 	}
-	log.Infof("PROCESSED response to dealer %d with verifier %d", request.Response.Index, request.Response.Response.Index)
-
-	return &ProcessResponseResponse{
-		Justification: nil,
-	}, nil
 }
 
 func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
