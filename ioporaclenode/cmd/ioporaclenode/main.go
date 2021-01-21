@@ -16,8 +16,8 @@ import (
 var (
 	addrFlag             = flag.String("address", "127.0.0.1:25565", "server address")
 	ethFlag              = flag.String("eth", "ws://127.0.0.1:7545", "eth node address")
-	oracleContractFlag   = flag.String("oracleContract", "0x94367f58cC0296196543E378cA81Fec50c929b2C", "oracle contract address")
-	registryContractFlag = flag.String("registryContract", "0xe3A8Eb651C392201A58cf14827CdAa410Efe49D5", "registry contract address")
+	oracleContractFlag   = flag.String("oracleContract", "0xac8E583e328a0d92a1d53CcC676006Bc7aC7C858", "oracle contract address")
+	registryContractFlag = flag.String("registryContract", "0xbc75947F0ceC785e3E41Bf0851DE072039fd3d50", "registry contract address")
 	ecdsaPrivateKeyFlag  = flag.String("ecdsaPrivateKey", "0xe63ff25be694842b3d25f3c8981dbe44b36b23a6effdbe04f9ee11e7965c922b", "private key")
 	blsPrivateKeyFlag    = flag.String("blsPrivateKey", "0x2e931ebbc908ec1993a789166f5690ee2ea34830df69a0fd0fc6a456b4aa8a46", "value of the private share")
 )
@@ -62,9 +62,8 @@ func main() {
 		log.Fatalf("listen on %s: %v", *addrFlag, err)
 	}
 
-	aggregator := iop.NewAggregator(ethClient, registryContract, account)
 	txVerifier := iop.NewTransactionVerifier(ethClient)
-	oracleNode := iop.NewOracleNode(ethClient, txVerifier, aggregator, oracleContract, registryContractWrapper, ecdsaPrivateKey, blsPrivateKey, account, suite)
+	oracleNode := iop.NewOracleNode(ethClient, txVerifier, oracleContract, registryContractWrapper, ecdsaPrivateKey, blsPrivateKey, account, suite)
 
 	go func() {
 		if err := oracleNode.Serve(lis); err != nil {

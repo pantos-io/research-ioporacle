@@ -35,7 +35,7 @@ type RegistryContractOracleNode struct {
 }
 
 // RegistryContractABI is the input ABI used to generate the binding from.
-const RegistryContractABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"threshold\",\"type\":\"uint256\"}],\"name\":\"DistributedKeyGenerationLog\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RegisterOracleNodeLog\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"_pubKey\",\"type\":\"bytes\"}],\"name\":\"registerOracleNode\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\",\"payable\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"oracleNodeIsRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"findOracleNodeByAddress\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"findOracleNodeByIndex\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"countOracleNodes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"isLeader\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"getLeader\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true}]"
+const RegistryContractABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"threshold\",\"type\":\"uint256\"}],\"name\":\"DistributedKeyGenerationLog\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RegisterOracleNodeLog\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"_pubKey\",\"type\":\"bytes\"}],\"name\":\"registerOracleNode\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\",\"payable\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"oracleNodeIsRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"findOracleNodeByAddress\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"findOracleNodeByIndex\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"countOracleNodes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"isLeader\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"getLeader\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"getPublicKey\",\"outputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"\",\"type\":\"uint256[4]\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"_publicKey\",\"type\":\"uint256[4]\"}],\"name\":\"setPublicKey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // RegistryContract is an auto generated Go binding around an Ethereum contract.
 type RegistryContract struct {
@@ -303,6 +303,37 @@ func (_RegistryContract *RegistryContractCallerSession) GetLeader() (RegistryCon
 	return _RegistryContract.Contract.GetLeader(&_RegistryContract.CallOpts)
 }
 
+// GetPublicKey is a free data retrieval call binding the contract method 0x2e334452.
+//
+// Solidity: function getPublicKey() view returns(uint256[4])
+func (_RegistryContract *RegistryContractCaller) GetPublicKey(opts *bind.CallOpts) ([4]*big.Int, error) {
+	var out []interface{}
+	err := _RegistryContract.contract.Call(opts, &out, "getPublicKey")
+
+	if err != nil {
+		return *new([4]*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([4]*big.Int)).(*[4]*big.Int)
+
+	return out0, err
+
+}
+
+// GetPublicKey is a free data retrieval call binding the contract method 0x2e334452.
+//
+// Solidity: function getPublicKey() view returns(uint256[4])
+func (_RegistryContract *RegistryContractSession) GetPublicKey() ([4]*big.Int, error) {
+	return _RegistryContract.Contract.GetPublicKey(&_RegistryContract.CallOpts)
+}
+
+// GetPublicKey is a free data retrieval call binding the contract method 0x2e334452.
+//
+// Solidity: function getPublicKey() view returns(uint256[4])
+func (_RegistryContract *RegistryContractCallerSession) GetPublicKey() ([4]*big.Int, error) {
+	return _RegistryContract.Contract.GetPublicKey(&_RegistryContract.CallOpts)
+}
+
 // IsLeader is a free data retrieval call binding the contract method 0xdb512e85.
 //
 // Solidity: function isLeader(address addr) view returns(bool)
@@ -384,6 +415,27 @@ func (_RegistryContract *RegistryContractSession) RegisterOracleNode(_ipAddr str
 // Solidity: function registerOracleNode(string _ipAddr, bytes _pubKey) payable returns()
 func (_RegistryContract *RegistryContractTransactorSession) RegisterOracleNode(_ipAddr string, _pubKey []byte) (*types.Transaction, error) {
 	return _RegistryContract.Contract.RegisterOracleNode(&_RegistryContract.TransactOpts, _ipAddr, _pubKey)
+}
+
+// SetPublicKey is a paid mutator transaction binding the contract method 0xaba94a66.
+//
+// Solidity: function setPublicKey(uint256[4] _publicKey) returns()
+func (_RegistryContract *RegistryContractTransactor) SetPublicKey(opts *bind.TransactOpts, _publicKey [4]*big.Int) (*types.Transaction, error) {
+	return _RegistryContract.contract.Transact(opts, "setPublicKey", _publicKey)
+}
+
+// SetPublicKey is a paid mutator transaction binding the contract method 0xaba94a66.
+//
+// Solidity: function setPublicKey(uint256[4] _publicKey) returns()
+func (_RegistryContract *RegistryContractSession) SetPublicKey(_publicKey [4]*big.Int) (*types.Transaction, error) {
+	return _RegistryContract.Contract.SetPublicKey(&_RegistryContract.TransactOpts, _publicKey)
+}
+
+// SetPublicKey is a paid mutator transaction binding the contract method 0xaba94a66.
+//
+// Solidity: function setPublicKey(uint256[4] _publicKey) returns()
+func (_RegistryContract *RegistryContractTransactorSession) SetPublicKey(_publicKey [4]*big.Int) (*types.Transaction, error) {
+	return _RegistryContract.Contract.SetPublicKey(&_RegistryContract.TransactOpts, _publicKey)
 }
 
 // RegistryContractDistributedKeyGenerationLogIterator is returned from FilterDistributedKeyGenerationLog and is used to iterate over the raw logs and unpacked data for DistributedKeyGenerationLog events raised by the RegistryContract contract.

@@ -5,7 +5,6 @@ import (
 	"crypto/ecdsa"
 	"errors"
 	"fmt"
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -39,13 +38,14 @@ type oracleNode struct {
 	account          common.Address
 	suite            pairing.Suite
 	distKey          *dkg.DistKeyShare
+	threshold        int
 	clients          map[int]OracleNodeClient
+	nodes            []RegistryContractOracleNode
 }
 
 func NewOracleNode(
 	ethClient *ethclient.Client,
 	txVerifier TransactionVerifier,
-	aggregator Aggregator,
 	oracleContract *OracleContract,
 	registryContract *RegistryContractWrapper,
 	ecdsaPrivateKey *ecdsa.PrivateKey,
@@ -58,7 +58,6 @@ func NewOracleNode(
 		server:           grpcServer,
 		ethClient:        ethClient,
 		txVerifier:       txVerifier,
-		aggregator:       aggregator,
 		oracleContract:   oracleContract,
 		registryContract: registryContract,
 		ecdsaPrivateKey:  ecdsaPrivateKey,
@@ -128,6 +127,8 @@ func (n *oracleNode) handleDistributedKeyGenerationLog(event *RegistryContractDi
 		return fmt.Errorf("find nodes: %w", err)
 	}
 
+	n.nodes = nodes
+
 	pubKeys := make([]kyber.Point, len(nodes))
 	for i, node := range nodes {
 		pubKey := bn256.NewSuiteG2().Point()
@@ -143,7 +144,8 @@ func (n *oracleNode) handleDistributedKeyGenerationLog(event *RegistryContractDi
 		return fmt.Errorf("connect to nodes: %w", err)
 	}
 
-	distKeyGenerator, err := dkg.NewDistKeyGenerator(bn256.NewSuiteG2(), n.blsPrivateKey, pubKeys, int(event.Threshold.Int64()))
+	n.threshold = int(event.Threshold.Int64())
+	distKeyGenerator, err := dkg.NewDistKeyGenerator(bn256.NewSuiteG2(), n.blsPrivateKey, pubKeys, n.threshold)
 	if err != nil {
 		return fmt.Errorf("dkg: %w", err)
 	}
@@ -183,6 +185,21 @@ loop:
 	}
 
 	log.Infof("Public Key: %v", n.distKey.Public())
+	pubBinary, err := n.distKey.Public().MarshalBinary()
+	if err != nil {
+		return fmt.Errorf("marshal public key: %w", err)
+	}
+
+	auth := bind.NewKeyedTransactor(n.ecdsaPrivateKey)
+	_, err = n.registryContract.SetPublicKey(auth, [4]*big.Int{
+		new(big.Int).SetBytes(pubBinary[:32]),
+		new(big.Int).SetBytes(pubBinary[32:64]),
+		new(big.Int).SetBytes(pubBinary[64:96]),
+		new(big.Int).SetBytes(pubBinary[96:128]),
+	})
+	if err != nil {
+		return fmt.Errorf("set public key: %w", err)
+	}
 
 	return nil
 }
@@ -295,7 +312,6 @@ func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
 		return err
 	}
 	defer sub.Unsubscribe()
-
 	for {
 		select {
 		case event := <-sink:
@@ -320,12 +336,17 @@ func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
 }
 
 func (n *oracleNode) handleVerifyTransactionLog(ctx context.Context, event *OracleContractVerifyTransactionLog) error {
-	result, _, err := n.aggregator.Aggregate(ctx, event.Id, common.BytesToHash(event.Hash[:]), event.Confirmations.Uint64())
+	aggregator := NewAggregator(n.ethClient, n.registryContract, n.account, n.distKey, n.nodes, n.threshold)
+	result, sig, err := aggregator.Aggregate(ctx, event.Id, common.BytesToHash(event.Hash[:]), event.Confirmations.Uint64())
 	if err != nil {
 		return fmt.Errorf("verify transaction remote: %w", err)
 	}
+
 	auth := bind.NewKeyedTransactor(n.ecdsaPrivateKey)
-	_, err = n.oracleContract.SubmitVerification(auth, event.Id, result, [2]*big.Int{big.NewInt(0), big.NewInt(0)})
+	_, err = n.oracleContract.SubmitVerification(auth, event.Id, result, [2]*big.Int{
+		new(big.Int).SetBytes(sig[:32]),
+		new(big.Int).SetBytes(sig[32:64]),
+	})
 	if err != nil {
 		return fmt.Errorf("verify transaction result: %v", err)
 	}
@@ -338,22 +359,7 @@ func (n *oracleNode) VerifyTransaction(ctx context.Context, request *VerifyTrans
 		return nil, status.Errorf(codes.Internal, "verify transaction: %v", err)
 	}
 
-	uint256Ty, _ := abi.NewType("uint256", "", nil)
-	boolTy, _ := abi.NewType("bool", "", nil)
-
-	arguments := abi.Arguments{
-		{
-			Type: uint256Ty,
-		},
-		{
-			Type: boolTy,
-		},
-	}
-
-	message, _ := arguments.Pack(
-		big.NewInt(request.Id),
-		result,
-	)
+	message, _ := encodeVerificationResult(big.NewInt(request.Id), result)
 
 	sig, err := tbls.Sign(n.suite, n.distKey.PriShare(), message)
 	if err != nil {

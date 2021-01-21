@@ -6,8 +6,11 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	log "github.com/sirupsen/logrus"
+	"go.dedis.ch/kyber/v3/share"
+	dkg "go.dedis.ch/kyber/v3/share/dkg/pedersen"
+	"go.dedis.ch/kyber/v3/sign/tbls"
 	"google.golang.org/grpc"
-	"math"
+	"ioporaclenode/internal/pkg/kyber/pairing/bn256"
 	"math/big"
 	"sync"
 	"time"
@@ -19,23 +22,32 @@ type Aggregator interface {
 
 type aggregatorImpl struct {
 	ethClient        *ethclient.Client
-	registryContract *RegistryContract
+	registryContract *RegistryContractWrapper
 	account          common.Address
+	distKey          *dkg.DistKeyShare
+	nodes            []RegistryContractOracleNode
+	t                int
 }
 
-func NewAggregator(ethClient *ethclient.Client, registryContract *RegistryContract, account common.Address) *aggregatorImpl {
+func NewAggregator(
+	ethClient *ethclient.Client,
+	registryContract *RegistryContractWrapper,
+	account common.Address,
+	distKey *dkg.DistKeyShare,
+	nodes []RegistryContractOracleNode,
+	t int,
+) *aggregatorImpl {
 	return &aggregatorImpl{
 		ethClient:        ethClient,
 		registryContract: registryContract,
 		account:          account,
+		distKey:          distKey,
+		nodes:            nodes,
+		t:                t,
 	}
 }
 
-func (a *aggregatorImpl) Aggregate(ctx context.Context, id *big.Int, txHash common.Hash, confirmations uint64) (bool, [][]byte, error) {
-	nodes, err := a.FindIopNodes()
-	if err != nil {
-		return false, nil, fmt.Errorf("find nodes: %w", err)
-	}
+func (a *aggregatorImpl) Aggregate(ctx context.Context, id *big.Int, txHash common.Hash, confirmations uint64) (bool, []byte, error) {
 
 	positiveResults := make([][]byte, 0)
 	negativeResults := make([][]byte, 0)
@@ -43,7 +55,7 @@ func (a *aggregatorImpl) Aggregate(ctx context.Context, id *big.Int, txHash comm
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
 
-	for _, v := range nodes {
+	for _, v := range a.nodes {
 		wg.Add(1)
 		go func(node RegistryContractOracleNode) {
 			defer wg.Done()
@@ -77,29 +89,28 @@ func (a *aggregatorImpl) Aggregate(ctx context.Context, id *big.Int, txHash comm
 	}
 
 	wg.Wait()
-	majority := int(math.Ceil(float64(len(nodes)+2) / 2.0))
-	if len(positiveResults) >= majority {
-		return true, positiveResults, nil
-	} else if len(negativeResults) >= majority {
-		return false, negativeResults, nil
+
+	suite := bn256.NewSuite()
+	suiteG2 := bn256.NewSuiteG2()
+	pubPoly := share.NewPubPoly(suiteG2, suiteG2.Point().Base(), a.distKey.Commits)
+
+	result := false
+	sigShares := negativeResults
+
+	if len(positiveResults) >= len(negativeResults) {
+		result = true
+		sigShares = positiveResults
 	}
 
-	return false, nil, fmt.Errorf("no majority")
-}
-
-func (a *aggregatorImpl) FindIopNodes() (map[common.Address]RegistryContractOracleNode, error) {
-	count, err := a.registryContract.CountOracleNodes(nil)
+	message, err := encodeVerificationResult(id, result)
 	if err != nil {
-		return nil, fmt.Errorf("count iop nodes: %w", err)
+		return false, nil, fmt.Errorf("encode verification result: %w", err)
 	}
-	nodeEntries := make(map[common.Address]RegistryContractOracleNode)
-	for i := int64(0); i < count.Int64(); i++ {
-		node, err := a.registryContract.FindOracleNodeByIndex(nil, big.NewInt(i))
-		if err != nil {
-			return nil, fmt.Errorf("count iop nodes: %w", err)
-		}
-		nodeEntries[node.Addr] = node
+
+	signature, err := tbls.Recover(suite, pubPoly, message, sigShares, a.t, len(a.nodes))
+	if err != nil {
+		return false, nil, fmt.Errorf("recover signature: %v", err)
 	}
-	delete(nodeEntries, a.account)
-	return nodeEntries, nil
+
+	return result, signature, nil
 }
