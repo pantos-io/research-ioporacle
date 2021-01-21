@@ -11,18 +11,20 @@ contract RegistryContract {
     }
 
     uint256 private constant BLOCK_RANGE = 6;
-    uint256 private constant KEY_GEN_INTERVAL = 7;
+    uint256 private constant KEY_GEN_INTERVAL = 3;
 
     mapping(address => OracleNode) private oracleNodes;
     address[] private oracleNodeIndices;
 
+    uint256[4] private publicKey;
+
     event RegisterOracleNodeLog(address indexed sender);
     event DistributedKeyGenerationLog(uint256 threshold);
 
-    function registerOracleNode(
-        string calldata _ipAddr,
-        bytes calldata _pubKey
-    ) external payable {
+    function registerOracleNode(string calldata _ipAddr, bytes calldata _pubKey)
+        external
+        payable
+    {
         require(!oracleNodeIsRegistered(msg.sender), "already registered");
         OracleNode storage iopNode = oracleNodes[msg.sender];
         iopNode.addr = msg.sender;
@@ -32,7 +34,7 @@ contract RegistryContract {
         oracleNodeIndices.push(iopNode.addr);
 
         if (oracleNodeIndices.length % KEY_GEN_INTERVAL == 0) {
-            emit DistributedKeyGenerationLog((oracleNodeIndices.length + 1) / 2);
+            emit DistributedKeyGenerationLog(threshold());
         }
 
         emit RegisterOracleNodeLog(msg.sender);
@@ -49,8 +51,7 @@ contract RegistryContract {
         returns (OracleNode memory)
     {
         require(oracleNodeIsRegistered(_addr), "not found");
-        OracleNode memory iopNode = oracleNodes[_addr];
-        return iopNode;
+        return oracleNodes[_addr];
     }
 
     function findOracleNodeByIndex(uint256 _index)
@@ -59,8 +60,7 @@ contract RegistryContract {
         returns (OracleNode memory)
     {
         require(_index >= 0 && _index < oracleNodeIndices.length, "not found");
-        OracleNode memory iopNode = oracleNodes[oracleNodeIndices[_index]];
-        return iopNode;
+        return oracleNodes[oracleNodeIndices[_index]];
     }
 
     function countOracleNodes() external view returns (uint256) {
@@ -69,20 +69,30 @@ contract RegistryContract {
 
     function isLeader(address addr) public view returns (bool) {
         OracleNode memory iopNode = findOracleNodeByAddress(addr);
-        uint256 chosen =
-            block.number % (oracleNodeIndices.length * BLOCK_RANGE);
+        uint256 chosen = blockNumberMod();
         return
             chosen >= iopNode.index * BLOCK_RANGE &&
             chosen < (iopNode.index + 1) * BLOCK_RANGE;
     }
 
     function getLeader() public view returns (OracleNode memory) {
-        for (uint256 i = 0; i < oracleNodeIndices.length; i++) {
-            OracleNode memory iopNode = oracleNodes[oracleNodeIndices[i]];
-            if (isLeader(iopNode.addr)) {
-                return iopNode;
-            }
-        }
-        revert("no leader");
+        uint256 i = blockNumberMod() / BLOCK_RANGE;
+        return findOracleNodeByIndex(i);
+    }
+
+    function blockNumberMod() internal view returns (uint256) {
+        return block.number % (oracleNodeIndices.length * BLOCK_RANGE);
+    }
+
+    function threshold() public view returns (uint256) {
+        return (oracleNodeIndices.length + 1) / 2;
+    }
+
+    function getPublicKey() public view returns (uint256[4] memory) {
+        return publicKey;
+    }
+
+    function setPublicKey(uint256[4] calldata _publicKey) external {
+        publicKey = _publicKey;
     }
 }
