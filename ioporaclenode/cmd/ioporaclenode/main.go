@@ -16,8 +16,10 @@ import (
 var (
 	addrFlag             = flag.String("address", "127.0.0.1:25565", "server address")
 	ethFlag              = flag.String("eth", "ws://127.0.0.1:7545", "eth node address")
-	oracleContractFlag   = flag.String("oracleContract", "0xf553fD8C8D76672191dBa8bF515Bdf901133794e", "oracle contract address")
-	registryContractFlag = flag.String("registryContract", "0x4B29e2144742526C33742Cf6A9eA5e487F507f2D", "registry contract address")
+	oracleContractFlag   = flag.String("oracleContract", "0x74d7afd741DB6b58Cc6472BEA48e3A362c33FA63", "oracle contract address")
+	registryContractFlag = flag.String("registryContract", "0x5d5DaAC0DBd2C0a9Bb1f5E15d234d355B1894C9f", "registry contract address")
+	raffleContractFlag   = flag.String("raffleContract", "0xFA1798a4fB446F26909B69D3fd8bF43380f4e915", "raffle contract address")
+	distKeyContractFlag  = flag.String("distKeyContract", "0x553442A6b90D55e75606bF3b25913BAf8c67c199", "dist key contract address")
 	ecdsaPrivateKeyFlag  = flag.String("ecdsaPrivateKey", "0xe63ff25be694842b3d25f3c8981dbe44b36b23a6effdbe04f9ee11e7965c922b", "private key")
 	blsPrivateKeyFlag    = flag.String("blsPrivateKey", "0x2e931ebbc908ec1993a789166f5690ee2ea34830df69a0fd0fc6a456b4aa8a46", "value of the private share")
 )
@@ -43,6 +45,16 @@ func main() {
 		log.Fatalf("oracle contract: %v", err)
 	}
 
+	raffleContract, err := iop.NewRaffleContract(common.HexToAddress(*raffleContractFlag), ethClient)
+	if err != nil {
+		log.Fatalf("raffle contract: %v", err)
+	}
+
+	distKeyContract, err := iop.NewDistKeyContract(common.HexToAddress(*distKeyContractFlag), ethClient)
+	if err != nil {
+		log.Fatalf("dist key contract: %v", err)
+	}
+
 	ecdsaPrivateKey, err := crypto.HexToECDSA(*ecdsaPrivateKeyFlag)
 	if err != nil {
 		log.Fatalf("hex to ecdsa: %v", err)
@@ -63,7 +75,18 @@ func main() {
 	}
 
 	txVerifier := iop.NewTransactionVerifier(ethClient)
-	oracleNode := iop.NewOracleNode(ethClient, txVerifier, oracleContract, registryContractWrapper, ecdsaPrivateKey, blsPrivateKey, account, suite)
+	oracleNode := iop.NewOracleNode(
+		ethClient,
+		txVerifier,
+		oracleContract,
+		registryContractWrapper,
+		raffleContract,
+		distKeyContract,
+		ecdsaPrivateKey,
+		blsPrivateKey,
+		account,
+		suite,
+	)
 
 	go func() {
 		if err := oracleNode.Serve(lis); err != nil {

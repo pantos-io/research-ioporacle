@@ -31,6 +31,8 @@ type oracleNode struct {
 	ethClient        *ethclient.Client
 	oracleContract   *OracleContract
 	registryContract *RegistryContractWrapper
+	raffleContract   *RaffleContract
+	distKeyContract  *DistKeyContract
 	dkg              *dkg.DistKeyGenerator
 	ecdsaPrivateKey  *ecdsa.PrivateKey
 	blsPrivateKey    kyber.Scalar
@@ -48,6 +50,8 @@ func NewOracleNode(
 	txVerifier TransactionVerifier,
 	oracleContract *OracleContract,
 	registryContract *RegistryContractWrapper,
+	raffleContract *RaffleContract,
+	distKeyContract *DistKeyContract,
 	ecdsaPrivateKey *ecdsa.PrivateKey,
 	blsPrivateKey kyber.Scalar,
 	account common.Address,
@@ -60,6 +64,8 @@ func NewOracleNode(
 		txVerifier:       txVerifier,
 		oracleContract:   oracleContract,
 		registryContract: registryContract,
+		raffleContract:   raffleContract,
+		distKeyContract:  distKeyContract,
 		ecdsaPrivateKey:  ecdsaPrivateKey,
 		blsPrivateKey:    blsPrivateKey,
 		blsPublicKey:     suite.G2().Point().Mul(blsPrivateKey, nil),
@@ -72,7 +78,7 @@ func NewOracleNode(
 
 func (n *oracleNode) Serve(lis net.Listener) error {
 	go func() {
-		err := n.watchDistributedKeyGenerationLog(context.Background())
+		err := n.watchDistKeyGenerationLog(context.Background())
 		if err != nil {
 			log.Errorf("watch distributed key generation log: %v", err)
 		}
@@ -90,11 +96,11 @@ func (n *oracleNode) Serve(lis net.Listener) error {
 	return n.server.Serve(lis)
 }
 
-func (n *oracleNode) watchDistributedKeyGenerationLog(ctx context.Context) error {
-	sink := make(chan *RegistryContractDistributedKeyGenerationLog)
+func (n *oracleNode) watchDistKeyGenerationLog(ctx context.Context) error {
+	sink := make(chan *DistKeyContractDistKeyGenerationLog)
 	defer close(sink)
 
-	sub, err := n.registryContract.WatchDistributedKeyGenerationLog(
+	sub, err := n.distKeyContract.WatchDistKeyGenerationLog(
 		&bind.WatchOpts{
 			Context: context.Background(),
 		},
@@ -120,7 +126,7 @@ func (n *oracleNode) watchDistributedKeyGenerationLog(ctx context.Context) error
 	}
 }
 
-func (n *oracleNode) handleDistributedKeyGenerationLog(event *RegistryContractDistributedKeyGenerationLog) error {
+func (n *oracleNode) handleDistributedKeyGenerationLog(event *DistKeyContractDistKeyGenerationLog) error {
 
 	nodes, err := n.registryContract.FindIopNodes()
 	if err != nil {
@@ -191,7 +197,7 @@ loop:
 	}
 
 	auth := bind.NewKeyedTransactor(n.ecdsaPrivateKey)
-	_, err = n.registryContract.SetPublicKey(auth, [4]*big.Int{
+	_, err = n.distKeyContract.SetPublicKey(auth, [4]*big.Int{
 		new(big.Int).SetBytes(pubBinary[:32]),
 		new(big.Int).SetBytes(pubBinary[32:64]),
 		new(big.Int).SetBytes(pubBinary[64:96]),

@@ -13,6 +13,10 @@ const raffleContractPath = path.resolve(
   __dirname,
   "../build/contracts/RaffleContract.json"
 );
+const distKeyContractPath = path.resolve(
+  __dirname,
+  "../build/contracts/DistKeyContract.json"
+);
 
 const abiPath = path.resolve(__dirname, "../build/contracts/abi");
 const binPath = path.resolve(__dirname, "../build/contracts/bin");
@@ -20,10 +24,12 @@ const binPath = path.resolve(__dirname, "../build/contracts/bin");
 const registryContractAbiPath = path.resolve(abiPath, "RegistryContract.abi");
 const oracleContractAbiPath = path.resolve(abiPath, "OracleContract.abi");
 const raffleContractAbiPath = path.resolve(abiPath, "RaffleContract.abi");
+const distKeyContractAbiPath = path.resolve(abiPath, "DistKeyContract.abi");
 
 const registryContractBinPath = path.resolve(binPath, "RegistryContract.bin");
 const oracleContractBinPath = path.resolve(binPath, "OracleContract.bin");
 const raffleContractBinPath = path.resolve(binPath, "RaffleContract.bin");
+const distKeyContractBinPath = path.resolve(binPath, "DistKeyContract.bin");
 
 const registryContract = JSON.parse(
   fs.readFileSync(registryContractPath, "utf8")
@@ -32,6 +38,10 @@ const registryContract = JSON.parse(
 const oracleContract = JSON.parse(fs.readFileSync(oracleContractPath, "utf8"));
 
 const raffleContract = JSON.parse(fs.readFileSync(raffleContractPath, "utf8"));
+
+const distKeyContract = JSON.parse(
+  fs.readFileSync(distKeyContractPath, "utf8")
+);
 
 fs.mkdirSync(abiPath, { recursive: true });
 fs.mkdirSync(binPath, { recursive: true });
@@ -99,5 +109,27 @@ fs.writeFile(
       return console.error(err);
     }
     console.log("RaffleContract BIN written successfully!");
+  }
+);
+
+fs.writeFile(
+  distKeyContractAbiPath,
+  JSON.stringify(distKeyContract.abi),
+  function (err) {
+    if (err) {
+      return console.error(err);
+    }
+    console.log("DistKeyContract ABI written successfully!");
+  }
+);
+
+fs.writeFile(
+  distKeyContractBinPath,
+  JSON.stringify(distKeyContract.bytecode),
+  function (err) {
+    if (err) {
+      return console.error(err);
+    }
+    console.log("DistKeyContract BIN written successfully!");
   }
 );

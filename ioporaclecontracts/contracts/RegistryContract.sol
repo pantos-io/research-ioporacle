@@ -2,6 +2,8 @@
 pragma solidity >=0.4.22 <0.8.0;
 pragma experimental ABIEncoderV2;
 
+import "./DistKeyContract.sol";
+
 contract RegistryContract {
     struct OracleNode {
         address addr;
@@ -16,10 +18,13 @@ contract RegistryContract {
     mapping(address => OracleNode) private oracleNodes;
     address[] private oracleNodeIndices;
 
-    uint256[4] private publicKey;
-
     event RegisterOracleNodeLog(address indexed sender);
-    event DistributedKeyGenerationLog(uint256 threshold);
+
+    DistKeyContract private distKeyContract;
+
+    constructor(address _distKeyContract) public {
+        distKeyContract = DistKeyContract(_distKeyContract);
+    }
 
     function registerOracleNode(string calldata _ipAddr, bytes calldata _pubKey)
         external
@@ -33,8 +38,10 @@ contract RegistryContract {
         iopNode.index = oracleNodeIndices.length;
         oracleNodeIndices.push(iopNode.addr);
 
-        if (oracleNodeIndices.length % KEY_GEN_INTERVAL == 0) {
-            emit DistributedKeyGenerationLog(threshold());
+        if (
+            oracleNodeIndices.length % distKeyContract.KEY_GEN_INTERVAL() == 0
+        ) {
+            distKeyContract.generate();
         }
 
         emit RegisterOracleNodeLog(msg.sender);
@@ -82,17 +89,5 @@ contract RegistryContract {
 
     function blockNumberMod() internal view returns (uint256) {
         return block.number % (oracleNodeIndices.length * BLOCK_RANGE);
-    }
-
-    function threshold() public view returns (uint256) {
-        return (oracleNodeIndices.length + 1) / 2;
-    }
-
-    function getPublicKey() public view returns (uint256[4] memory) {
-        return publicKey;
-    }
-
-    function setPublicKey(uint256[4] calldata _publicKey) external {
-        publicKey = _publicKey;
     }
 }

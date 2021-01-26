@@ -3,6 +3,7 @@ pragma solidity >=0.4.22 <0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "./RegistryContract.sol";
+import "./DistKeyContract.sol";
 import "./RaffleContract.sol";
 import "cdlbot-solidity/contracts/crypto/BN256G1.sol";
 import "cdlbot-solidity/contracts/crypto/BN256G2.sol";
@@ -35,12 +36,16 @@ contract OracleContract {
     );
 
     RegistryContract private registryContract;
+    DistKeyContract private distKeyContract;
     address payable private raffleContract;
 
-    constructor(address _registryContract, address payable _raffleContract)
-        public
-    {
+    constructor(
+        address _registryContract,
+        address _distKeyContract,
+        address payable _raffleContract
+    ) public {
         registryContract = RegistryContract(_registryContract);
+        distKeyContract = DistKeyContract(_distKeyContract);
         raffleContract = _raffleContract;
     }
 
@@ -71,7 +76,7 @@ contract OracleContract {
         uint256[2] memory hash =
             BN256G1.hashToPointSha256(abi.encode(_id, _result));
         uint256[4] memory negG2 = BN256G2.getNegG2();
-        uint256[4] memory publicKey = registryContract.getPublicKey();
+        uint256[4] memory publicKey = distKeyContract.getPublicKey();
         uint256[12] memory input =
             [
                 hash[0],
