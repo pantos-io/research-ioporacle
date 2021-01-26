@@ -3,6 +3,7 @@ pragma solidity >=0.4.22 <0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "./RegistryContract.sol";
+import "./RaffleContract.sol";
 import "cdlbot-solidity/contracts/crypto/BN256G1.sol";
 import "cdlbot-solidity/contracts/crypto/BN256G2.sol";
 
@@ -12,8 +13,10 @@ contract OracleContract {
         bool result;
     }
 
-    uint256 private constant LEADER_REWARD = 0.001 ether;
-    uint256 private constant RANDOM_NODE_REWARD = 0.001 ether;
+    uint256 private constant AGGREGATOR_REWARD = 0.001 ether;
+    uint256 private constant VALIDATOR_REWARD = 0.0001 ether;
+    uint256 private constant TOTAL_REWARD =
+        AGGREGATOR_REWARD + VALIDATOR_REWARD;
 
     uint256 private requestCounter;
 
@@ -32,19 +35,20 @@ contract OracleContract {
     );
 
     RegistryContract private registryContract;
+    address payable private raffleContract;
 
-    constructor(address _registryContract) public {
+    constructor(address _registryContract, address payable _raffleContract)
+        public
+    {
         registryContract = RegistryContract(_registryContract);
+        raffleContract = _raffleContract;
     }
 
     function verifyTransaction(bytes32 _hash, uint256 _confirmations)
         external
         payable
     {
-        require(
-            msg.value >= LEADER_REWARD + RANDOM_NODE_REWARD,
-            "msg value too low"
-        );
+        require(msg.value >= TOTAL_REWARD, "msg value below total reward");
         emit VerifyTransactionLog(
             msg.sender,
             ++requestCounter,
@@ -58,7 +62,11 @@ contract OracleContract {
         bool _result,
         uint256[2] calldata _signature
     ) external {
-        require(!verificationExists(_id), "already submitted");
+        require(!verificationExists(_id), "already exists");
+        require(
+            registryContract.getAggregator().addr == msg.sender,
+            "not the aggregator"
+        );
 
         uint256[2] memory hash =
             BN256G1.hashToPointSha256(abi.encode(_id, _result));
@@ -81,7 +89,8 @@ contract OracleContract {
             ];
         require(BN256G1.bn256CheckPairing(input), "invalid signature");
 
-        payable(msg.sender).transfer(LEADER_REWARD);
+        payable(msg.sender).transfer(AGGREGATOR_REWARD);
+        raffleContract.transfer(VALIDATOR_REWARD);
 
         VerificationResult storage verificationResult =
             verificationResults[_id];

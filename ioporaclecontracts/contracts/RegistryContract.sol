@@ -67,7 +67,7 @@ contract RegistryContract {
         return oracleNodeIndices.length;
     }
 
-    function isLeader(address addr) public view returns (bool) {
+    function isAggregator(address addr) public view returns (bool) {
         OracleNode memory iopNode = findOracleNodeByAddress(addr);
         uint256 chosen = blockNumberMod();
         return
@@ -75,7 +75,7 @@ contract RegistryContract {
             chosen < (iopNode.index + 1) * BLOCK_RANGE;
     }
 
-    function getLeader() public view returns (OracleNode memory) {
+    function getAggregator() public view returns (OracleNode memory) {
         uint256 i = blockNumberMod() / BLOCK_RANGE;
         return findOracleNodeByIndex(i);
     }

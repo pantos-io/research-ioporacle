@@ -33,7 +33,7 @@ type OracleContractVerificationResult struct {
 }
 
 // OracleContractABI is the input ABI used to generate the binding from.
-const OracleContractABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"name\":\"SubmitVerificationLog\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"hash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"confirmations\",\"type\":\"uint256\"}],\"name\":\"VerifyTransactionLog\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"PUB_KEY_X_IM\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"PUB_KEY_X_RE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"PUB_KEY_Y_IM\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"PUB_KEY_Y_RE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_confirmations\",\"type\":\"uint256\"}],\"name\":\"verifyTransaction\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\",\"payable\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"},{\"internalType\":\"uint256[2]\",\"name\":\"_signature\",\"type\":\"uint256[2]\"}],\"name\":\"submitVerification\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"findVerification\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"internalType\":\"structOracleContract.VerificationResult\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"verificationExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true}]"
+const OracleContractABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"name\":\"SubmitVerificationLog\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"hash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"confirmations\",\"type\":\"uint256\"}],\"name\":\"VerifyTransactionLog\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_confirmations\",\"type\":\"uint256\"}],\"name\":\"verifyTransaction\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\",\"payable\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"},{\"internalType\":\"uint256[2]\",\"name\":\"_signature\",\"type\":\"uint256[2]\"}],\"name\":\"submitVerification\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"findVerification\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"internalType\":\"structOracleContract.VerificationResult\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"verificationExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true}]"
 
 // OracleContract is an auto generated Go binding around an Ethereum contract.
 type OracleContract struct {
@@ -175,130 +175,6 @@ func (_OracleContract *OracleContractTransactorRaw) Transfer(opts *bind.Transact
 // Transact invokes the (paid) contract method with params as input values.
 func (_OracleContract *OracleContractTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
 	return _OracleContract.Contract.contract.Transact(opts, method, params...)
-}
-
-// PUBKEYXIM is a free data retrieval call binding the contract method 0xc5c8df21.
-//
-// Solidity: function PUB_KEY_X_IM() view returns(uint256)
-func (_OracleContract *OracleContractCaller) PUBKEYXIM(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _OracleContract.contract.Call(opts, &out, "PUB_KEY_X_IM")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// PUBKEYXIM is a free data retrieval call binding the contract method 0xc5c8df21.
-//
-// Solidity: function PUB_KEY_X_IM() view returns(uint256)
-func (_OracleContract *OracleContractSession) PUBKEYXIM() (*big.Int, error) {
-	return _OracleContract.Contract.PUBKEYXIM(&_OracleContract.CallOpts)
-}
-
-// PUBKEYXIM is a free data retrieval call binding the contract method 0xc5c8df21.
-//
-// Solidity: function PUB_KEY_X_IM() view returns(uint256)
-func (_OracleContract *OracleContractCallerSession) PUBKEYXIM() (*big.Int, error) {
-	return _OracleContract.Contract.PUBKEYXIM(&_OracleContract.CallOpts)
-}
-
-// PUBKEYXRE is a free data retrieval call binding the contract method 0x4401e888.
-//
-// Solidity: function PUB_KEY_X_RE() view returns(uint256)
-func (_OracleContract *OracleContractCaller) PUBKEYXRE(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _OracleContract.contract.Call(opts, &out, "PUB_KEY_X_RE")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// PUBKEYXRE is a free data retrieval call binding the contract method 0x4401e888.
-//
-// Solidity: function PUB_KEY_X_RE() view returns(uint256)
-func (_OracleContract *OracleContractSession) PUBKEYXRE() (*big.Int, error) {
-	return _OracleContract.Contract.PUBKEYXRE(&_OracleContract.CallOpts)
-}
-
-// PUBKEYXRE is a free data retrieval call binding the contract method 0x4401e888.
-//
-// Solidity: function PUB_KEY_X_RE() view returns(uint256)
-func (_OracleContract *OracleContractCallerSession) PUBKEYXRE() (*big.Int, error) {
-	return _OracleContract.Contract.PUBKEYXRE(&_OracleContract.CallOpts)
-}
-
-// PUBKEYYIM is a free data retrieval call binding the contract method 0x52c41d22.
-//
-// Solidity: function PUB_KEY_Y_IM() view returns(uint256)
-func (_OracleContract *OracleContractCaller) PUBKEYYIM(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _OracleContract.contract.Call(opts, &out, "PUB_KEY_Y_IM")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// PUBKEYYIM is a free data retrieval call binding the contract method 0x52c41d22.
-//
-// Solidity: function PUB_KEY_Y_IM() view returns(uint256)
-func (_OracleContract *OracleContractSession) PUBKEYYIM() (*big.Int, error) {
-	return _OracleContract.Contract.PUBKEYYIM(&_OracleContract.CallOpts)
-}
-
-// PUBKEYYIM is a free data retrieval call binding the contract method 0x52c41d22.
-//
-// Solidity: function PUB_KEY_Y_IM() view returns(uint256)
-func (_OracleContract *OracleContractCallerSession) PUBKEYYIM() (*big.Int, error) {
-	return _OracleContract.Contract.PUBKEYYIM(&_OracleContract.CallOpts)
-}
-
-// PUBKEYYRE is a free data retrieval call binding the contract method 0x24815ca5.
-//
-// Solidity: function PUB_KEY_Y_RE() view returns(uint256)
-func (_OracleContract *OracleContractCaller) PUBKEYYRE(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _OracleContract.contract.Call(opts, &out, "PUB_KEY_Y_RE")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// PUBKEYYRE is a free data retrieval call binding the contract method 0x24815ca5.
-//
-// Solidity: function PUB_KEY_Y_RE() view returns(uint256)
-func (_OracleContract *OracleContractSession) PUBKEYYRE() (*big.Int, error) {
-	return _OracleContract.Contract.PUBKEYYRE(&_OracleContract.CallOpts)
-}
-
-// PUBKEYYRE is a free data retrieval call binding the contract method 0x24815ca5.
-//
-// Solidity: function PUB_KEY_Y_RE() view returns(uint256)
-func (_OracleContract *OracleContractCallerSession) PUBKEYYRE() (*big.Int, error) {
-	return _OracleContract.Contract.PUBKEYYRE(&_OracleContract.CallOpts)
 }
 
 // FindVerification is a free data retrieval call binding the contract method 0x0bfb3232.

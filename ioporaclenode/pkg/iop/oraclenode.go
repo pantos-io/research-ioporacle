@@ -315,12 +315,12 @@ func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
 	for {
 		select {
 		case event := <-sink:
-			isLeader, err := n.registryContract.IsLeader(nil, n.account)
+			isAggregator, err := n.registryContract.IsAggregator(nil, n.account)
 			if err != nil {
-				log.Errorf("is leader: %v", err)
+				log.Errorf("is aggregator: %v", err)
 				continue
 			}
-			if !isLeader {
+			if !isAggregator {
 				continue
 			}
 			err = n.handleVerifyTransactionLog(ctx, event)
