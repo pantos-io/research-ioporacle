@@ -13,7 +13,6 @@ import (
 	"go.dedis.ch/kyber/v3/pairing"
 	dkg "go.dedis.ch/kyber/v3/share/dkg/pedersen"
 	vss "go.dedis.ch/kyber/v3/share/vss/pedersen"
-	"go.dedis.ch/kyber/v3/sign/tbls"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -23,10 +22,10 @@ import (
 	"time"
 )
 
-type oracleNode struct {
+type OracleNode struct {
 	UnimplementedOracleNodeServer
 	server           *grpc.Server
-	txVerifier       TransactionVerifier
+	validator        *Validator
 	aggregator       Aggregator
 	ethClient        *ethclient.Client
 	oracleContract   *OracleContract
@@ -47,7 +46,7 @@ type oracleNode struct {
 
 func NewOracleNode(
 	ethClient *ethclient.Client,
-	txVerifier TransactionVerifier,
+	validator *Validator,
 	oracleContract *OracleContract,
 	registryContract *RegistryContractWrapper,
 	raffleContract *RaffleContract,
@@ -56,12 +55,12 @@ func NewOracleNode(
 	blsPrivateKey kyber.Scalar,
 	account common.Address,
 	suite pairing.Suite,
-) *oracleNode {
+) *OracleNode {
 	grpcServer := grpc.NewServer()
-	node := &oracleNode{
+	node := &OracleNode{
 		server:           grpcServer,
 		ethClient:        ethClient,
-		txVerifier:       txVerifier,
+		validator:        validator,
 		oracleContract:   oracleContract,
 		registryContract: registryContract,
 		raffleContract:   raffleContract,
@@ -76,7 +75,7 @@ func NewOracleNode(
 	return node
 }
 
-func (n *oracleNode) Serve(lis net.Listener) error {
+func (n *OracleNode) Serve(lis net.Listener) error {
 	go func() {
 		err := n.watchDistKeyGenerationLog(context.Background())
 		if err != nil {
@@ -96,7 +95,7 @@ func (n *oracleNode) Serve(lis net.Listener) error {
 	return n.server.Serve(lis)
 }
 
-func (n *oracleNode) watchDistKeyGenerationLog(ctx context.Context) error {
+func (n *OracleNode) watchDistKeyGenerationLog(ctx context.Context) error {
 	sink := make(chan *DistKeyContractDistKeyGenerationLog)
 	defer close(sink)
 
@@ -126,7 +125,7 @@ func (n *oracleNode) watchDistKeyGenerationLog(ctx context.Context) error {
 	}
 }
 
-func (n *oracleNode) handleDistributedKeyGenerationLog(event *DistKeyContractDistKeyGenerationLog) error {
+func (n *OracleNode) handleDistributedKeyGenerationLog(event *DistKeyContractDistKeyGenerationLog) error {
 
 	nodes, err := n.registryContract.FindIopNodes()
 	if err != nil {
@@ -210,7 +209,7 @@ loop:
 	return nil
 }
 
-func (n *oracleNode) connect(nodes []RegistryContractOracleNode) (map[int]OracleNodeClient, error) {
+func (n *OracleNode) connect(nodes []RegistryContractOracleNode) (map[int]OracleNodeClient, error) {
 	nodes, err := n.registryContract.FindIopNodes()
 	if err != nil {
 		return nil, fmt.Errorf("find nodes: %w", err)
@@ -233,7 +232,7 @@ func (n *oracleNode) connect(nodes []RegistryContractOracleNode) (map[int]Oracle
 	return otherNodes, nil
 }
 
-func (n *oracleNode) broadCastDeals(deals map[int]*dkg.Deal) {
+func (n *OracleNode) broadCastDeals(deals map[int]*dkg.Deal) {
 	log.Infof("Broadcasting deals")
 	for i, deal := range deals {
 		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -248,7 +247,7 @@ func (n *oracleNode) broadCastDeals(deals map[int]*dkg.Deal) {
 	}
 }
 
-func (n *oracleNode) ProcessDeal(_ context.Context, request *ProcessDealRequest) (*ProcessDealResponse, error) {
+func (n *OracleNode) ProcessDeal(_ context.Context, request *ProcessDealRequest) (*ProcessDealResponse, error) {
 	log.Infof("Process deal from node %d", request.Deal.Index)
 
 	response, err := n.dkg.ProcessDeal(pbToDeal(request.Deal))
@@ -263,7 +262,7 @@ func (n *oracleNode) ProcessDeal(_ context.Context, request *ProcessDealRequest)
 	}, nil
 }
 
-func (n *oracleNode) broadCastResponse(response *dkg.Response) {
+func (n *OracleNode) broadCastResponse(response *dkg.Response) {
 	log.Infof("Broadcasting response with dealer %d and verifier %d", response.Index, response.Response.Index)
 	for _, otherNode := range n.clients {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -281,7 +280,7 @@ func (n *oracleNode) broadCastResponse(response *dkg.Response) {
 	}
 }
 
-func (n *oracleNode) ProcessResponse(ctx context.Context, request *ProcessResponseRequest) (*ProcessResponseResponse, error) {
+func (n *OracleNode) ProcessResponse(ctx context.Context, request *ProcessResponseRequest) (*ProcessResponseResponse, error) {
 	log.Infof("Process response with dealer %d and verifier %d", request.Response.Index, request.Response.Response.Index)
 
 	for {
@@ -302,7 +301,7 @@ func (n *oracleNode) ProcessResponse(ctx context.Context, request *ProcessRespon
 	}
 }
 
-func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
+func (n *OracleNode) watchVerifyTransactionLog(ctx context.Context) error {
 	sink := make(chan *OracleContractVerifyTransactionLog)
 	defer close(sink)
 
@@ -341,7 +340,7 @@ func (n *oracleNode) watchVerifyTransactionLog(ctx context.Context) error {
 	}
 }
 
-func (n *oracleNode) handleVerifyTransactionLog(ctx context.Context, event *OracleContractVerifyTransactionLog) error {
+func (n *OracleNode) handleVerifyTransactionLog(ctx context.Context, event *OracleContractVerifyTransactionLog) error {
 	aggregator := NewAggregator(n.ethClient, n.registryContract, n.account, n.distKey, n.nodes, n.threshold)
 	result, sig, err := aggregator.Aggregate(ctx, event.Id, common.BytesToHash(event.Hash[:]), event.Confirmations.Uint64())
 	if err != nil {
@@ -359,27 +358,20 @@ func (n *oracleNode) handleVerifyTransactionLog(ctx context.Context, event *Orac
 	return nil
 }
 
-func (n *oracleNode) VerifyTransaction(ctx context.Context, request *VerifyTransactionRequest) (*VerifyTransactionResponse, error) {
-	result, err := n.txVerifier.VerifyTransaction(ctx, common.HexToHash(request.Tx), request.Confirmations)
+func (n *OracleNode) ValidateTransaction(ctx context.Context, request *ValidateTransactionRequest) (*ValidateTransactionResponse, error) {
+	result, err := n.validator.ValidateTransaction(
+		ctx,
+		big.NewInt(request.Id),
+		common.HexToHash(request.Tx),
+		request.Confirmations,
+	)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "verify transaction: %v", err)
+		return nil, status.Errorf(codes.Internal, "validate transaction: %v", err)
 	}
-
-	message, _ := encodeVerificationResult(big.NewInt(request.Id), result)
-
-	sig, err := tbls.Sign(n.suite, n.distKey.PriShare(), message)
-	if err != nil {
-		return nil, fmt.Errorf("tbls sign: %v", err)
-	}
-
-	return &VerifyTransactionResponse{
-		Id:        request.Id,
-		Result:    result,
-		Signature: sig,
-	}, nil
+	return validateTransactionResultToResponse(result), nil
 }
 
-func (n *oracleNode) register(ipAddr string) error {
+func (n *OracleNode) register(ipAddr string) error {
 	isRegistered, err := n.registryContract.OracleNodeIsRegistered(nil, n.account)
 	if err != nil {
 		return fmt.Errorf("is registered: %w", err)
@@ -400,10 +392,17 @@ func (n *oracleNode) register(ipAddr string) error {
 	return nil
 }
 
-func (n *oracleNode) Stop() {
+func (n *OracleNode) DistKeyShare() (*dkg.DistKeyShare, error) {
+	if n.distKey == nil {
+		return nil, errors.New("no dist key share")
+	}
+	return n.distKey, nil
+}
+
+func (n *OracleNode) Stop() {
 	n.server.Stop()
 }
 
-func (n *oracleNode) GracefulStop() {
+func (n *OracleNode) GracefulStop() {
 	n.server.GracefulStop()
 }

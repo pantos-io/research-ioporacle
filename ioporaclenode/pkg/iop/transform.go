@@ -5,6 +5,14 @@ import (
 	vss "go.dedis.ch/kyber/v3/share/vss/pedersen"
 )
 
+func validateTransactionResultToResponse(result *ValidateTransactionResult) *ValidateTransactionResponse {
+	return &ValidateTransactionResponse{
+		Id:        result.id.Int64(),
+		Valid:     result.valid,
+		Signature: result.signature,
+	}
+}
+
 func dealToPb(deal *dkg.Deal) *Deal {
 	return &Deal{
 		Index:     deal.Index,

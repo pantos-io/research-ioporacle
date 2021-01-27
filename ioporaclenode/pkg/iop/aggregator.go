@@ -66,7 +66,7 @@ func (a *aggregatorImpl) Aggregate(ctx context.Context, id *big.Int, txHash comm
 			}
 			client := NewOracleNodeClient(conn)
 			ctxTimeout, cancel := context.WithTimeout(ctx, 3*time.Second)
-			result, err := client.VerifyTransaction(ctxTimeout, &VerifyTransactionRequest{
+			result, err := client.ValidateTransaction(ctxTimeout, &ValidateTransactionRequest{
 				Id:            id.Int64(),
 				Tx:            txHash.String(),
 				Confirmations: confirmations,
@@ -79,7 +79,7 @@ func (a *aggregatorImpl) Aggregate(ctx context.Context, id *big.Int, txHash comm
 			}
 			mutex.Lock()
 
-			if result.Result {
+			if result.Valid {
 				positiveResults = append(positiveResults, result.Signature)
 			} else {
 				negativeResults = append(negativeResults, result.Signature)

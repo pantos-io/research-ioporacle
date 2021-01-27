@@ -17,7 +17,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OracleNodeClient interface {
-	VerifyTransaction(ctx context.Context, in *VerifyTransactionRequest, opts ...grpc.CallOption) (*VerifyTransactionResponse, error)
+	ValidateTransaction(ctx context.Context, in *ValidateTransactionRequest, opts ...grpc.CallOption) (*ValidateTransactionResponse, error)
 	ProcessDeal(ctx context.Context, in *ProcessDealRequest, opts ...grpc.CallOption) (*ProcessDealResponse, error)
 	ProcessResponse(ctx context.Context, in *ProcessResponseRequest, opts ...grpc.CallOption) (*ProcessResponseResponse, error)
 	ProcessJustification(ctx context.Context, in *ProcessJustificationRequest, opts ...grpc.CallOption) (*ProcessJustificationResponse, error)
@@ -31,9 +31,9 @@ func NewOracleNodeClient(cc grpc.ClientConnInterface) OracleNodeClient {
 	return &oracleNodeClient{cc}
 }
 
-func (c *oracleNodeClient) VerifyTransaction(ctx context.Context, in *VerifyTransactionRequest, opts ...grpc.CallOption) (*VerifyTransactionResponse, error) {
-	out := new(VerifyTransactionResponse)
-	err := c.cc.Invoke(ctx, "/iop.OracleNode/VerifyTransaction", in, out, opts...)
+func (c *oracleNodeClient) ValidateTransaction(ctx context.Context, in *ValidateTransactionRequest, opts ...grpc.CallOption) (*ValidateTransactionResponse, error) {
+	out := new(ValidateTransactionResponse)
+	err := c.cc.Invoke(ctx, "/iop.OracleNode/ValidateTransaction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (c *oracleNodeClient) ProcessJustification(ctx context.Context, in *Process
 // All implementations must embed UnimplementedOracleNodeServer
 // for forward compatibility
 type OracleNodeServer interface {
-	VerifyTransaction(context.Context, *VerifyTransactionRequest) (*VerifyTransactionResponse, error)
+	ValidateTransaction(context.Context, *ValidateTransactionRequest) (*ValidateTransactionResponse, error)
 	ProcessDeal(context.Context, *ProcessDealRequest) (*ProcessDealResponse, error)
 	ProcessResponse(context.Context, *ProcessResponseRequest) (*ProcessResponseResponse, error)
 	ProcessJustification(context.Context, *ProcessJustificationRequest) (*ProcessJustificationResponse, error)
@@ -82,8 +82,8 @@ type OracleNodeServer interface {
 type UnimplementedOracleNodeServer struct {
 }
 
-func (UnimplementedOracleNodeServer) VerifyTransaction(context.Context, *VerifyTransactionRequest) (*VerifyTransactionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method VerifyTransaction not implemented")
+func (UnimplementedOracleNodeServer) ValidateTransaction(context.Context, *ValidateTransactionRequest) (*ValidateTransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateTransaction not implemented")
 }
 func (UnimplementedOracleNodeServer) ProcessDeal(context.Context, *ProcessDealRequest) (*ProcessDealResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProcessDeal not implemented")
@@ -107,20 +107,20 @@ func RegisterOracleNodeServer(s grpc.ServiceRegistrar, srv OracleNodeServer) {
 	s.RegisterService(&OracleNode_ServiceDesc, srv)
 }
 
-func _OracleNode_VerifyTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VerifyTransactionRequest)
+func _OracleNode_ValidateTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OracleNodeServer).VerifyTransaction(ctx, in)
+		return srv.(OracleNodeServer).ValidateTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/iop.OracleNode/VerifyTransaction",
+		FullMethod: "/iop.OracleNode/ValidateTransaction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OracleNodeServer).VerifyTransaction(ctx, req.(*VerifyTransactionRequest))
+		return srv.(OracleNodeServer).ValidateTransaction(ctx, req.(*ValidateTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -187,8 +187,8 @@ var OracleNode_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*OracleNodeServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "VerifyTransaction",
-			Handler:    _OracleNode_VerifyTransaction_Handler,
+			MethodName: "ValidateTransaction",
+			Handler:    _OracleNode_ValidateTransaction_Handler,
 		},
 		{
 			MethodName: "ProcessDeal",

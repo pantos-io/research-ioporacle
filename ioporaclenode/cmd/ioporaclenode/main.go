@@ -16,10 +16,10 @@ import (
 var (
 	addrFlag             = flag.String("address", "127.0.0.1:25565", "server address")
 	ethFlag              = flag.String("eth", "ws://127.0.0.1:7545", "eth node address")
-	oracleContractFlag   = flag.String("oracleContract", "0x74d7afd741DB6b58Cc6472BEA48e3A362c33FA63", "oracle contract address")
-	registryContractFlag = flag.String("registryContract", "0x5d5DaAC0DBd2C0a9Bb1f5E15d234d355B1894C9f", "registry contract address")
-	raffleContractFlag   = flag.String("raffleContract", "0xFA1798a4fB446F26909B69D3fd8bF43380f4e915", "raffle contract address")
-	distKeyContractFlag  = flag.String("distKeyContract", "0x553442A6b90D55e75606bF3b25913BAf8c67c199", "dist key contract address")
+	oracleContractFlag   = flag.String("oracleContract", "0x32742536554092C1f8d47A1E71aBd1daaEF55aBB", "oracle contract address")
+	registryContractFlag = flag.String("registryContract", "0x06983D416C40273bc22a9492F3a0D22AFAEdC26F", "registry contract address")
+	raffleContractFlag   = flag.String("raffleContract", "0x13aEeF0aa983851296707A37C5529C83FA3f2ee5", "raffle contract address")
+	distKeyContractFlag  = flag.String("distKeyContract", "0x998BdE7FF93774DF2087e23Df1d1d37Ff0977d5C", "dist key contract address")
 	ecdsaPrivateKeyFlag  = flag.String("ecdsaPrivateKey", "0xe63ff25be694842b3d25f3c8981dbe44b36b23a6effdbe04f9ee11e7965c922b", "private key")
 	blsPrivateKeyFlag    = flag.String("blsPrivateKey", "0x2e931ebbc908ec1993a789166f5690ee2ea34830df69a0fd0fc6a456b4aa8a46", "value of the private share")
 )
@@ -74,10 +74,10 @@ func main() {
 		log.Fatalf("listen on %s: %v", *addrFlag, err)
 	}
 
-	txVerifier := iop.NewTransactionVerifier(ethClient)
-	oracleNode := iop.NewOracleNode(
+	validator := iop.NewValidator(suite, nil, ethClient)
+	node := iop.NewOracleNode(
 		ethClient,
-		txVerifier,
+		validator,
 		oracleContract,
 		registryContractWrapper,
 		raffleContract,
@@ -87,9 +87,10 @@ func main() {
 		account,
 		suite,
 	)
+	validator.SetNode(node)
 
 	go func() {
-		if err := oracleNode.Serve(lis); err != nil {
+		if err := node.Serve(lis); err != nil {
 			log.Fatalf("serve %s: %v", lis.Addr(), err)
 		}
 	}()
@@ -98,6 +99,6 @@ func main() {
 	signal.Notify(sig, os.Interrupt)
 	<-sig
 
-	oracleNode.GracefulStop()
+	node.GracefulStop()
 	ethClient.Close()
 }
