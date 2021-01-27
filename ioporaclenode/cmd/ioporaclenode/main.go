@@ -16,10 +16,10 @@ import (
 var (
 	addrFlag             = flag.String("address", "127.0.0.1:25565", "server address")
 	ethFlag              = flag.String("eth", "ws://127.0.0.1:7545", "eth node address")
-	oracleContractFlag   = flag.String("oracleContract", "0x32742536554092C1f8d47A1E71aBd1daaEF55aBB", "oracle contract address")
-	registryContractFlag = flag.String("registryContract", "0x06983D416C40273bc22a9492F3a0D22AFAEdC26F", "registry contract address")
-	raffleContractFlag   = flag.String("raffleContract", "0x13aEeF0aa983851296707A37C5529C83FA3f2ee5", "raffle contract address")
-	distKeyContractFlag  = flag.String("distKeyContract", "0x998BdE7FF93774DF2087e23Df1d1d37Ff0977d5C", "dist key contract address")
+	oracleContractFlag   = flag.String("oracleContract", "0x6C0498eB2AAD5D50781514E745493F02cb99488A", "oracle contract address")
+	registryContractFlag = flag.String("registryContract", "0x8004C488FFfc77363bD93F51116E7aF4C7b442fD", "registry contract address")
+	raffleContractFlag   = flag.String("raffleContract", "0x2268D2825dab5490908Db6Da06402CCeD6873E85", "raffle contract address")
+	distKeyContractFlag  = flag.String("distKeyContract", "0x88E0d3423Df6FCC8A23f4B838FEA1f842CA32D81", "dist key contract address")
 	ecdsaPrivateKeyFlag  = flag.String("ecdsaPrivateKey", "0xe63ff25be694842b3d25f3c8981dbe44b36b23a6effdbe04f9ee11e7965c922b", "private key")
 	blsPrivateKeyFlag    = flag.String("blsPrivateKey", "0x2e931ebbc908ec1993a789166f5690ee2ea34830df69a0fd0fc6a456b4aa8a46", "value of the private share")
 )
@@ -74,9 +74,11 @@ func main() {
 		log.Fatalf("listen on %s: %v", *addrFlag, err)
 	}
 
+	connectionManager := iop.NewConnectionManager()
 	validator := iop.NewValidator(suite, nil, ethClient)
 	node := iop.NewOracleNode(
 		ethClient,
+		connectionManager,
 		validator,
 		oracleContract,
 		registryContractWrapper,
@@ -85,7 +87,7 @@ func main() {
 		ecdsaPrivateKey,
 		blsPrivateKey,
 		account,
-		suite,
+		bn256.NewSuiteG2(),
 	)
 	validator.SetNode(node)
 

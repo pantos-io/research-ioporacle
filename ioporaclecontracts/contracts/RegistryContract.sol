@@ -38,13 +38,13 @@ contract RegistryContract {
         iopNode.index = oracleNodeIndices.length;
         oracleNodeIndices.push(iopNode.addr);
 
+        emit RegisterOracleNodeLog(msg.sender);
+
         if (
             oracleNodeIndices.length % distKeyContract.KEY_GEN_INTERVAL() == 0
         ) {
             distKeyContract.generate();
         }
-
-        emit RegisterOracleNodeLog(msg.sender);
     }
 
     function oracleNodeIsRegistered(address _addr) public view returns (bool) {

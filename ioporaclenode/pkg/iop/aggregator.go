@@ -23,7 +23,6 @@ type Aggregator interface {
 type aggregatorImpl struct {
 	ethClient        *ethclient.Client
 	registryContract *RegistryContractWrapper
-	account          common.Address
 	distKey          *dkg.DistKeyShare
 	nodes            []RegistryContractOracleNode
 	t                int
@@ -32,7 +31,6 @@ type aggregatorImpl struct {
 func NewAggregator(
 	ethClient *ethclient.Client,
 	registryContract *RegistryContractWrapper,
-	account common.Address,
 	distKey *dkg.DistKeyShare,
 	nodes []RegistryContractOracleNode,
 	t int,
@@ -40,7 +38,6 @@ func NewAggregator(
 	return &aggregatorImpl{
 		ethClient:        ethClient,
 		registryContract: registryContract,
-		account:          account,
 		distKey:          distKey,
 		nodes:            nodes,
 		t:                t,
