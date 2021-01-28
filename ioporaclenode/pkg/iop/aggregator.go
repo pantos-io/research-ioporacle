@@ -6,45 +6,38 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	log "github.com/sirupsen/logrus"
+	"go.dedis.ch/kyber/v3/pairing"
 	"go.dedis.ch/kyber/v3/share"
-	dkg "go.dedis.ch/kyber/v3/share/dkg/pedersen"
 	"go.dedis.ch/kyber/v3/sign/tbls"
-	"google.golang.org/grpc"
-	"ioporaclenode/internal/pkg/kyber/pairing/bn256"
 	"math/big"
 	"sync"
 	"time"
 )
 
-type Aggregator interface {
-	Aggregate(ctx context.Context, id *big.Int, txHash common.Hash, confirmations uint64) (bool, [][]byte, error)
-}
-
-type aggregatorImpl struct {
-	ethClient        *ethclient.Client
-	registryContract *RegistryContractWrapper
-	distKey          *dkg.DistKeyShare
-	nodes            []RegistryContractOracleNode
-	t                int
+type Aggregator struct {
+	suite             pairing.Suite
+	ethClient         *ethclient.Client
+	node              *OracleNode
+	connectionManager *ConnectionManager
+	registryContract  *RegistryContractWrapper
+	t                 int
 }
 
 func NewAggregator(
+	suite pairing.Suite,
 	ethClient *ethclient.Client,
+	connectionManager *ConnectionManager,
 	registryContract *RegistryContractWrapper,
-	distKey *dkg.DistKeyShare,
-	nodes []RegistryContractOracleNode,
-	t int,
-) *aggregatorImpl {
-	return &aggregatorImpl{
-		ethClient:        ethClient,
-		registryContract: registryContract,
-		distKey:          distKey,
-		nodes:            nodes,
-		t:                t,
+) *Aggregator {
+	return &Aggregator{
+		suite:             suite,
+		ethClient:         ethClient,
+		connectionManager: connectionManager,
+		registryContract:  registryContract,
 	}
 }
 
-func (a *aggregatorImpl) Aggregate(ctx context.Context, id *big.Int, txHash common.Hash, confirmations uint64) (bool, []byte, error) {
+func (a *Aggregator) AggregateValidateTransactionResults(ctx context.Context, id *big.Int, txHash common.Hash, confirmations uint64) (bool, []byte, error) {
 
 	positiveResults := make([][]byte, 0)
 	negativeResults := make([][]byte, 0)
@@ -52,13 +45,18 @@ func (a *aggregatorImpl) Aggregate(ctx context.Context, id *big.Int, txHash comm
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
 
-	for _, v := range a.nodes {
+	nodes, err := a.registryContract.FindIopNodes()
+	if err != nil {
+		return false, nil, fmt.Errorf("find nodes: %w", err)
+	}
+
+	for _, v := range nodes {
 		wg.Add(1)
 		go func(node RegistryContractOracleNode) {
 			defer wg.Done()
-			conn, err := grpc.Dial(node.IpAddr, grpc.WithInsecure())
+			conn, err := a.connectionManager.FindByAddress(node.Addr)
 			if err != nil {
-				log.Errorf("dial %s: %v", node.IpAddr, err)
+				log.Errorf("find connection by address: %v", err)
 				return
 			}
 			client := NewOracleNodeClient(conn)
@@ -69,7 +67,6 @@ func (a *aggregatorImpl) Aggregate(ctx context.Context, id *big.Int, txHash comm
 				Confirmations: confirmations,
 			})
 			cancel()
-			_ = conn.Close()
 			if err != nil {
 				log.Errorf("verify transaction %s: %v", node.IpAddr, err)
 				return
@@ -87,9 +84,12 @@ func (a *aggregatorImpl) Aggregate(ctx context.Context, id *big.Int, txHash comm
 
 	wg.Wait()
 
-	suite := bn256.NewSuite()
-	suiteG2 := bn256.NewSuiteG2()
-	pubPoly := share.NewPubPoly(suiteG2, suiteG2.Point().Base(), a.distKey.Commits)
+	distKey, err := a.node.DistKeyShare()
+	if err != nil {
+		return false, nil, fmt.Errorf("dist key share: %w", err)
+	}
+
+	pubPoly := share.NewPubPoly(a.suite.G2(), a.suite.G2().Point().Base(), distKey.Commits)
 
 	result := false
 	sigShares := negativeResults
@@ -99,15 +99,23 @@ func (a *aggregatorImpl) Aggregate(ctx context.Context, id *big.Int, txHash comm
 		sigShares = positiveResults
 	}
 
-	message, err := encodeVerificationResult(id, result)
+	message, err := encodeValidateTransactionResult(id, result)
 	if err != nil {
 		return false, nil, fmt.Errorf("encode verification result: %w", err)
 	}
 
-	signature, err := tbls.Recover(suite, pubPoly, message, sigShares, a.t, len(a.nodes))
+	signature, err := tbls.Recover(a.suite, pubPoly, message, sigShares, a.t, len(nodes))
 	if err != nil {
 		return false, nil, fmt.Errorf("recover signature: %v", err)
 	}
 
 	return result, signature, nil
+}
+
+func (a *Aggregator) SetNode(node *OracleNode) {
+	a.node = node
+}
+
+func (a *Aggregator) SetThreshold(threshold int) {
+	a.t = threshold
 }

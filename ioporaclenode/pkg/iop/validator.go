@@ -24,10 +24,9 @@ type Validator struct {
 	ethClient *ethclient.Client
 }
 
-func NewValidator(suite pairing.Suite, node *OracleNode, ethClient *ethclient.Client) *Validator {
+func NewValidator(suite pairing.Suite, ethClient *ethclient.Client) *Validator {
 	return &Validator{
 		suite:     suite,
-		node:      node,
 		ethClient: ethClient,
 	}
 }
@@ -38,16 +37,19 @@ func (v *Validator) ValidateTransaction(ctx context.Context, id *big.Int, txHash
 	if err != nil && found {
 		return nil, fmt.Errorf("transaction receipt: %w", err)
 	}
+
 	blockNumber, err := v.ethClient.BlockNumber(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("blocknumber: %w", err)
 	}
+
 	valid := false
 	if found {
 		confirmed := blockNumber - receipt.BlockNumber.Uint64()
 		valid = confirmed >= confirmations
 	}
-	message, err := encodeVerificationResult(id, valid)
+
+	message, err := encodeValidateTransactionResult(id, valid)
 	if err != nil {
 		return nil, fmt.Errorf("encode result: %w", err)
 	}

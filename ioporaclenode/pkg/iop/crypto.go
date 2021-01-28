@@ -26,9 +26,8 @@ func HexToScalar(suite kyber.Group, hexScalar string) (kyber.Scalar, error) {
 		return nil, errors.New("invalid hex data for scalar")
 	}
 	s := suite.Scalar()
-	err = s.UnmarshalBinary(b)
-	if err != nil {
-		return nil, fmt.Errorf("unmarshal scalar binary: %v", err)
+	if err := s.UnmarshalBinary(b); err != nil {
+		return nil, fmt.Errorf("unmarshal scalar binary: %w", err)
 	}
 	return s, nil
 }

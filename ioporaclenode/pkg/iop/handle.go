@@ -17,9 +17,8 @@ func (n *OracleNode) handleRegisterOracleNodeLog(event *RegistryContractRegister
 	if err != nil {
 		return fmt.Errorf("find oracle node by address %s: %w", event.Sender, err)
 	}
-	n.nodes = append(n.nodes, node)
-	_, err = n.connectionManager.NewConnection(node)
-	if err != nil {
+	//n.nodes = append(n.nodes, node)
+	if _, err := n.connectionManager.NewConnection(node); err != nil {
 		return fmt.Errorf("new connection: %w", err)
 	}
 	log.Infof("New connection to %s", event.Sender.String())
@@ -27,8 +26,7 @@ func (n *OracleNode) handleRegisterOracleNodeLog(event *RegistryContractRegister
 }
 
 func (n *OracleNode) handleVerifyTransactionLog(ctx context.Context, event *OracleContractVerifyTransactionLog) error {
-	aggregator := NewAggregator(n.ethClient, n.registryContract, n.distKey, n.nodes, n.threshold)
-	result, sig, err := aggregator.Aggregate(ctx, event.Id, common.BytesToHash(event.Hash[:]), event.Confirmations.Uint64())
+	result, sig, err := n.aggregator.AggregateValidateTransactionResults(ctx, event.Id, common.BytesToHash(event.Hash[:]), event.Confirmations.Uint64())
 	if err != nil {
 		return fmt.Errorf("verify transaction remote: %w", err)
 	}
@@ -48,28 +46,32 @@ func (n *OracleNode) handleDistributedKeyGenerationLog(event *DistKeyContractDis
 
 	time.Sleep(5 * time.Second)
 
-	pubKeys := make([]kyber.Point, len(n.nodes))
-	for i, node := range n.nodes {
+	nodes, err := n.registryContract.FindIopNodes()
+	if err != nil {
+		return fmt.Errorf("find nodes: %w", err)
+	}
+
+	pubKeys := make([]kyber.Point, len(nodes))
+	for i, node := range nodes {
 		pubKey := n.suiteG2.Point()
-		err := pubKey.UnmarshalBinary(node.PubKey)
-		if err != nil {
+		if err := pubKey.UnmarshalBinary(node.PubKey); err != nil {
 			return fmt.Errorf("unmarshal public key: %w", err)
 		}
 		pubKeys[i] = pubKey
 	}
 
-	n.threshold = int(event.Threshold.Int64())
+	threshold := int(event.Threshold.Int64())
 	distKeyGenerator, err := dkg.NewDistKeyGenerator(
 		n.suiteG2,
 		n.blsPrivateKey,
 		pubKeys,
-		n.threshold,
+		threshold,
 	)
 	if err != nil {
 		return fmt.Errorf("new dkg: %w", err)
 	}
 	n.dkg = distKeyGenerator
-
+	n.aggregator.SetThreshold(threshold)
 	time.Sleep(5 * time.Second)
 
 	deals, err := n.dkg.Deals()
@@ -77,7 +79,7 @@ func (n *OracleNode) handleDistributedKeyGenerationLog(event *DistKeyContractDis
 		return fmt.Errorf("deals: %w", err)
 	}
 
-	n.broadCastDeals(deals)
+	n.broadCastDeals(nodes, deals)
 
 	timeout := time.After(30 * time.Second)
 
@@ -98,13 +100,13 @@ loop:
 	log.Infof("Qualified shares: %v\n", n.dkg.QualifiedShares())
 	log.Infof("QUAL: %v\n", n.dkg.QUAL())
 
-	n.distKey, err = n.dkg.DistKeyShare()
+	distKey, err := n.dkg.DistKeyShare()
 	if err != nil {
 		return fmt.Errorf("distributed key share: %w", err)
 	}
 
-	log.Infof("Public Key: %v", n.distKey.Public())
-	pubBinary, err := n.distKey.Public().MarshalBinary()
+	log.Infof("Public Key: %v", distKey.Public())
+	pubBinary, err := distKey.Public().MarshalBinary()
 	if err != nil {
 		return fmt.Errorf("marshal public key: %w", err)
 	}

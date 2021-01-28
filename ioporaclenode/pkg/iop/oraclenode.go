@@ -3,7 +3,6 @@ package iop
 import (
 	"context"
 	"crypto/ecdsa"
-	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -22,7 +21,7 @@ type OracleNode struct {
 	server            *grpc.Server
 	connectionManager *ConnectionManager
 	validator         *Validator
-	aggregator        Aggregator
+	aggregator        *Aggregator
 	ethClient         *ethclient.Client
 	oracleContract    *OracleContract
 	registryContract  *RegistryContractWrapper
@@ -31,18 +30,15 @@ type OracleNode struct {
 	dkg               *dkg.DistKeyGenerator
 	ecdsaPrivateKey   *ecdsa.PrivateKey
 	blsPrivateKey     kyber.Scalar
-	blsPublicKey      kyber.Point
 	account           common.Address
 	suiteG2           *bn256.Suite
-	distKey           *dkg.DistKeyShare
-	threshold         int
-	nodes             []RegistryContractOracleNode
 }
 
 func NewOracleNode(
 	ethClient *ethclient.Client,
 	connectionManager *ConnectionManager,
 	validator *Validator,
+	aggregator *Aggregator,
 	oracleContract *OracleContract,
 	registryContract *RegistryContractWrapper,
 	raffleContract *RaffleContract,
@@ -58,13 +54,13 @@ func NewOracleNode(
 		ethClient:         ethClient,
 		connectionManager: connectionManager,
 		validator:         validator,
+		aggregator:        aggregator,
 		oracleContract:    oracleContract,
 		registryContract:  registryContract,
 		raffleContract:    raffleContract,
 		distKeyContract:   distKeyContract,
 		ecdsaPrivateKey:   ecdsaPrivateKey,
 		blsPrivateKey:     blsPrivateKey,
-		blsPublicKey:      suite.Point().Mul(blsPrivateKey, nil),
 		account:           account,
 		suiteG2:           suite,
 	}
@@ -73,14 +69,12 @@ func NewOracleNode(
 }
 
 func (n *OracleNode) Serve(lis net.Listener) error {
-	err := n.initConnections()
-	if err != nil {
+	if err := n.initConnections(); err != nil {
 		return fmt.Errorf("init connections: %w", err)
 	}
-	n.watch()
-	err = n.register(lis.Addr().String())
-	if err != nil {
-		return fmt.Errorf("register: %v", err)
+	n.watch(context.Background())
+	if err := n.register(lis.Addr().String()); err != nil {
+		return fmt.Errorf("register: %w", err)
 	}
 	return n.server.Serve(lis)
 }
@@ -91,17 +85,15 @@ func (n *OracleNode) initConnections() error {
 	if err != nil {
 		return fmt.Errorf("find nodes: %w", err)
 	}
-	n.nodes = nodes
-	for i := 0; i < len(nodes); i++ {
-		if nodes[i].Addr == n.account {
+	for _, node := range nodes {
+		if node.Addr == n.account {
 			continue
 		}
-		_, err := n.connectionManager.NewConnection(nodes[i])
-		if err != nil {
-			log.Errorf("new connection %s: %v", nodes[i].IpAddr, err)
+		if _, err := n.connectionManager.NewConnection(node); err != nil {
+			log.Errorf("new connection %s: %v", node.IpAddr, err)
 			continue
 		}
-		log.Infof("New connection to %s", nodes[i].Addr.String())
+		log.Infof("New connection to %s", node.Addr.String())
 	}
 	return nil
 }
@@ -112,7 +104,8 @@ func (n *OracleNode) register(ipAddr string) error {
 		return fmt.Errorf("is registered: %w", err)
 	}
 
-	b, err := n.blsPublicKey.MarshalBinary()
+	blsPublicKey := n.suiteG2.Point().Mul(n.blsPrivateKey, nil)
+	b, err := blsPublicKey.MarshalBinary()
 	if err != nil {
 		return fmt.Errorf("marshal bls public key: %v", err)
 	}
@@ -127,10 +120,10 @@ func (n *OracleNode) register(ipAddr string) error {
 	return nil
 }
 
-func (n *OracleNode) broadCastDeals(deals map[int]*dkg.Deal) {
+func (n *OracleNode) broadCastDeals(nodes []RegistryContractOracleNode, deals map[int]*dkg.Deal) {
 	log.Infof("Broadcasting deals")
 	for i, deal := range deals {
-		conn, err := n.connectionManager.FindByAddress(n.nodes[i].Addr)
+		conn, err := n.connectionManager.FindByAddress(nodes[i].Addr)
 		if err != nil {
 			log.Errorf("find connection by address: %v", err)
 			continue
@@ -140,17 +133,21 @@ func (n *OracleNode) broadCastDeals(deals map[int]*dkg.Deal) {
 		request := &ProcessDealRequest{
 			Deal: dealToPb(deal),
 		}
-		_, err = client.ProcessDeal(ctx, request)
-		if err != nil {
+		if _, err := client.ProcessDeal(ctx, request); err != nil {
 			log.Errorf("process deal: %v", err)
 		}
 		cancel()
 	}
 }
 
-func (n *OracleNode) broadCastResponse(response *dkg.Response) {
+func (n *OracleNode) broadCastResponse(response *dkg.Response) error {
 	log.Infof("Broadcasting response with dealer %d and verifier %d", response.Index, response.Response.Index)
-	for _, otherNode := range n.nodes {
+	nodes, err := n.registryContract.FindIopNodes()
+	if err != nil {
+		return fmt.Errorf("find nodes: %w", err)
+	}
+
+	for _, otherNode := range nodes {
 		if otherNode.Addr == n.account {
 			continue
 		}
@@ -165,28 +162,27 @@ func (n *OracleNode) broadCastResponse(response *dkg.Response) {
 			Response: responseToPb(response),
 		}
 		go func() {
-			_, err := client.ProcessResponse(ctx, request)
-			if err != nil {
+			if _, err := client.ProcessResponse(ctx, request); err != nil {
 				log.Errorf("process response: %v", err)
 			}
 			cancel()
 		}()
 	}
+	return nil
 }
 
 func (n *OracleNode) DistKeyShare() (*dkg.DistKeyShare, error) {
-	if n.distKey == nil {
-		return nil, errors.New("no dist key share")
-	}
-	return n.distKey, nil
+	return n.dkg.DistKeyShare()
 }
 
 func (n *OracleNode) Stop() {
-	n.connectionManager.Close()
 	n.server.Stop()
+	n.ethClient.Close()
+	n.connectionManager.Close()
 }
 
 func (n *OracleNode) GracefulStop() {
-	n.connectionManager.Close()
 	n.server.GracefulStop()
+	n.ethClient.Close()
+	n.connectionManager.Close()
 }

@@ -6,22 +6,19 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (n *OracleNode) watch() {
+func (n *OracleNode) watch(ctx context.Context) {
 	go func() {
-		err := n.watchRegisterOracleNodeLog(context.Background())
-		if err != nil {
+		if err := n.watchRegisterOracleNodeLog(ctx); err != nil {
 			log.Errorf("watch register oracle node log: %v", err)
 		}
 	}()
 	go func() {
-		err := n.watchDistKeyGenerationLog(context.Background())
-		if err != nil {
+		if err := n.watchDistKeyGenerationLog(ctx); err != nil {
 			log.Errorf("watch distributed key generation log: %v", err)
 		}
 	}()
 	go func() {
-		err := n.watchVerifyTransactionLog(context.Background())
-		if err != nil {
+		if err := n.watchVerifyTransactionLog(ctx); err != nil {
 			log.Errorf("watch verify transaction log: %v", err)
 		}
 	}()
@@ -47,8 +44,7 @@ func (n *OracleNode) watchRegisterOracleNodeLog(ctx context.Context) error {
 		select {
 		case event := <-sink:
 			log.Infof("Received register oracle node event %s", event.Sender.String())
-			err = n.handleRegisterOracleNodeLog(event)
-			if err != nil {
+			if err = n.handleRegisterOracleNodeLog(event); err != nil {
 				log.Errorf("handle register oracle node log: %v", err)
 			}
 		case err = <-sub.Err():
@@ -78,8 +74,7 @@ func (n *OracleNode) watchDistKeyGenerationLog(ctx context.Context) error {
 		select {
 		case event := <-sink:
 			log.Infof("Received distributed key generation event with t %s", event.Threshold)
-			err = n.handleDistributedKeyGenerationLog(event)
-			if err != nil {
+			if err := n.handleDistributedKeyGenerationLog(event); err != nil {
 				log.Errorf("handle distributed key generation log: %v", err)
 			}
 		case err = <-sub.Err():
@@ -106,6 +101,7 @@ func (n *OracleNode) watchVerifyTransactionLog(ctx context.Context) error {
 		return err
 	}
 	defer sub.Unsubscribe()
+
 	for {
 		select {
 		case event := <-sink:
@@ -118,8 +114,7 @@ func (n *OracleNode) watchVerifyTransactionLog(ctx context.Context) error {
 			if !isAggregator {
 				continue
 			}
-			err = n.handleVerifyTransactionLog(ctx, event)
-			if err != nil {
+			if err := n.handleVerifyTransactionLog(ctx, event); err != nil {
 				log.Errorf("handle verify transaction log: %v", err)
 			}
 		case err = <-sub.Err():

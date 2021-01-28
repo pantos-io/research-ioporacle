@@ -28,10 +28,6 @@ func (m *ConnectionManager) NewConnection(node RegistryContractOracleNode) (*grp
 	return conn, nil
 }
 
-func (m *ConnectionManager) Connections() map[common.Address]*grpc.ClientConn {
-	return m.connections
-}
-
 func (m *ConnectionManager) FindByAddress(address common.Address) (*grpc.ClientConn, error) {
 	if conn, ok := m.connections[address]; ok {
 		return conn, nil

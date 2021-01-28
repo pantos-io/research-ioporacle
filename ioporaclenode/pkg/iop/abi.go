@@ -5,7 +5,7 @@ import (
 	"math/big"
 )
 
-func encodeVerificationResult(id *big.Int, result bool) ([]byte, error) {
+func encodeValidateTransactionResult(id *big.Int, result bool) ([]byte, error) {
 	uint256Ty, _ := abi.NewType("uint256", "", nil)
 	boolTy, _ := abi.NewType("bool", "", nil)
 
