@@ -26,14 +26,14 @@ var (
 	_ = event.NewSubscription
 )
 
-// OracleContractVerificationResult is an auto generated low-level Go binding around an user-defined struct.
-type OracleContractVerificationResult struct {
+// OracleContractValidationResult is an auto generated low-level Go binding around an user-defined struct.
+type OracleContractValidationResult struct {
 	Id     *big.Int
 	Result bool
 }
 
 // OracleContractABI is the input ABI used to generate the binding from.
-const OracleContractABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_distKeyContract\",\"type\":\"address\"},{\"internalType\":\"addresspayable\",\"name\":\"_raffleContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"name\":\"SubmitVerificationLog\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"hash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"confirmations\",\"type\":\"uint256\"}],\"name\":\"VerifyTransactionLog\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_confirmations\",\"type\":\"uint256\"}],\"name\":\"verifyTransaction\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\",\"payable\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"},{\"internalType\":\"uint256[2]\",\"name\":\"_signature\",\"type\":\"uint256[2]\"}],\"name\":\"submitVerification\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"findVerification\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"internalType\":\"structOracleContract.VerificationResult\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"verificationExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true}]"
+const OracleContractABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_distKeyContract\",\"type\":\"address\"},{\"internalType\":\"addresspayable\",\"name\":\"_raffleContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"name\":\"SubmitValidationResultLog\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"hash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"confirmations\",\"type\":\"uint256\"}],\"name\":\"ValidateTransactionLog\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_confirmations\",\"type\":\"uint256\"}],\"name\":\"validateTransaction\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\",\"payable\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"},{\"internalType\":\"uint256[2]\",\"name\":\"_signature\",\"type\":\"uint256[2]\"}],\"name\":\"submitValidationResult\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"findValidationResult\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"internalType\":\"structOracleContract.ValidationResult\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"validationResultExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true}]"
 
 // OracleContract is an auto generated Go binding around an Ethereum contract.
 type OracleContract struct {
@@ -177,43 +177,43 @@ func (_OracleContract *OracleContractTransactorRaw) Transact(opts *bind.Transact
 	return _OracleContract.Contract.contract.Transact(opts, method, params...)
 }
 
-// FindVerification is a free data retrieval call binding the contract method 0x0bfb3232.
+// FindValidationResult is a free data retrieval call binding the contract method 0x953bde29.
 //
-// Solidity: function findVerification(uint256 _id) view returns((uint256,bool))
-func (_OracleContract *OracleContractCaller) FindVerification(opts *bind.CallOpts, _id *big.Int) (OracleContractVerificationResult, error) {
+// Solidity: function findValidationResult(uint256 _id) view returns((uint256,bool))
+func (_OracleContract *OracleContractCaller) FindValidationResult(opts *bind.CallOpts, _id *big.Int) (OracleContractValidationResult, error) {
 	var out []interface{}
-	err := _OracleContract.contract.Call(opts, &out, "findVerification", _id)
+	err := _OracleContract.contract.Call(opts, &out, "findValidationResult", _id)
 
 	if err != nil {
-		return *new(OracleContractVerificationResult), err
+		return *new(OracleContractValidationResult), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(OracleContractVerificationResult)).(*OracleContractVerificationResult)
+	out0 := *abi.ConvertType(out[0], new(OracleContractValidationResult)).(*OracleContractValidationResult)
 
 	return out0, err
 
 }
 
-// FindVerification is a free data retrieval call binding the contract method 0x0bfb3232.
+// FindValidationResult is a free data retrieval call binding the contract method 0x953bde29.
 //
-// Solidity: function findVerification(uint256 _id) view returns((uint256,bool))
-func (_OracleContract *OracleContractSession) FindVerification(_id *big.Int) (OracleContractVerificationResult, error) {
-	return _OracleContract.Contract.FindVerification(&_OracleContract.CallOpts, _id)
+// Solidity: function findValidationResult(uint256 _id) view returns((uint256,bool))
+func (_OracleContract *OracleContractSession) FindValidationResult(_id *big.Int) (OracleContractValidationResult, error) {
+	return _OracleContract.Contract.FindValidationResult(&_OracleContract.CallOpts, _id)
 }
 
-// FindVerification is a free data retrieval call binding the contract method 0x0bfb3232.
+// FindValidationResult is a free data retrieval call binding the contract method 0x953bde29.
 //
-// Solidity: function findVerification(uint256 _id) view returns((uint256,bool))
-func (_OracleContract *OracleContractCallerSession) FindVerification(_id *big.Int) (OracleContractVerificationResult, error) {
-	return _OracleContract.Contract.FindVerification(&_OracleContract.CallOpts, _id)
+// Solidity: function findValidationResult(uint256 _id) view returns((uint256,bool))
+func (_OracleContract *OracleContractCallerSession) FindValidationResult(_id *big.Int) (OracleContractValidationResult, error) {
+	return _OracleContract.Contract.FindValidationResult(&_OracleContract.CallOpts, _id)
 }
 
-// VerificationExists is a free data retrieval call binding the contract method 0xc6704288.
+// ValidationResultExists is a free data retrieval call binding the contract method 0xef915125.
 //
-// Solidity: function verificationExists(uint256 _id) view returns(bool)
-func (_OracleContract *OracleContractCaller) VerificationExists(opts *bind.CallOpts, _id *big.Int) (bool, error) {
+// Solidity: function validationResultExists(uint256 _id) view returns(bool)
+func (_OracleContract *OracleContractCaller) ValidationResultExists(opts *bind.CallOpts, _id *big.Int) (bool, error) {
 	var out []interface{}
-	err := _OracleContract.contract.Call(opts, &out, "verificationExists", _id)
+	err := _OracleContract.contract.Call(opts, &out, "validationResultExists", _id)
 
 	if err != nil {
 		return *new(bool), err
@@ -225,65 +225,65 @@ func (_OracleContract *OracleContractCaller) VerificationExists(opts *bind.CallO
 
 }
 
-// VerificationExists is a free data retrieval call binding the contract method 0xc6704288.
+// ValidationResultExists is a free data retrieval call binding the contract method 0xef915125.
 //
-// Solidity: function verificationExists(uint256 _id) view returns(bool)
-func (_OracleContract *OracleContractSession) VerificationExists(_id *big.Int) (bool, error) {
-	return _OracleContract.Contract.VerificationExists(&_OracleContract.CallOpts, _id)
+// Solidity: function validationResultExists(uint256 _id) view returns(bool)
+func (_OracleContract *OracleContractSession) ValidationResultExists(_id *big.Int) (bool, error) {
+	return _OracleContract.Contract.ValidationResultExists(&_OracleContract.CallOpts, _id)
 }
 
-// VerificationExists is a free data retrieval call binding the contract method 0xc6704288.
+// ValidationResultExists is a free data retrieval call binding the contract method 0xef915125.
 //
-// Solidity: function verificationExists(uint256 _id) view returns(bool)
-func (_OracleContract *OracleContractCallerSession) VerificationExists(_id *big.Int) (bool, error) {
-	return _OracleContract.Contract.VerificationExists(&_OracleContract.CallOpts, _id)
+// Solidity: function validationResultExists(uint256 _id) view returns(bool)
+func (_OracleContract *OracleContractCallerSession) ValidationResultExists(_id *big.Int) (bool, error) {
+	return _OracleContract.Contract.ValidationResultExists(&_OracleContract.CallOpts, _id)
 }
 
-// SubmitVerification is a paid mutator transaction binding the contract method 0xb1f98c1f.
+// SubmitValidationResult is a paid mutator transaction binding the contract method 0x4c281081.
 //
-// Solidity: function submitVerification(uint256 _id, bool _result, uint256[2] _signature) returns()
-func (_OracleContract *OracleContractTransactor) SubmitVerification(opts *bind.TransactOpts, _id *big.Int, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
-	return _OracleContract.contract.Transact(opts, "submitVerification", _id, _result, _signature)
+// Solidity: function submitValidationResult(uint256 _id, bool _result, uint256[2] _signature) returns()
+func (_OracleContract *OracleContractTransactor) SubmitValidationResult(opts *bind.TransactOpts, _id *big.Int, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
+	return _OracleContract.contract.Transact(opts, "submitValidationResult", _id, _result, _signature)
 }
 
-// SubmitVerification is a paid mutator transaction binding the contract method 0xb1f98c1f.
+// SubmitValidationResult is a paid mutator transaction binding the contract method 0x4c281081.
 //
-// Solidity: function submitVerification(uint256 _id, bool _result, uint256[2] _signature) returns()
-func (_OracleContract *OracleContractSession) SubmitVerification(_id *big.Int, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
-	return _OracleContract.Contract.SubmitVerification(&_OracleContract.TransactOpts, _id, _result, _signature)
+// Solidity: function submitValidationResult(uint256 _id, bool _result, uint256[2] _signature) returns()
+func (_OracleContract *OracleContractSession) SubmitValidationResult(_id *big.Int, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
+	return _OracleContract.Contract.SubmitValidationResult(&_OracleContract.TransactOpts, _id, _result, _signature)
 }
 
-// SubmitVerification is a paid mutator transaction binding the contract method 0xb1f98c1f.
+// SubmitValidationResult is a paid mutator transaction binding the contract method 0x4c281081.
 //
-// Solidity: function submitVerification(uint256 _id, bool _result, uint256[2] _signature) returns()
-func (_OracleContract *OracleContractTransactorSession) SubmitVerification(_id *big.Int, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
-	return _OracleContract.Contract.SubmitVerification(&_OracleContract.TransactOpts, _id, _result, _signature)
+// Solidity: function submitValidationResult(uint256 _id, bool _result, uint256[2] _signature) returns()
+func (_OracleContract *OracleContractTransactorSession) SubmitValidationResult(_id *big.Int, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
+	return _OracleContract.Contract.SubmitValidationResult(&_OracleContract.TransactOpts, _id, _result, _signature)
 }
 
-// VerifyTransaction is a paid mutator transaction binding the contract method 0xd0508fd6.
+// ValidateTransaction is a paid mutator transaction binding the contract method 0x5f6c680d.
 //
-// Solidity: function verifyTransaction(bytes32 _hash, uint256 _confirmations) payable returns()
-func (_OracleContract *OracleContractTransactor) VerifyTransaction(opts *bind.TransactOpts, _hash [32]byte, _confirmations *big.Int) (*types.Transaction, error) {
-	return _OracleContract.contract.Transact(opts, "verifyTransaction", _hash, _confirmations)
+// Solidity: function validateTransaction(bytes32 _hash, uint256 _confirmations) payable returns()
+func (_OracleContract *OracleContractTransactor) ValidateTransaction(opts *bind.TransactOpts, _hash [32]byte, _confirmations *big.Int) (*types.Transaction, error) {
+	return _OracleContract.contract.Transact(opts, "validateTransaction", _hash, _confirmations)
 }
 
-// VerifyTransaction is a paid mutator transaction binding the contract method 0xd0508fd6.
+// ValidateTransaction is a paid mutator transaction binding the contract method 0x5f6c680d.
 //
-// Solidity: function verifyTransaction(bytes32 _hash, uint256 _confirmations) payable returns()
-func (_OracleContract *OracleContractSession) VerifyTransaction(_hash [32]byte, _confirmations *big.Int) (*types.Transaction, error) {
-	return _OracleContract.Contract.VerifyTransaction(&_OracleContract.TransactOpts, _hash, _confirmations)
+// Solidity: function validateTransaction(bytes32 _hash, uint256 _confirmations) payable returns()
+func (_OracleContract *OracleContractSession) ValidateTransaction(_hash [32]byte, _confirmations *big.Int) (*types.Transaction, error) {
+	return _OracleContract.Contract.ValidateTransaction(&_OracleContract.TransactOpts, _hash, _confirmations)
 }
 
-// VerifyTransaction is a paid mutator transaction binding the contract method 0xd0508fd6.
+// ValidateTransaction is a paid mutator transaction binding the contract method 0x5f6c680d.
 //
-// Solidity: function verifyTransaction(bytes32 _hash, uint256 _confirmations) payable returns()
-func (_OracleContract *OracleContractTransactorSession) VerifyTransaction(_hash [32]byte, _confirmations *big.Int) (*types.Transaction, error) {
-	return _OracleContract.Contract.VerifyTransaction(&_OracleContract.TransactOpts, _hash, _confirmations)
+// Solidity: function validateTransaction(bytes32 _hash, uint256 _confirmations) payable returns()
+func (_OracleContract *OracleContractTransactorSession) ValidateTransaction(_hash [32]byte, _confirmations *big.Int) (*types.Transaction, error) {
+	return _OracleContract.Contract.ValidateTransaction(&_OracleContract.TransactOpts, _hash, _confirmations)
 }
 
-// OracleContractSubmitVerificationLogIterator is returned from FilterSubmitVerificationLog and is used to iterate over the raw logs and unpacked data for SubmitVerificationLog events raised by the OracleContract contract.
-type OracleContractSubmitVerificationLogIterator struct {
-	Event *OracleContractSubmitVerificationLog // Event containing the contract specifics and raw log
+// OracleContractSubmitValidationResultLogIterator is returned from FilterSubmitValidationResultLog and is used to iterate over the raw logs and unpacked data for SubmitValidationResultLog events raised by the OracleContract contract.
+type OracleContractSubmitValidationResultLogIterator struct {
+	Event *OracleContractSubmitValidationResultLog // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -297,7 +297,7 @@ type OracleContractSubmitVerificationLogIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *OracleContractSubmitVerificationLogIterator) Next() bool {
+func (it *OracleContractSubmitValidationResultLogIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -306,7 +306,7 @@ func (it *OracleContractSubmitVerificationLogIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(OracleContractSubmitVerificationLog)
+			it.Event = new(OracleContractSubmitValidationResultLog)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -321,7 +321,7 @@ func (it *OracleContractSubmitVerificationLogIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(OracleContractSubmitVerificationLog)
+		it.Event = new(OracleContractSubmitValidationResultLog)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -337,53 +337,53 @@ func (it *OracleContractSubmitVerificationLogIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *OracleContractSubmitVerificationLogIterator) Error() error {
+func (it *OracleContractSubmitValidationResultLogIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *OracleContractSubmitVerificationLogIterator) Close() error {
+func (it *OracleContractSubmitValidationResultLogIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// OracleContractSubmitVerificationLog represents a SubmitVerificationLog event raised by the OracleContract contract.
-type OracleContractSubmitVerificationLog struct {
+// OracleContractSubmitValidationResultLog represents a SubmitValidationResultLog event raised by the OracleContract contract.
+type OracleContractSubmitValidationResultLog struct {
 	Sender common.Address
 	Id     *big.Int
 	Result bool
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterSubmitVerificationLog is a free log retrieval operation binding the contract event 0x8bac4ca8b4a878693f815b8e8e244f09b02c960dcd4937470482ca16ab12692b.
+// FilterSubmitValidationResultLog is a free log retrieval operation binding the contract event 0x36cf801fa1e8739e3bf8426bba2c30eca735b965ef2ab047727480e5bf49847a.
 //
-// Solidity: event SubmitVerificationLog(address indexed sender, uint256 id, bool result)
-func (_OracleContract *OracleContractFilterer) FilterSubmitVerificationLog(opts *bind.FilterOpts, sender []common.Address) (*OracleContractSubmitVerificationLogIterator, error) {
+// Solidity: event SubmitValidationResultLog(address indexed sender, uint256 id, bool result)
+func (_OracleContract *OracleContractFilterer) FilterSubmitValidationResultLog(opts *bind.FilterOpts, sender []common.Address) (*OracleContractSubmitValidationResultLogIterator, error) {
 
 	var senderRule []interface{}
 	for _, senderItem := range sender {
 		senderRule = append(senderRule, senderItem)
 	}
 
-	logs, sub, err := _OracleContract.contract.FilterLogs(opts, "SubmitVerificationLog", senderRule)
+	logs, sub, err := _OracleContract.contract.FilterLogs(opts, "SubmitValidationResultLog", senderRule)
 	if err != nil {
 		return nil, err
 	}
-	return &OracleContractSubmitVerificationLogIterator{contract: _OracleContract.contract, event: "SubmitVerificationLog", logs: logs, sub: sub}, nil
+	return &OracleContractSubmitValidationResultLogIterator{contract: _OracleContract.contract, event: "SubmitValidationResultLog", logs: logs, sub: sub}, nil
 }
 
-// WatchSubmitVerificationLog is a free log subscription operation binding the contract event 0x8bac4ca8b4a878693f815b8e8e244f09b02c960dcd4937470482ca16ab12692b.
+// WatchSubmitValidationResultLog is a free log subscription operation binding the contract event 0x36cf801fa1e8739e3bf8426bba2c30eca735b965ef2ab047727480e5bf49847a.
 //
-// Solidity: event SubmitVerificationLog(address indexed sender, uint256 id, bool result)
-func (_OracleContract *OracleContractFilterer) WatchSubmitVerificationLog(opts *bind.WatchOpts, sink chan<- *OracleContractSubmitVerificationLog, sender []common.Address) (event.Subscription, error) {
+// Solidity: event SubmitValidationResultLog(address indexed sender, uint256 id, bool result)
+func (_OracleContract *OracleContractFilterer) WatchSubmitValidationResultLog(opts *bind.WatchOpts, sink chan<- *OracleContractSubmitValidationResultLog, sender []common.Address) (event.Subscription, error) {
 
 	var senderRule []interface{}
 	for _, senderItem := range sender {
 		senderRule = append(senderRule, senderItem)
 	}
 
-	logs, sub, err := _OracleContract.contract.WatchLogs(opts, "SubmitVerificationLog", senderRule)
+	logs, sub, err := _OracleContract.contract.WatchLogs(opts, "SubmitValidationResultLog", senderRule)
 	if err != nil {
 		return nil, err
 	}
@@ -393,8 +393,8 @@ func (_OracleContract *OracleContractFilterer) WatchSubmitVerificationLog(opts *
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(OracleContractSubmitVerificationLog)
-				if err := _OracleContract.contract.UnpackLog(event, "SubmitVerificationLog", log); err != nil {
+				event := new(OracleContractSubmitValidationResultLog)
+				if err := _OracleContract.contract.UnpackLog(event, "SubmitValidationResultLog", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -415,21 +415,21 @@ func (_OracleContract *OracleContractFilterer) WatchSubmitVerificationLog(opts *
 	}), nil
 }
 
-// ParseSubmitVerificationLog is a log parse operation binding the contract event 0x8bac4ca8b4a878693f815b8e8e244f09b02c960dcd4937470482ca16ab12692b.
+// ParseSubmitValidationResultLog is a log parse operation binding the contract event 0x36cf801fa1e8739e3bf8426bba2c30eca735b965ef2ab047727480e5bf49847a.
 //
-// Solidity: event SubmitVerificationLog(address indexed sender, uint256 id, bool result)
-func (_OracleContract *OracleContractFilterer) ParseSubmitVerificationLog(log types.Log) (*OracleContractSubmitVerificationLog, error) {
-	event := new(OracleContractSubmitVerificationLog)
-	if err := _OracleContract.contract.UnpackLog(event, "SubmitVerificationLog", log); err != nil {
+// Solidity: event SubmitValidationResultLog(address indexed sender, uint256 id, bool result)
+func (_OracleContract *OracleContractFilterer) ParseSubmitValidationResultLog(log types.Log) (*OracleContractSubmitValidationResultLog, error) {
+	event := new(OracleContractSubmitValidationResultLog)
+	if err := _OracleContract.contract.UnpackLog(event, "SubmitValidationResultLog", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// OracleContractVerifyTransactionLogIterator is returned from FilterVerifyTransactionLog and is used to iterate over the raw logs and unpacked data for VerifyTransactionLog events raised by the OracleContract contract.
-type OracleContractVerifyTransactionLogIterator struct {
-	Event *OracleContractVerifyTransactionLog // Event containing the contract specifics and raw log
+// OracleContractValidateTransactionLogIterator is returned from FilterValidateTransactionLog and is used to iterate over the raw logs and unpacked data for ValidateTransactionLog events raised by the OracleContract contract.
+type OracleContractValidateTransactionLogIterator struct {
+	Event *OracleContractValidateTransactionLog // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -443,7 +443,7 @@ type OracleContractVerifyTransactionLogIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *OracleContractVerifyTransactionLogIterator) Next() bool {
+func (it *OracleContractValidateTransactionLogIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -452,7 +452,7 @@ func (it *OracleContractVerifyTransactionLogIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(OracleContractVerifyTransactionLog)
+			it.Event = new(OracleContractValidateTransactionLog)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -467,7 +467,7 @@ func (it *OracleContractVerifyTransactionLogIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(OracleContractVerifyTransactionLog)
+		it.Event = new(OracleContractValidateTransactionLog)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -483,19 +483,19 @@ func (it *OracleContractVerifyTransactionLogIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *OracleContractVerifyTransactionLogIterator) Error() error {
+func (it *OracleContractValidateTransactionLogIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *OracleContractVerifyTransactionLogIterator) Close() error {
+func (it *OracleContractValidateTransactionLogIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// OracleContractVerifyTransactionLog represents a VerifyTransactionLog event raised by the OracleContract contract.
-type OracleContractVerifyTransactionLog struct {
+// OracleContractValidateTransactionLog represents a ValidateTransactionLog event raised by the OracleContract contract.
+type OracleContractValidateTransactionLog struct {
 	Sender        common.Address
 	Id            *big.Int
 	Hash          [32]byte
@@ -503,10 +503,10 @@ type OracleContractVerifyTransactionLog struct {
 	Raw           types.Log // Blockchain specific contextual infos
 }
 
-// FilterVerifyTransactionLog is a free log retrieval operation binding the contract event 0x7273af0961d6b722075a949b6dddbe85d4688ee4c18ab11a8d68b34a137d53d6.
+// FilterValidateTransactionLog is a free log retrieval operation binding the contract event 0xdb3924693edfb1380a509834c8de41c8d57794e3b056a3cc6b0bac025ba57da4.
 //
-// Solidity: event VerifyTransactionLog(address indexed sender, uint256 indexed id, bytes32 hash, uint256 confirmations)
-func (_OracleContract *OracleContractFilterer) FilterVerifyTransactionLog(opts *bind.FilterOpts, sender []common.Address, id []*big.Int) (*OracleContractVerifyTransactionLogIterator, error) {
+// Solidity: event ValidateTransactionLog(address indexed sender, uint256 indexed id, bytes32 hash, uint256 confirmations)
+func (_OracleContract *OracleContractFilterer) FilterValidateTransactionLog(opts *bind.FilterOpts, sender []common.Address, id []*big.Int) (*OracleContractValidateTransactionLogIterator, error) {
 
 	var senderRule []interface{}
 	for _, senderItem := range sender {
@@ -517,17 +517,17 @@ func (_OracleContract *OracleContractFilterer) FilterVerifyTransactionLog(opts *
 		idRule = append(idRule, idItem)
 	}
 
-	logs, sub, err := _OracleContract.contract.FilterLogs(opts, "VerifyTransactionLog", senderRule, idRule)
+	logs, sub, err := _OracleContract.contract.FilterLogs(opts, "ValidateTransactionLog", senderRule, idRule)
 	if err != nil {
 		return nil, err
 	}
-	return &OracleContractVerifyTransactionLogIterator{contract: _OracleContract.contract, event: "VerifyTransactionLog", logs: logs, sub: sub}, nil
+	return &OracleContractValidateTransactionLogIterator{contract: _OracleContract.contract, event: "ValidateTransactionLog", logs: logs, sub: sub}, nil
 }
 
-// WatchVerifyTransactionLog is a free log subscription operation binding the contract event 0x7273af0961d6b722075a949b6dddbe85d4688ee4c18ab11a8d68b34a137d53d6.
+// WatchValidateTransactionLog is a free log subscription operation binding the contract event 0xdb3924693edfb1380a509834c8de41c8d57794e3b056a3cc6b0bac025ba57da4.
 //
-// Solidity: event VerifyTransactionLog(address indexed sender, uint256 indexed id, bytes32 hash, uint256 confirmations)
-func (_OracleContract *OracleContractFilterer) WatchVerifyTransactionLog(opts *bind.WatchOpts, sink chan<- *OracleContractVerifyTransactionLog, sender []common.Address, id []*big.Int) (event.Subscription, error) {
+// Solidity: event ValidateTransactionLog(address indexed sender, uint256 indexed id, bytes32 hash, uint256 confirmations)
+func (_OracleContract *OracleContractFilterer) WatchValidateTransactionLog(opts *bind.WatchOpts, sink chan<- *OracleContractValidateTransactionLog, sender []common.Address, id []*big.Int) (event.Subscription, error) {
 
 	var senderRule []interface{}
 	for _, senderItem := range sender {
@@ -538,7 +538,7 @@ func (_OracleContract *OracleContractFilterer) WatchVerifyTransactionLog(opts *b
 		idRule = append(idRule, idItem)
 	}
 
-	logs, sub, err := _OracleContract.contract.WatchLogs(opts, "VerifyTransactionLog", senderRule, idRule)
+	logs, sub, err := _OracleContract.contract.WatchLogs(opts, "ValidateTransactionLog", senderRule, idRule)
 	if err != nil {
 		return nil, err
 	}
@@ -548,8 +548,8 @@ func (_OracleContract *OracleContractFilterer) WatchVerifyTransactionLog(opts *b
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(OracleContractVerifyTransactionLog)
-				if err := _OracleContract.contract.UnpackLog(event, "VerifyTransactionLog", log); err != nil {
+				event := new(OracleContractValidateTransactionLog)
+				if err := _OracleContract.contract.UnpackLog(event, "ValidateTransactionLog", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -570,12 +570,12 @@ func (_OracleContract *OracleContractFilterer) WatchVerifyTransactionLog(opts *b
 	}), nil
 }
 
-// ParseVerifyTransactionLog is a log parse operation binding the contract event 0x7273af0961d6b722075a949b6dddbe85d4688ee4c18ab11a8d68b34a137d53d6.
+// ParseValidateTransactionLog is a log parse operation binding the contract event 0xdb3924693edfb1380a509834c8de41c8d57794e3b056a3cc6b0bac025ba57da4.
 //
-// Solidity: event VerifyTransactionLog(address indexed sender, uint256 indexed id, bytes32 hash, uint256 confirmations)
-func (_OracleContract *OracleContractFilterer) ParseVerifyTransactionLog(log types.Log) (*OracleContractVerifyTransactionLog, error) {
-	event := new(OracleContractVerifyTransactionLog)
-	if err := _OracleContract.contract.UnpackLog(event, "VerifyTransactionLog", log); err != nil {
+// Solidity: event ValidateTransactionLog(address indexed sender, uint256 indexed id, bytes32 hash, uint256 confirmations)
+func (_OracleContract *OracleContractFilterer) ParseValidateTransactionLog(log types.Log) (*OracleContractValidateTransactionLog, error) {
+	event := new(OracleContractValidateTransactionLog)
+	if err := _OracleContract.contract.UnpackLog(event, "ValidateTransactionLog", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

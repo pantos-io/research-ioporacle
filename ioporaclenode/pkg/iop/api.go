@@ -20,7 +20,9 @@ func (n *OracleNode) ProcessDeal(_ context.Context, request *ProcessDealRequest)
 		return nil, fmt.Errorf("process deal: %w", err)
 	}
 
-	n.broadCastResponse(response)
+	if err := n.broadCastResponse(response); err != nil {
+		return nil, fmt.Errorf("broadcast response: %w", err)
+	}
 
 	return &ProcessDealResponse{
 		Response: responseToPb(response),
@@ -35,12 +37,13 @@ func (n *OracleNode) ProcessResponse(ctx context.Context, request *ProcessRespon
 		case <-ctx.Done():
 			return &ProcessResponseResponse{}, ctx.Err()
 		default:
-			_, err := n.dkg.ProcessResponse(pbToResponse(request.Response))
-			if errors.Is(err, vss.ErrNoDealBeforeResponse) {
-				continue
-			} else if err != nil {
+			if _, err := n.dkg.ProcessResponse(pbToResponse(request.Response)); err != nil {
+				if errors.Is(err, vss.ErrNoDealBeforeResponse) {
+					continue
+				}
 				return &ProcessResponseResponse{}, fmt.Errorf("process response: %w", err)
 			}
+
 			return &ProcessResponseResponse{
 				Justification: nil,
 			}, nil

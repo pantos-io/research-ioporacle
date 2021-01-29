@@ -8,7 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"go.dedis.ch/kyber/v3"
 	dkg "go.dedis.ch/kyber/v3/share/dkg/pedersen"
-	"math/big"
 	"time"
 )
 
@@ -17,7 +16,6 @@ func (n *OracleNode) handleRegisterOracleNodeLog(event *RegistryContractRegister
 	if err != nil {
 		return fmt.Errorf("find oracle node by address %s: %w", event.Sender, err)
 	}
-	//n.nodes = append(n.nodes, node)
 	if _, err := n.connectionManager.NewConnection(node); err != nil {
 		return fmt.Errorf("new connection: %w", err)
 	}
@@ -25,35 +23,39 @@ func (n *OracleNode) handleRegisterOracleNodeLog(event *RegistryContractRegister
 	return nil
 }
 
-func (n *OracleNode) handleVerifyTransactionLog(ctx context.Context, event *OracleContractVerifyTransactionLog) error {
-	result, sig, err := n.aggregator.AggregateValidateTransactionResults(ctx, event.Id, common.BytesToHash(event.Hash[:]), event.Confirmations.Uint64())
+func (n *OracleNode) handleVerifyTransactionLog(ctx context.Context, event *OracleContractValidateTransactionLog) error {
+	result, s, err := n.aggregator.AggregateValidateTransactionResults(
+		ctx,
+		event.Id,
+		common.BytesToHash(event.Hash[:]),
+		event.Confirmations.Uint64(),
+	)
 	if err != nil {
-		return fmt.Errorf("verify transaction remote: %w", err)
+		return fmt.Errorf("aggregate validate transaction results: %w", err)
+	}
+
+	sig, err := SignatureToBig(s)
+	if err != nil {
+		return fmt.Errorf("signature to big int: %w", err)
 	}
 
 	auth := bind.NewKeyedTransactor(n.ecdsaPrivateKey)
-	_, err = n.oracleContract.SubmitVerification(auth, event.Id, result, [2]*big.Int{
-		new(big.Int).SetBytes(sig[:32]),
-		new(big.Int).SetBytes(sig[32:64]),
-	})
-	if err != nil {
-		return fmt.Errorf("verify transaction result: %v", err)
+	if _, err = n.oracleContract.SubmitValidationResult(auth, event.Id, result, sig); err != nil {
+		return fmt.Errorf("submit verification: %w", err)
 	}
 	return nil
 }
 
 func (n *OracleNode) handleDistributedKeyGenerationLog(event *DistKeyContractDistKeyGenerationLog) error {
 
-	time.Sleep(5 * time.Second)
-
-	nodes, err := n.registryContract.FindIopNodes()
+	nodes, err := n.registryContract.FindOracleNodes()
 	if err != nil {
 		return fmt.Errorf("find nodes: %w", err)
 	}
 
 	pubKeys := make([]kyber.Point, len(nodes))
 	for i, node := range nodes {
-		pubKey := n.suiteG2.Point()
+		pubKey := n.suite.Point()
 		if err := pubKey.UnmarshalBinary(node.PubKey); err != nil {
 			return fmt.Errorf("unmarshal public key: %w", err)
 		}
@@ -61,8 +63,9 @@ func (n *OracleNode) handleDistributedKeyGenerationLog(event *DistKeyContractDis
 	}
 
 	threshold := int(event.Threshold.Int64())
-	distKeyGenerator, err := dkg.NewDistKeyGenerator(
-		n.suiteG2,
+	n.aggregator.SetThreshold(threshold)
+	n.dkg, err = dkg.NewDistKeyGenerator(
+		n.suite,
 		n.blsPrivateKey,
 		pubKeys,
 		threshold,
@@ -70,8 +73,8 @@ func (n *OracleNode) handleDistributedKeyGenerationLog(event *DistKeyContractDis
 	if err != nil {
 		return fmt.Errorf("new dkg: %w", err)
 	}
-	n.dkg = distKeyGenerator
-	n.aggregator.SetThreshold(threshold)
+
+	//Wait until every participant is prepared. TODO: Wait for head n
 	time.Sleep(5 * time.Second)
 
 	deals, err := n.dkg.Deals()
@@ -81,24 +84,22 @@ func (n *OracleNode) handleDistributedKeyGenerationLog(event *DistKeyContractDis
 
 	n.broadCastDeals(nodes, deals)
 
-	timeout := time.After(30 * time.Second)
-
 loop:
 	for {
 		select {
-		case <-timeout:
+		case <-time.After(DkgTimeout):
 			n.dkg.SetTimeout()
 			break loop
 		default:
 			if n.dkg.Certified() {
 				break loop
 			}
-			time.Sleep(50 * time.Millisecond)
+			time.Sleep(500 * time.Millisecond)
 		}
 	}
 
-	log.Infof("Qualified shares: %v\n", n.dkg.QualifiedShares())
-	log.Infof("QUAL: %v\n", n.dkg.QUAL())
+	log.Infof("Qualified shares: %v", n.dkg.QualifiedShares())
+	log.Infof("QUAL: %v", n.dkg.QUAL())
 
 	distKey, err := n.dkg.DistKeyShare()
 	if err != nil {
@@ -106,19 +107,13 @@ loop:
 	}
 
 	log.Infof("Public Key: %v", distKey.Public())
-	pubBinary, err := distKey.Public().MarshalBinary()
+	pubKey, err := PubKeyToBig(distKey.Public())
 	if err != nil {
-		return fmt.Errorf("marshal public key: %w", err)
+		return fmt.Errorf("public key to big int: %w", err)
 	}
 
 	auth := bind.NewKeyedTransactor(n.ecdsaPrivateKey)
-	_, err = n.distKeyContract.SetPublicKey(auth, [4]*big.Int{
-		new(big.Int).SetBytes(pubBinary[:32]),
-		new(big.Int).SetBytes(pubBinary[32:64]),
-		new(big.Int).SetBytes(pubBinary[64:96]),
-		new(big.Int).SetBytes(pubBinary[96:128]),
-	})
-	if err != nil {
+	if _, err = n.distKeyContract.SetPublicKey(auth, pubKey); err != nil {
 		return fmt.Errorf("set public key: %w", err)
 	}
 

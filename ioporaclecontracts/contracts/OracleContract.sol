@@ -9,7 +9,7 @@ import "cdlbot-solidity/contracts/crypto/BN256G1.sol";
 import "cdlbot-solidity/contracts/crypto/BN256G2.sol";
 
 contract OracleContract {
-    struct VerificationResult {
+    struct ValidationResult {
         uint256 id;
         bool result;
     }
@@ -21,15 +21,15 @@ contract OracleContract {
 
     uint256 private requestCounter;
 
-    mapping(uint256 => VerificationResult) private verificationResults;
+    mapping(uint256 => ValidationResult) private validationResults;
 
-    event VerifyTransactionLog(
+    event ValidateTransactionLog(
         address indexed sender,
         uint256 indexed id,
         bytes32 hash,
         uint256 confirmations
     );
-    event SubmitVerificationLog(
+    event SubmitValidationResultLog(
         address indexed sender,
         uint256 id,
         bool result
@@ -49,12 +49,12 @@ contract OracleContract {
         raffleContract = _raffleContract;
     }
 
-    function verifyTransaction(bytes32 _hash, uint256 _confirmations)
+    function validateTransaction(bytes32 _hash, uint256 _confirmations)
         external
         payable
     {
         require(msg.value >= TOTAL_REWARD, "msg value below total reward");
-        emit VerifyTransactionLog(
+        emit ValidateTransactionLog(
             msg.sender,
             ++requestCounter,
             _hash,
@@ -62,12 +62,12 @@ contract OracleContract {
         );
     }
 
-    function submitVerification(
+    function submitValidationResult(
         uint256 _id,
         bool _result,
         uint256[2] calldata _signature
     ) external {
-        require(!verificationExists(_id), "already exists");
+        require(!validationResultExists(_id), "already exists");
         require(
             registryContract.getAggregator().addr == msg.sender,
             "not the aggregator"
@@ -97,24 +97,23 @@ contract OracleContract {
         payable(msg.sender).transfer(AGGREGATOR_REWARD);
         raffleContract.transfer(VALIDATOR_REWARD);
 
-        VerificationResult storage verificationResult =
-            verificationResults[_id];
-        verificationResult.id = _id;
-        verificationResult.result = _result;
+        ValidationResult storage validationResult = validationResults[_id];
+        validationResult.id = _id;
+        validationResult.result = _result;
 
-        emit SubmitVerificationLog(msg.sender, _id, _result);
+        emit SubmitValidationResultLog(msg.sender, _id, _result);
     }
 
-    function findVerification(uint256 _id)
+    function findValidationResult(uint256 _id)
         public
         view
-        returns (VerificationResult memory)
+        returns (ValidationResult memory)
     {
-        require(verificationExists(_id), "not found");
-        return verificationResults[_id];
+        require(validationResultExists(_id), "not found");
+        return validationResults[_id];
     }
 
-    function verificationExists(uint256 _id) public view returns (bool) {
-        return verificationResults[_id].id != 0;
+    function validationResultExists(uint256 _id) public view returns (bool) {
+        return validationResults[_id].id != 0;
     }
 }

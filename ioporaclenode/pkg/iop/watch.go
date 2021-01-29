@@ -18,7 +18,7 @@ func (n *OracleNode) watch(ctx context.Context) {
 		}
 	}()
 	go func() {
-		if err := n.watchVerifyTransactionLog(ctx); err != nil {
+		if err := n.watchValidateTransactionLog(ctx); err != nil {
 			log.Errorf("watch verify transaction log: %v", err)
 		}
 	}()
@@ -85,11 +85,11 @@ func (n *OracleNode) watchDistKeyGenerationLog(ctx context.Context) error {
 	}
 }
 
-func (n *OracleNode) watchVerifyTransactionLog(ctx context.Context) error {
-	sink := make(chan *OracleContractVerifyTransactionLog)
+func (n *OracleNode) watchValidateTransactionLog(ctx context.Context) error {
+	sink := make(chan *OracleContractValidateTransactionLog)
 	defer close(sink)
 
-	sub, err := n.oracleContract.WatchVerifyTransactionLog(
+	sub, err := n.oracleContract.WatchValidateTransactionLog(
 		&bind.WatchOpts{
 			Context: context.Background(),
 		},

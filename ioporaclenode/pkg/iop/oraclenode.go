@@ -10,8 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"go.dedis.ch/kyber/v3"
 	dkg "go.dedis.ch/kyber/v3/share/dkg/pedersen"
+	"go.dedis.ch/kyber/v3/suites"
 	"google.golang.org/grpc"
-	"ioporaclenode/internal/pkg/kyber/pairing/bn256"
 	"net"
 	"time"
 )
@@ -31,7 +31,7 @@ type OracleNode struct {
 	ecdsaPrivateKey   *ecdsa.PrivateKey
 	blsPrivateKey     kyber.Scalar
 	account           common.Address
-	suiteG2           *bn256.Suite
+	suite             suites.Suite
 }
 
 func NewOracleNode(
@@ -46,7 +46,7 @@ func NewOracleNode(
 	ecdsaPrivateKey *ecdsa.PrivateKey,
 	blsPrivateKey kyber.Scalar,
 	account common.Address,
-	suite *bn256.Suite,
+	suite suites.Suite,
 ) *OracleNode {
 	grpcServer := grpc.NewServer()
 	node := &OracleNode{
@@ -62,7 +62,7 @@ func NewOracleNode(
 		ecdsaPrivateKey:   ecdsaPrivateKey,
 		blsPrivateKey:     blsPrivateKey,
 		account:           account,
-		suiteG2:           suite,
+		suite:             suite,
 	}
 	RegisterOracleNodeServer(grpcServer, node)
 	return node
@@ -81,7 +81,7 @@ func (n *OracleNode) Serve(lis net.Listener) error {
 
 func (n *OracleNode) initConnections() error {
 	log.Info("Initialize connections to other nodes")
-	nodes, err := n.registryContract.FindIopNodes()
+	nodes, err := n.registryContract.FindOracleNodes()
 	if err != nil {
 		return fmt.Errorf("find nodes: %w", err)
 	}
@@ -104,7 +104,7 @@ func (n *OracleNode) register(ipAddr string) error {
 		return fmt.Errorf("is registered: %w", err)
 	}
 
-	blsPublicKey := n.suiteG2.Point().Mul(n.blsPrivateKey, nil)
+	blsPublicKey := n.suite.Point().Mul(n.blsPrivateKey, nil)
 	b, err := blsPublicKey.MarshalBinary()
 	if err != nil {
 		return fmt.Errorf("marshal bls public key: %v", err)
@@ -142,7 +142,7 @@ func (n *OracleNode) broadCastDeals(nodes []RegistryContractOracleNode, deals ma
 
 func (n *OracleNode) broadCastResponse(response *dkg.Response) error {
 	log.Infof("Broadcasting response with dealer %d and verifier %d", response.Index, response.Response.Index)
-	nodes, err := n.registryContract.FindIopNodes()
+	nodes, err := n.registryContract.FindOracleNodes()
 	if err != nil {
 		return fmt.Errorf("find nodes: %w", err)
 	}

@@ -45,20 +45,23 @@ func (a *Aggregator) AggregateValidateTransactionResults(ctx context.Context, id
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
 
-	nodes, err := a.registryContract.FindIopNodes()
+	nodes, err := a.registryContract.FindOracleNodes()
 	if err != nil {
 		return false, nil, fmt.Errorf("find nodes: %w", err)
 	}
 
-	for _, v := range nodes {
+	for _, node := range nodes {
+
+		conn, err := a.connectionManager.FindByAddress(node.Addr)
+		if err != nil {
+			log.Errorf("find connection by address: %v", err)
+			continue
+		}
+
 		wg.Add(1)
-		go func(node RegistryContractOracleNode) {
+		go func() {
 			defer wg.Done()
-			conn, err := a.connectionManager.FindByAddress(node.Addr)
-			if err != nil {
-				log.Errorf("find connection by address: %v", err)
-				return
-			}
+
 			client := NewOracleNodeClient(conn)
 			ctxTimeout, cancel := context.WithTimeout(ctx, 3*time.Second)
 			result, err := client.ValidateTransaction(ctxTimeout, &ValidateTransactionRequest{
@@ -68,18 +71,18 @@ func (a *Aggregator) AggregateValidateTransactionResults(ctx context.Context, id
 			})
 			cancel()
 			if err != nil {
-				log.Errorf("verify transaction %s: %v", node.IpAddr, err)
+				log.Errorf("validate transaction: %v", err)
 				return
 			}
-			mutex.Lock()
 
+			mutex.Lock()
 			if result.Valid {
 				positiveResults = append(positiveResults, result.Signature)
 			} else {
 				negativeResults = append(negativeResults, result.Signature)
 			}
 			mutex.Unlock()
-		}(v)
+		}()
 	}
 
 	wg.Wait()
@@ -101,12 +104,12 @@ func (a *Aggregator) AggregateValidateTransactionResults(ctx context.Context, id
 
 	message, err := encodeValidateTransactionResult(id, result)
 	if err != nil {
-		return false, nil, fmt.Errorf("encode verification result: %w", err)
+		return false, nil, fmt.Errorf("encode validate transaction result: %w", err)
 	}
 
 	signature, err := tbls.Recover(a.suite, pubPoly, message, sigShares, a.t, len(nodes))
 	if err != nil {
-		return false, nil, fmt.Errorf("recover signature: %v", err)
+		return false, nil, fmt.Errorf("recover signature: %w", err)
 	}
 
 	return result, signature, nil
