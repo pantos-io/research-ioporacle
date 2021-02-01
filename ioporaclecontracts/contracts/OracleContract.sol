@@ -4,7 +4,6 @@ pragma experimental ABIEncoderV2;
 
 import "./RegistryContract.sol";
 import "./DistKeyContract.sol";
-import "./RaffleContract.sol";
 import "cdlbot-solidity/contracts/crypto/BN256G1.sol";
 import "cdlbot-solidity/contracts/crypto/BN256G2.sol";
 
@@ -14,12 +13,12 @@ contract OracleContract {
         bool result;
     }
 
-    uint256 private constant AGGREGATOR_REWARD = 0.001 ether;
-    uint256 private constant VALIDATOR_REWARD = 0.0001 ether;
-    uint256 private constant TOTAL_REWARD =
-        AGGREGATOR_REWARD + VALIDATOR_REWARD;
+    uint256 private constant BASE_FEE = 0.001 ether;
+    uint256 private constant VALIDATOR_FEE = 0.0001 ether;
+    uint256 private constant TOTAL_FEE = BASE_FEE + VALIDATOR_FEE;
 
     uint256 private requestCounter;
+    uint256 private requestsSinceLastPayout;
 
     mapping(uint256 => ValidationResult) private validationResults;
 
@@ -32,28 +31,23 @@ contract OracleContract {
     event SubmitValidationResultLog(
         address indexed sender,
         uint256 id,
-        bool result
+        bool result,
+        uint256 fee
     );
 
     RegistryContract private registryContract;
     DistKeyContract private distKeyContract;
-    address payable private raffleContract;
 
-    constructor(
-        address _registryContract,
-        address _distKeyContract,
-        address payable _raffleContract
-    ) public {
+    constructor(address _registryContract, address _distKeyContract) public {
         registryContract = RegistryContract(_registryContract);
         distKeyContract = DistKeyContract(_distKeyContract);
-        raffleContract = _raffleContract;
     }
 
     function validateTransaction(bytes32 _hash, uint256 _confirmations)
         external
         payable
     {
-        require(msg.value >= TOTAL_REWARD, "msg value below total reward");
+        require(msg.value >= TOTAL_FEE, "msg value below total fee");
         emit ValidateTransactionLog(
             msg.sender,
             ++requestCounter,
@@ -68,10 +62,10 @@ contract OracleContract {
         uint256[2] calldata _signature
     ) external {
         require(!validationResultExists(_id), "already exists");
-        require(
-            registryContract.getAggregator().addr == msg.sender,
-            "not the aggregator"
-        );
+
+        RegistryContract.OracleNode memory aggregator =
+            registryContract.getAggregator();
+        require(aggregator.addr == msg.sender, "not the aggregator");
 
         uint256[2] memory hash =
             BN256G1.hashToPointSha256(abi.encode(_id, _result));
@@ -94,14 +88,36 @@ contract OracleContract {
             ];
         require(BN256G1.bn256CheckPairing(input), "invalid signature");
 
-        payable(msg.sender).transfer(AGGREGATOR_REWARD);
-        raffleContract.transfer(VALIDATOR_REWARD);
+        uint256 fee = calculateFee(aggregator.index, _signature[0]);
+        payable(msg.sender).transfer(fee);
 
         ValidationResult storage validationResult = validationResults[_id];
         validationResult.id = _id;
         validationResult.result = _result;
 
-        emit SubmitValidationResultLog(msg.sender, _id, _result);
+        emit SubmitValidationResultLog(msg.sender, _id, _result, fee);
+    }
+
+    function calculateFee(uint256 index, uint256 seed)
+        private
+        returns (uint256)
+    {
+        if (isValidationFeeReceiver(index, seed)) {
+            uint256 totalFee =
+                BASE_FEE + VALIDATOR_FEE * requestsSinceLastPayout;
+            requestsSinceLastPayout = 0;
+            return totalFee;
+        }
+        requestsSinceLastPayout++;
+        return BASE_FEE;
+    }
+
+    function isValidationFeeReceiver(uint256 index, uint256 seed)
+        private
+        view
+        returns (bool)
+    {
+        return index == seed % registryContract.countOracleNodes();
     }
 
     function findValidationResult(uint256 _id)

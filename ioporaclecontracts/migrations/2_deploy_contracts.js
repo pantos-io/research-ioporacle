@@ -1,6 +1,5 @@
 const RegistryContract = artifacts.require("RegistryContract");
 const OracleContract = artifacts.require("OracleContract");
-const RaffleContract = artifacts.require("RaffleContract");
 const DistKeyContract = artifacts.require("DistKeyContract");
 
 module.exports = function (deployer) {
@@ -20,14 +19,10 @@ module.exports = function (deployer) {
     })
     .then(function () {
       distKeyContract.setRegistryContract(RegistryContract.address);
-      return deployer.deploy(RaffleContract, RegistryContract.address);
-    })
-    .then(function () {
       return deployer.deploy(
         OracleContract,
         RegistryContract.address,
-        DistKeyContract.address,
-        RaffleContract.address
+        DistKeyContract.address
       );
     });
 };

@@ -25,7 +25,6 @@ type OracleNode struct {
 	ethClient         *ethclient.Client
 	oracleContract    *OracleContract
 	registryContract  *RegistryContractWrapper
-	raffleContract    *RaffleContract
 	distKeyContract   *DistKeyContract
 	dkg               *dkg.DistKeyGenerator
 	ecdsaPrivateKey   *ecdsa.PrivateKey
@@ -41,7 +40,6 @@ func NewOracleNode(
 	aggregator *Aggregator,
 	oracleContract *OracleContract,
 	registryContract *RegistryContractWrapper,
-	raffleContract *RaffleContract,
 	distKeyContract *DistKeyContract,
 	ecdsaPrivateKey *ecdsa.PrivateKey,
 	blsPrivateKey kyber.Scalar,
@@ -57,7 +55,6 @@ func NewOracleNode(
 		aggregator:        aggregator,
 		oracleContract:    oracleContract,
 		registryContract:  registryContract,
-		raffleContract:    raffleContract,
 		distKeyContract:   distKeyContract,
 		ecdsaPrivateKey:   ecdsaPrivateKey,
 		blsPrivateKey:     blsPrivateKey,

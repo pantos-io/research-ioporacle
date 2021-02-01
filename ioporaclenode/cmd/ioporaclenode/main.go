@@ -16,10 +16,9 @@ import (
 var (
 	addrFlag             = flag.String("address", "127.0.0.1:25565", "server address")
 	ethFlag              = flag.String("eth", "ws://127.0.0.1:7545", "eth node address")
-	oracleContractFlag   = flag.String("oracleContract", "0x51065eC79713d01874431786A04638B46699830b", "oracle contract address")
-	registryContractFlag = flag.String("registryContract", "0x906Dd620e17273C8bc34551f8F9F708BCa730361", "registry contract address")
-	raffleContractFlag   = flag.String("raffleContract", "0x018b19dc8d1BBD5d6C77D41759316240e2A4E59B", "raffle contract address")
-	distKeyContractFlag  = flag.String("distKeyContract", "0x4E5295b742D64E44e5D5B923c10f5DB7747FEe44", "dist key contract address")
+	oracleContractFlag   = flag.String("oracleContract", "0x60A8c211165c2B810a14aCFEFd8e1EfA05bBb851", "oracle contract address")
+	registryContractFlag = flag.String("registryContract", "0x0cf4150313c423188Ffe228B74760327DA54B3b1", "registry contract address")
+	distKeyContractFlag  = flag.String("distKeyContract", "0x5528ee91566934A17A2e54Adf1Fa42C49C0afe35", "dist key contract address")
 	ecdsaPrivateKeyFlag  = flag.String("ecdsaPrivateKey", "0xe63ff25be694842b3d25f3c8981dbe44b36b23a6effdbe04f9ee11e7965c922b", "private key")
 	blsPrivateKeyFlag    = flag.String("blsPrivateKey", "0x2e931ebbc908ec1993a789166f5690ee2ea34830df69a0fd0fc6a456b4aa8a46", "value of the private share")
 )
@@ -43,11 +42,6 @@ func main() {
 	oracleContract, err := iop.NewOracleContract(common.HexToAddress(*oracleContractFlag), ethClient)
 	if err != nil {
 		log.Fatalf("oracle contract: %v", err)
-	}
-
-	raffleContract, err := iop.NewRaffleContract(common.HexToAddress(*raffleContractFlag), ethClient)
-	if err != nil {
-		log.Fatalf("raffle contract: %v", err)
 	}
 
 	distKeyContract, err := iop.NewDistKeyContract(common.HexToAddress(*distKeyContractFlag), ethClient)
@@ -87,7 +81,6 @@ func main() {
 		aggregator,
 		oracleContract,
 		registryContractWrapper,
-		raffleContract,
 		distKeyContract,
 		ecdsaPrivateKey,
 		blsPrivateKey,
