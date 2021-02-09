@@ -23,7 +23,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("unmarshal config into struct, %v", err)
 	}
-	log.Printf("%v", config)
 
 	log.Infof("Loaded config file %s", *configFile)
 

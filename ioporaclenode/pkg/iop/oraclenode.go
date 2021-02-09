@@ -102,7 +102,7 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 	}
 	account := common.HexToAddress(hexAddress)
 
-	connectionManager := NewConnectionManager()
+	connectionManager := NewConnectionManager(registryContractWrapper, account)
 	validator := NewValidator(suite, ethClient)
 	aggregator := NewAggregator(
 		suite,
@@ -155,12 +155,18 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 }
 
 func (n *OracleNode) Run() error {
-	if err := n.initConnections(); err != nil {
+	if err := n.connectionManager.InitConnections(); err != nil {
 		return fmt.Errorf("init connections: %w", err)
 	}
 
 	go func() {
-		if err := n.watchAndHandleRegisterOracleNodeLog(context.Background()); err != nil {
+		if err := n.dkg.ListenAndProcess(context.Background()); err != nil {
+			log.Errorf("watch and handle dkg log: %v", err)
+		}
+	}()
+
+	go func() {
+		if err := n.connectionManager.WatchAndHandleRegisterOracleNodeLog(context.Background()); err != nil {
 			log.Errorf("watch and handle register oracle node log: %v", err)
 		}
 	}()
@@ -171,79 +177,11 @@ func (n *OracleNode) Run() error {
 		}
 	}()
 
-	go func() {
-		if err := n.dkg.ListenAndProcess(context.Background()); err != nil {
-			log.Errorf("watch and handle dkg log: %v", err)
-		}
-	}()
-
 	if err := n.register(n.serverLis.Addr().String()); err != nil {
 		return fmt.Errorf("register: %w", err)
 	}
 
 	return n.server.Serve(n.serverLis)
-}
-
-func (n *OracleNode) initConnections() error {
-	log.Info("Initialize connections to other nodes")
-	nodes, err := n.registryContract.FindOracleNodes()
-	if err != nil {
-		return fmt.Errorf("find nodes: %w", err)
-	}
-	for _, node := range nodes {
-		if node.Addr == n.account {
-			continue
-		}
-		if _, err := n.connectionManager.NewConnection(node); err != nil {
-			log.Errorf("new connection %s: %v", node.IpAddr, err)
-			continue
-		}
-		log.Infof("New connection to %s", node.Addr.String())
-	}
-	return nil
-}
-
-func (n *OracleNode) watchAndHandleRegisterOracleNodeLog(ctx context.Context) error {
-	sink := make(chan *RegistryContractRegisterOracleNodeLog)
-	defer close(sink)
-
-	sub, err := n.registryContract.WatchRegisterOracleNodeLog(
-		&bind.WatchOpts{
-			Context: context.Background(),
-		},
-		sink,
-		nil,
-	)
-	if err != nil {
-		return err
-	}
-	defer sub.Unsubscribe()
-
-	for {
-		select {
-		case event := <-sink:
-			log.Infof("Received register oracle node event %s", event.Sender.String())
-			if err = n.handleRegisterOracleNodeLog(event); err != nil {
-				log.Errorf("handle register oracle node log: %v", err)
-			}
-		case err = <-sub.Err():
-			return err
-		case <-ctx.Done():
-			return ctx.Err()
-		}
-	}
-}
-
-func (n *OracleNode) handleRegisterOracleNodeLog(event *RegistryContractRegisterOracleNodeLog) error {
-	node, err := n.registryContract.FindOracleNodeByAddress(nil, event.Sender)
-	if err != nil {
-		return fmt.Errorf("find oracle node by address %s: %w", event.Sender, err)
-	}
-	if _, err := n.connectionManager.NewConnection(node); err != nil {
-		return fmt.Errorf("new connection: %w", err)
-	}
-	log.Infof("New connection to %s", event.Sender.String())
-	return nil
 }
 
 func (n *OracleNode) register(ipAddr string) error {
