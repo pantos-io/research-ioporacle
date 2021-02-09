@@ -7,6 +7,7 @@ require (
 	github.com/iotaledger/iota.go v1.0.0-beta.15
 	github.com/pebbe/zmq4 v1.2.2
 	github.com/sirupsen/logrus v1.7.0
+	github.com/spf13/viper v1.7.1
 	go.dedis.ch/fixbuf v1.0.3
 	go.dedis.ch/kyber/v3 v3.0.13
 	golang.org/x/sys v0.0.0-20200824131525-c12d262b63d8
