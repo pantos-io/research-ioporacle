@@ -23,6 +23,7 @@ import (
 )
 
 type DistKeyGenerator struct {
+	sync.Mutex
 	dkg               *dkg.DistKeyGenerator
 	suite             suites.Suite
 	connectionManager *ConnectionManager
@@ -38,7 +39,6 @@ type DistKeyGenerator struct {
 	address           trinary.Trytes
 	deals             map[uint32]*dkg.Deal
 	pendingResp       map[uint32][]*dkg.Response
-	m                 sync.Mutex
 	index             uint32
 }
 
@@ -74,21 +74,21 @@ func NewDistKeyGenerator(
 	}
 }
 
-func (g *DistKeyGenerator) Listen(ctx context.Context) error {
+func (g *DistKeyGenerator) ListenAndProcess(ctx context.Context) error {
 	go func() {
-		if err := g.watchDistKeyGenerationLog(ctx); err != nil {
-			log.Errorf("watch distributed key generation log: %v", err)
+		if err := g.watchAndHandleDistKeyGenerationLog(ctx); err != nil {
+			log.Errorf("watch and handle dkg log: %v", err)
 		}
 	}()
 	go func() {
-		if err := g.listenResponse(); err != nil {
-			log.Errorf("listen response: %v", err)
+		if err := g.listenAndProcessResponse(); err != nil {
+			log.Errorf("listen and process response: %v", err)
 		}
 	}()
 	return nil
 }
 
-func (g *DistKeyGenerator) watchDistKeyGenerationLog(ctx context.Context) error {
+func (g *DistKeyGenerator) watchAndHandleDistKeyGenerationLog(ctx context.Context) error {
 	sink := make(chan *DistKeyContractDistKeyGenerationLog)
 	defer close(sink)
 
@@ -108,7 +108,7 @@ func (g *DistKeyGenerator) watchDistKeyGenerationLog(ctx context.Context) error 
 		case event := <-sink:
 			log.Infof("Received distributed key generation event with t %s", event.Threshold)
 			if err := g.handleDistributedKeyGenerationLog(event); err != nil {
-				log.Errorf("handle distributed key generation log: %v", err)
+				log.Errorf("handle dkg log: %v", err)
 			}
 		case err = <-sub.Err():
 			return err
@@ -210,13 +210,13 @@ func (g *DistKeyGenerator) sendDeals(nodes []RegistryContractOracleNode, deals m
 		}
 		log.Infof("Sending deal to node %d", i)
 		if _, err := client.SendDeal(ctx, request); err != nil {
-			log.Errorf("process deal: %v", err)
+			log.Errorf("send deal: %v", err)
 		}
 		cancel()
 	}
 }
 
-func (g *DistKeyGenerator) listenResponse() error {
+func (g *DistKeyGenerator) listenAndProcessResponse() error {
 	if err := g.zmqClient.SetSubscribe(g.address[:81]); err != nil {
 		return fmt.Errorf("subscribe to address %s: %w", g.address, err)
 	}
@@ -245,7 +245,7 @@ func (g *DistKeyGenerator) listenResponse() error {
 				break
 			}
 			go func() {
-				err = g.handleResponse(&response)
+				err = g.ProcessResponse(&response)
 				if err != nil {
 					log.Errorf("handle response: %v", err)
 				}
@@ -255,8 +255,8 @@ func (g *DistKeyGenerator) listenResponse() error {
 }
 
 func (g *DistKeyGenerator) ProcessDeal(deal *dkg.Deal) (*dkg.Response, error) {
-	g.m.Lock()
-	defer g.m.Unlock()
+	g.Lock()
+	defer g.Unlock()
 
 	response, err := g.dkg.ProcessDeal(deal)
 	if err != nil {
@@ -273,15 +273,14 @@ func (g *DistKeyGenerator) ProcessDeal(deal *dkg.Deal) (*dkg.Response, error) {
 		}
 	}
 
-	err = g.broadcastResponse(response)
-	if err != nil {
+	if err = g.broadcastResponse(response); err != nil {
 		return nil, fmt.Errorf("broadcast response: %w", err)
 	}
 	return response, nil
 }
 
 func (g *DistKeyGenerator) broadcastResponse(response *dkg.Response) error {
-	log.Infof("Broadcasting response for dealer %d and verifier %d", response.Index, response.Response.Index)
+	log.Infof("Broadcasting response for deal from %d", response.Index)
 	b, err := json.Marshal(response)
 	if err != nil {
 		return fmt.Errorf("marshal response: %w", err)
@@ -300,17 +299,16 @@ func (g *DistKeyGenerator) broadcastResponse(response *dkg.Response) error {
 		return fmt.Errorf("prepare transfers: %w", err)
 	}
 
-	_, err = g.iotaClient.SendTrytes(trytes, 3, 9)
-	if err != nil {
+	if _, err = g.iotaClient.SendTrytes(trytes, 3, 9); err != nil {
 		return fmt.Errorf("send trytes: %w", err)
 	}
 	return nil
 }
 
-func (g *DistKeyGenerator) handleResponse(response *dkg.Response) error {
+func (g *DistKeyGenerator) ProcessResponse(response *dkg.Response) error {
 	log.Infof("Handle response for dealer %d and verifier %d", response.Index, response.Response.Index)
-	g.m.Lock()
-	defer g.m.Unlock()
+	g.Lock()
+	defer g.Unlock()
 
 	if response.Response.Index == g.index {
 		return nil

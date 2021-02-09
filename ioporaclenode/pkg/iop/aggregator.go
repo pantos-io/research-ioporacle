@@ -2,7 +2,9 @@ package iop
 
 import (
 	"context"
+	"crypto/ecdsa"
 	"fmt"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	log "github.com/sirupsen/logrus"
@@ -19,7 +21,10 @@ type Aggregator struct {
 	ethClient         *ethclient.Client
 	dkg               *DistKeyGenerator
 	connectionManager *ConnectionManager
+	oracleContract    *OracleContract
 	registryContract  *RegistryContractWrapper
+	account           common.Address
+	ecdsaPrivateKey   *ecdsa.PrivateKey
 	t                 int
 }
 
@@ -27,14 +32,83 @@ func NewAggregator(
 	suite pairing.Suite,
 	ethClient *ethclient.Client,
 	connectionManager *ConnectionManager,
+	oracleContract *OracleContract,
 	registryContract *RegistryContractWrapper,
+	account common.Address,
+	ecdsaPrivateKey *ecdsa.PrivateKey,
 ) *Aggregator {
 	return &Aggregator{
 		suite:             suite,
 		ethClient:         ethClient,
 		connectionManager: connectionManager,
+		oracleContract:    oracleContract,
 		registryContract:  registryContract,
+		account:           account,
+		ecdsaPrivateKey:   ecdsaPrivateKey,
 	}
+}
+
+func (a *Aggregator) WatchAndHandleValidateTransactionLog(ctx context.Context) error {
+	sink := make(chan *OracleContractValidateTransactionLog)
+	defer close(sink)
+
+	sub, err := a.oracleContract.WatchValidateTransactionLog(
+		&bind.WatchOpts{
+			Context: context.Background(),
+		},
+		sink,
+		nil,
+		nil,
+	)
+	if err != nil {
+		return err
+	}
+	defer sub.Unsubscribe()
+
+	for {
+		select {
+		case event := <-sink:
+			log.Infof("Received verify transaction event %s", event.Id)
+			isAggregator, err := a.registryContract.IsAggregator(nil, a.account)
+			if err != nil {
+				log.Errorf("is aggregator: %v", err)
+				continue
+			}
+			if !isAggregator {
+				continue
+			}
+			if err := a.handleValidateTransactionLog(ctx, event); err != nil {
+				log.Errorf("handle verify transaction log: %v", err)
+			}
+		case err = <-sub.Err():
+			return err
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
+}
+
+func (a *Aggregator) handleValidateTransactionLog(ctx context.Context, event *OracleContractValidateTransactionLog) error {
+	result, s, err := a.AggregateValidateTransactionResults(
+		ctx,
+		event.Id,
+		common.BytesToHash(event.Hash[:]),
+		event.Confirmations.Uint64(),
+	)
+	if err != nil {
+		return fmt.Errorf("aggregate validate transaction results: %w", err)
+	}
+
+	sig, err := SignatureToBig(s)
+	if err != nil {
+		return fmt.Errorf("signature to big int: %w", err)
+	}
+
+	auth := bind.NewKeyedTransactor(a.ecdsaPrivateKey)
+	if _, err = a.oracleContract.SubmitValidationResult(auth, event.Id, result, sig); err != nil {
+		return fmt.Errorf("submit verification: %w", err)
+	}
+	return nil
 }
 
 func (a *Aggregator) AggregateValidateTransactionResults(ctx context.Context, id *big.Int, txHash common.Hash, confirmations uint64) (bool, []byte, error) {

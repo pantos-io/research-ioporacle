@@ -20,9 +20,9 @@ var (
 	ethFlag              = flag.String("eth", "ws://127.0.0.1:7545", "eth node address")
 	iotaFlag             = flag.String("iota", "https://nodes.devnet.iota.org:443", "iota node address")
 	zmqFlag              = flag.String("zmq", "tcp://127.0.0.1:5556", "zmq address")
-	oracleContractFlag   = flag.String("oracleContract", "0x804DEAfD5d05eF28E4baC255d55B3731ec06c18d", "oracle contract address")
-	registryContractFlag = flag.String("registryContract", "0x75B3Caa55Ad59b33FAc7611790C5d36d0f6b1496", "registry contract address")
-	distKeyContractFlag  = flag.String("distKeyContract", "0x7A3ac857C462587c785317900f343Ae0E241DD73", "dist key contract address")
+	oracleContractFlag   = flag.String("oracleContract", "0x5D02e5caA40735c22206B6f2bc4509Ce8461cC30", "oracle contract address")
+	registryContractFlag = flag.String("registryContract", "0xB16A8FebD068e5e9BFdB34d1123C50EEb9B59114", "registry contract address")
+	distKeyContractFlag  = flag.String("distKeyContract", "0x23bEA5A93ca502c3A5a92f5E81496c5e9ce4A4a8", "dist key contract address")
 	ecdsaPrivateKeyFlag  = flag.String("ecdsaPrivateKey", "0xe63ff25be694842b3d25f3c8981dbe44b36b23a6effdbe04f9ee11e7965c922b", "private key")
 	blsPrivateKeyFlag    = flag.String("blsPrivateKey", "0x2e931ebbc908ec1993a789166f5690ee2ea34830df69a0fd0fc6a456b4aa8a46", "value of the private share")
 	seedFlag             = flag.String("seed", "KQXMQNRFGVQECXKURNQUYZKDLZLNWJEMABXSHMREMSGRLDUHCCAWPFFZIQFCAWK9ZVQXJEYLINJ9WRCNZ", "iota seed")
@@ -92,7 +92,15 @@ func main() {
 
 	connectionManager := iop.NewConnectionManager()
 	validator := iop.NewValidator(suite, ethClient)
-	aggregator := iop.NewAggregator(suite, ethClient, connectionManager, registryContractWrapper)
+	aggregator := iop.NewAggregator(
+		suite,
+		ethClient,
+		connectionManager,
+		oracleContract,
+		registryContractWrapper,
+		account,
+		ecdsaPrivateKey,
+	)
 	dkg := iop.NewDistKeyGenerator(
 		suite,
 		connectionManager,
@@ -113,13 +121,10 @@ func main() {
 	node := iop.NewOracleNode(
 		dkg,
 		ethClient,
-		iotaClient,
 		connectionManager,
 		validator,
 		aggregator,
-		oracleContract,
 		registryContractWrapper,
-		distKeyContract,
 		ecdsaPrivateKey,
 		blsPrivateKey,
 		account,

@@ -7,7 +7,6 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
-	iota "github.com/iotaledger/iota.go/api"
 	"github.com/iotaledger/iota.go/trinary"
 	log "github.com/sirupsen/logrus"
 	"go.dedis.ch/kyber/v3"
@@ -24,10 +23,8 @@ type OracleNode struct {
 	connectionManager *ConnectionManager
 	validator         *Validator
 	aggregator        *Aggregator
-	iotaClient        *iota.API
 	oracleContract    *OracleContract
 	registryContract  *RegistryContractWrapper
-	distKeyContract   *DistKeyContract
 	ecdsaPrivateKey   *ecdsa.PrivateKey
 	blsPrivateKey     kyber.Scalar
 	account           common.Address
@@ -38,13 +35,10 @@ type OracleNode struct {
 func NewOracleNode(
 	dkg *DistKeyGenerator,
 	ethClient *ethclient.Client,
-	iotaClient *iota.API,
 	connectionManager *ConnectionManager,
 	validator *Validator,
 	aggregator *Aggregator,
-	oracleContract *OracleContract,
 	registryContract *RegistryContractWrapper,
-	distKeyContract *DistKeyContract,
 	ecdsaPrivateKey *ecdsa.PrivateKey,
 	blsPrivateKey kyber.Scalar,
 	account common.Address,
@@ -56,13 +50,10 @@ func NewOracleNode(
 		dkg:               dkg,
 		server:            grpcServer,
 		ethClient:         ethClient,
-		iotaClient:        iotaClient,
 		connectionManager: connectionManager,
 		validator:         validator,
 		aggregator:        aggregator,
-		oracleContract:    oracleContract,
 		registryContract:  registryContract,
-		distKeyContract:   distKeyContract,
 		ecdsaPrivateKey:   ecdsaPrivateKey,
 		blsPrivateKey:     blsPrivateKey,
 		account:           account,
@@ -77,10 +68,32 @@ func (n *OracleNode) Serve(lis net.Listener) error {
 	if err := n.initConnections(); err != nil {
 		return fmt.Errorf("init connections: %w", err)
 	}
-	n.watch(context.Background())
+
+	go func() {
+		err := n.watchAndHandleRegisterOracleNodeLog(context.Background())
+		if err != nil {
+			log.Errorf("watch and handle register oracle node log: %v", err)
+		}
+	}()
+
+	go func() {
+		err := n.aggregator.WatchAndHandleValidateTransactionLog(context.Background())
+		if err != nil {
+			log.Errorf("watch and handle validate transaction log: %v", err)
+		}
+	}()
+
+	go func() {
+		err := n.dkg.ListenAndProcess(context.Background())
+		if err != nil {
+			log.Errorf("watch and handle dkg log: %v", err)
+		}
+	}()
+
 	if err := n.register(lis.Addr().String()); err != nil {
 		return fmt.Errorf("register: %w", err)
 	}
+
 	return n.server.Serve(lis)
 }
 
@@ -100,6 +113,49 @@ func (n *OracleNode) initConnections() error {
 		}
 		log.Infof("New connection to %s", node.Addr.String())
 	}
+	return nil
+}
+
+func (n *OracleNode) watchAndHandleRegisterOracleNodeLog(ctx context.Context) error {
+	sink := make(chan *RegistryContractRegisterOracleNodeLog)
+	defer close(sink)
+
+	sub, err := n.registryContract.WatchRegisterOracleNodeLog(
+		&bind.WatchOpts{
+			Context: context.Background(),
+		},
+		sink,
+		nil,
+	)
+	if err != nil {
+		return err
+	}
+	defer sub.Unsubscribe()
+
+	for {
+		select {
+		case event := <-sink:
+			log.Infof("Received register oracle node event %s", event.Sender.String())
+			if err = n.handleRegisterOracleNodeLog(event); err != nil {
+				log.Errorf("handle register oracle node log: %v", err)
+			}
+		case err = <-sub.Err():
+			return err
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
+}
+
+func (n *OracleNode) handleRegisterOracleNodeLog(event *RegistryContractRegisterOracleNodeLog) error {
+	node, err := n.registryContract.FindOracleNodeByAddress(nil, event.Sender)
+	if err != nil {
+		return fmt.Errorf("find oracle node by address %s: %w", event.Sender, err)
+	}
+	if _, err := n.connectionManager.NewConnection(node); err != nil {
+		return fmt.Errorf("new connection: %w", err)
+	}
+	log.Infof("New connection to %s", event.Sender.String())
 	return nil
 }
 

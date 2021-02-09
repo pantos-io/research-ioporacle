@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"google.golang.org/grpc"
+	"sync"
 )
 
 type ConnectionManager struct {
+	sync.RWMutex
 	connections map[common.Address]*grpc.ClientConn
 }
 
@@ -17,6 +19,8 @@ func NewConnectionManager() *ConnectionManager {
 }
 
 func (m *ConnectionManager) NewConnection(node RegistryContractOracleNode) (*grpc.ClientConn, error) {
+	m.Lock()
+	defer m.Unlock()
 	if conn, ok := m.connections[node.Addr]; ok {
 		return conn, nil
 	}
@@ -29,6 +33,8 @@ func (m *ConnectionManager) NewConnection(node RegistryContractOracleNode) (*grp
 }
 
 func (m *ConnectionManager) FindByAddress(address common.Address) (*grpc.ClientConn, error) {
+	m.RLock()
+	defer m.RUnlock()
 	if conn, ok := m.connections[address]; ok {
 		return conn, nil
 	}
