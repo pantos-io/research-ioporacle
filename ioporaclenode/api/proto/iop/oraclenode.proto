@@ -3,39 +3,17 @@ syntax = "proto3";
 package iop;
 option go_package = ".;iop";
 
+message SendDealRequest {
+  Deal deal = 1;
+}
+
+message SendDealResponse {
+}
+
 message ValidateTransactionRequest {
   int64 id = 1;
   string tx = 2;
   uint64 confirmations = 3;
-}
-
-message ValidateTransactionResponse {
-  int64 id = 1;
-  bool valid = 2;
-  bytes signature = 3;
-}
-
-message ProcessDealRequest {
-  Deal deal = 1;
-}
-
-message ProcessDealResponse {
-  Response response = 1;
-}
-
-message ProcessResponseRequest {
-  Response response = 1;
-}
-
-message ProcessResponseResponse {
-  Justification justification = 1;
-}
-
-message ProcessJustificationRequest {
-  Justification justification = 1;
-}
-
-message ProcessJustificationResponse {
 }
 
 message Deal {
@@ -51,49 +29,15 @@ message EncryptedDeal {
   bytes cipher = 4;
 }
 
-message Response {
-  uint32 index = 1;
-  VSSResponse response = 2;
-}
-
-message VSSResponse {
-  bytes sessionID = 1;
-  uint32 index = 2;
-  bool status = 3;
-  bytes signature = 4;
-}
-
-message Justification {
-  uint32 index = 1;
-  VSSJustification justification = 2;
-}
-
-message VSSJustification {
-  bytes sessionID = 1;
-  uint32 index = 2;
-  ClearTextDeal deal = 3;
-  bytes signature = 4;
-}
-
-message ClearTextDeal {
-  bytes sessionID = 1;
-  PriShare priShare = 2;
-  uint32 t = 3;
-  repeated bytes commitments = 4;
-}
-
-message PriShare {
-  uint32 index = 1;
-  bytes value = 2;
+message ValidateTransactionResponse {
+  int64 id = 1;
+  bool valid = 2;
+  bytes signature = 3;
 }
 
 service OracleNode {
+  rpc SendDeal(SendDealRequest) returns (SendDealResponse){
+  }
   rpc ValidateTransaction(ValidateTransactionRequest) returns (ValidateTransactionResponse) {
-  }
-  rpc ProcessDeal(ProcessDealRequest) returns (ProcessDealResponse){
-  }
-  rpc ProcessResponse(ProcessResponseRequest) returns (ProcessResponseResponse){
-  }
-  rpc ProcessJustification(ProcessJustificationRequest) returns (ProcessJustificationResponse){
   }
 }

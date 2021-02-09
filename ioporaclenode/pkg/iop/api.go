@@ -2,53 +2,19 @@ package iop
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
-	log "github.com/sirupsen/logrus"
-	vss "go.dedis.ch/kyber/v3/share/vss/pedersen"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"math/big"
 )
 
-func (n *OracleNode) ProcessDeal(_ context.Context, request *ProcessDealRequest) (*ProcessDealResponse, error) {
-	log.Infof("Process deal from node %d", request.Deal.Index)
-
-	response, err := n.dkg.ProcessDeal(pbToDeal(request.Deal))
+func (n *OracleNode) SendDeal(_ context.Context, request *SendDealRequest) (*SendDealResponse, error) {
+	_, err := n.dkg.ProcessDeal(pbToDeal(request.Deal))
 	if err != nil {
-		return nil, fmt.Errorf("process deal: %w", err)
+		return nil, fmt.Errorf("handle deal: %w", err)
 	}
-
-	if err := n.broadCastResponse(response); err != nil {
-		return nil, fmt.Errorf("broadcast response: %w", err)
-	}
-
-	return &ProcessDealResponse{
-		Response: responseToPb(response),
-	}, nil
-}
-
-func (n *OracleNode) ProcessResponse(ctx context.Context, request *ProcessResponseRequest) (*ProcessResponseResponse, error) {
-	log.Infof("Process response with dealer %d and verifier %d", request.Response.Index, request.Response.Response.Index)
-
-	for {
-		select {
-		case <-ctx.Done():
-			return &ProcessResponseResponse{}, ctx.Err()
-		default:
-			if _, err := n.dkg.ProcessResponse(pbToResponse(request.Response)); err != nil {
-				if errors.Is(err, vss.ErrNoDealBeforeResponse) {
-					continue
-				}
-				return &ProcessResponseResponse{}, fmt.Errorf("process response: %w", err)
-			}
-
-			return &ProcessResponseResponse{
-				Justification: nil,
-			}, nil
-		}
-	}
+	return &SendDealResponse{}, nil
 }
 
 func (n *OracleNode) ValidateTransaction(ctx context.Context, request *ValidateTransactionRequest) (*ValidateTransactionResponse, error) {

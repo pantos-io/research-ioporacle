@@ -46,35 +46,3 @@ func pbToEncryptedDeal(encryptedDeal *EncryptedDeal) *vss.EncryptedDeal {
 		Cipher:    encryptedDeal.Cipher,
 	}
 }
-
-func responseToPb(response *dkg.Response) *Response {
-	return &Response{
-		Index:    response.Index,
-		Response: vssResponseToPb(response.Response),
-	}
-}
-
-func pbToResponse(response *Response) *dkg.Response {
-	return &dkg.Response{
-		Index:    response.Index,
-		Response: pbToVSSResponse(response.Response),
-	}
-}
-
-func pbToVSSResponse(response *VSSResponse) *vss.Response {
-	return &vss.Response{
-		SessionID: response.SessionID,
-		Index:     response.Index,
-		Status:    response.Status,
-		Signature: response.Signature,
-	}
-}
-
-func vssResponseToPb(response *vss.Response) *VSSResponse {
-	return &VSSResponse{
-		SessionID: response.SessionID,
-		Index:     response.Index,
-		Status:    response.Status,
-		Signature: response.Signature,
-	}
-}

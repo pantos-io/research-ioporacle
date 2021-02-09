@@ -7,34 +7,38 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	iota "github.com/iotaledger/iota.go/api"
+	"github.com/iotaledger/iota.go/trinary"
 	log "github.com/sirupsen/logrus"
 	"go.dedis.ch/kyber/v3"
-	dkg "go.dedis.ch/kyber/v3/share/dkg/pedersen"
 	"go.dedis.ch/kyber/v3/suites"
 	"google.golang.org/grpc"
 	"net"
-	"time"
 )
 
 type OracleNode struct {
 	UnimplementedOracleNodeServer
+	dkg               *DistKeyGenerator
+	ethClient         *ethclient.Client
 	server            *grpc.Server
 	connectionManager *ConnectionManager
 	validator         *Validator
 	aggregator        *Aggregator
-	ethClient         *ethclient.Client
+	iotaClient        *iota.API
 	oracleContract    *OracleContract
 	registryContract  *RegistryContractWrapper
 	distKeyContract   *DistKeyContract
-	dkg               *dkg.DistKeyGenerator
 	ecdsaPrivateKey   *ecdsa.PrivateKey
 	blsPrivateKey     kyber.Scalar
 	account           common.Address
+	seed              trinary.Trytes
 	suite             suites.Suite
 }
 
 func NewOracleNode(
+	dkg *DistKeyGenerator,
 	ethClient *ethclient.Client,
+	iotaClient *iota.API,
 	connectionManager *ConnectionManager,
 	validator *Validator,
 	aggregator *Aggregator,
@@ -44,12 +48,15 @@ func NewOracleNode(
 	ecdsaPrivateKey *ecdsa.PrivateKey,
 	blsPrivateKey kyber.Scalar,
 	account common.Address,
+	seed trinary.Trytes,
 	suite suites.Suite,
 ) *OracleNode {
 	grpcServer := grpc.NewServer()
 	node := &OracleNode{
+		dkg:               dkg,
 		server:            grpcServer,
 		ethClient:         ethClient,
+		iotaClient:        iotaClient,
 		connectionManager: connectionManager,
 		validator:         validator,
 		aggregator:        aggregator,
@@ -59,6 +66,7 @@ func NewOracleNode(
 		ecdsaPrivateKey:   ecdsaPrivateKey,
 		blsPrivateKey:     blsPrivateKey,
 		account:           account,
+		seed:              seed,
 		suite:             suite,
 	}
 	RegisterOracleNodeServer(grpcServer, node)
@@ -115,61 +123,6 @@ func (n *OracleNode) register(ipAddr string) error {
 		}
 	}
 	return nil
-}
-
-func (n *OracleNode) broadCastDeals(nodes []RegistryContractOracleNode, deals map[int]*dkg.Deal) {
-	log.Infof("Broadcasting deals")
-	for i, deal := range deals {
-		conn, err := n.connectionManager.FindByAddress(nodes[i].Addr)
-		if err != nil {
-			log.Errorf("find connection by address: %v", err)
-			continue
-		}
-		client := NewOracleNodeClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-		request := &ProcessDealRequest{
-			Deal: dealToPb(deal),
-		}
-		if _, err := client.ProcessDeal(ctx, request); err != nil {
-			log.Errorf("process deal: %v", err)
-		}
-		cancel()
-	}
-}
-
-func (n *OracleNode) broadCastResponse(response *dkg.Response) error {
-	log.Infof("Broadcasting response with dealer %d and verifier %d", response.Index, response.Response.Index)
-	nodes, err := n.registryContract.FindOracleNodes()
-	if err != nil {
-		return fmt.Errorf("find nodes: %w", err)
-	}
-
-	for _, otherNode := range nodes {
-		if otherNode.Addr == n.account {
-			continue
-		}
-		conn, err := n.connectionManager.FindByAddress(otherNode.Addr)
-		if err != nil {
-			log.Errorf("find connection by address: %v", err)
-			continue
-		}
-		client := NewOracleNodeClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		request := &ProcessResponseRequest{
-			Response: responseToPb(response),
-		}
-		go func() {
-			if _, err := client.ProcessResponse(ctx, request); err != nil {
-				log.Errorf("process response: %v", err)
-			}
-			cancel()
-		}()
-	}
-	return nil
-}
-
-func (n *OracleNode) DistKeyShare() (*dkg.DistKeyShare, error) {
-	return n.dkg.DistKeyShare()
 }
 
 func (n *OracleNode) Stop() {

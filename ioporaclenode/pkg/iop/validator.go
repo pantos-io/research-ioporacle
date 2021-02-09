@@ -20,7 +20,7 @@ type ValidateTransactionResult struct {
 
 type Validator struct {
 	suite     pairing.Suite
-	node      *OracleNode
+	dkg       *DistKeyGenerator
 	ethClient *ethclient.Client
 }
 
@@ -54,7 +54,7 @@ func (v *Validator) ValidateTransaction(ctx context.Context, id *big.Int, txHash
 		return nil, fmt.Errorf("encode result: %w", err)
 	}
 
-	distKey, err := v.node.DistKeyShare()
+	distKey, err := v.dkg.DistKeyShare()
 	if err != nil {
 		return nil, fmt.Errorf("dist key share: %w", err)
 	}
@@ -71,6 +71,6 @@ func (v *Validator) ValidateTransaction(ctx context.Context, id *big.Int, txHash
 	}, nil
 }
 
-func (v *Validator) SetNode(node *OracleNode) {
-	v.node = node
+func (v *Validator) SetDistKeyGenerator(dkg *DistKeyGenerator) {
+	v.dkg = dkg
 }

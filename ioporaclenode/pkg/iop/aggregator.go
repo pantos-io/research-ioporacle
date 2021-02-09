@@ -17,7 +17,7 @@ import (
 type Aggregator struct {
 	suite             pairing.Suite
 	ethClient         *ethclient.Client
-	node              *OracleNode
+	dkg               *DistKeyGenerator
 	connectionManager *ConnectionManager
 	registryContract  *RegistryContractWrapper
 	t                 int
@@ -87,7 +87,7 @@ func (a *Aggregator) AggregateValidateTransactionResults(ctx context.Context, id
 
 	wg.Wait()
 
-	distKey, err := a.node.DistKeyShare()
+	distKey, err := a.dkg.DistKeyShare()
 	if err != nil {
 		return false, nil, fmt.Errorf("dist key share: %w", err)
 	}
@@ -115,8 +115,8 @@ func (a *Aggregator) AggregateValidateTransactionResults(ctx context.Context, id
 	return result, signature, nil
 }
 
-func (a *Aggregator) SetNode(node *OracleNode) {
-	a.node = node
+func (a *Aggregator) SetDistKeyGenerator(dkg *DistKeyGenerator) {
+	a.dkg = dkg
 }
 
 func (a *Aggregator) SetThreshold(threshold int) {

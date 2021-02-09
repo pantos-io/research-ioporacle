@@ -8,13 +8,13 @@ import (
 
 func (n *OracleNode) watch(ctx context.Context) {
 	go func() {
-		if err := n.watchRegisterOracleNodeLog(ctx); err != nil {
+		if err := n.dkg.Listen(ctx); err != nil {
 			log.Errorf("watch register oracle node log: %v", err)
 		}
 	}()
 	go func() {
-		if err := n.watchDistKeyGenerationLog(ctx); err != nil {
-			log.Errorf("watch distributed key generation log: %v", err)
+		if err := n.watchRegisterOracleNodeLog(ctx); err != nil {
+			log.Errorf("watch register oracle node log: %v", err)
 		}
 	}()
 	go func() {
@@ -46,36 +46,6 @@ func (n *OracleNode) watchRegisterOracleNodeLog(ctx context.Context) error {
 			log.Infof("Received register oracle node event %s", event.Sender.String())
 			if err = n.handleRegisterOracleNodeLog(event); err != nil {
 				log.Errorf("handle register oracle node log: %v", err)
-			}
-		case err = <-sub.Err():
-			return err
-		case <-ctx.Done():
-			return ctx.Err()
-		}
-	}
-}
-
-func (n *OracleNode) watchDistKeyGenerationLog(ctx context.Context) error {
-	sink := make(chan *DistKeyContractDistKeyGenerationLog)
-	defer close(sink)
-
-	sub, err := n.distKeyContract.WatchDistKeyGenerationLog(
-		&bind.WatchOpts{
-			Context: context.Background(),
-		},
-		sink,
-	)
-	if err != nil {
-		return err
-	}
-	defer sub.Unsubscribe()
-
-	for {
-		select {
-		case event := <-sink:
-			log.Infof("Received distributed key generation event with t %s", event.Threshold)
-			if err := n.handleDistributedKeyGenerationLog(event); err != nil {
-				log.Errorf("handle distributed key generation log: %v", err)
 			}
 		case err = <-sub.Err():
 			return err
