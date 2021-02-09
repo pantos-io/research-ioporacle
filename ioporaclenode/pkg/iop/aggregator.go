@@ -77,7 +77,7 @@ func (a *Aggregator) WatchAndHandleValidateTransactionLog(ctx context.Context) e
 			if !isAggregator {
 				continue
 			}
-			if err := a.handleValidateTransactionLog(ctx, event); err != nil {
+			if err := a.HandleValidateTransactionLog(ctx, event); err != nil {
 				log.Errorf("handle verify transaction log: %v", err)
 			}
 		case err = <-sub.Err():
@@ -88,7 +88,7 @@ func (a *Aggregator) WatchAndHandleValidateTransactionLog(ctx context.Context) e
 	}
 }
 
-func (a *Aggregator) handleValidateTransactionLog(ctx context.Context, event *OracleContractValidateTransactionLog) error {
+func (a *Aggregator) HandleValidateTransactionLog(ctx context.Context, event *OracleContractValidateTransactionLog) error {
 	result, s, err := a.AggregateValidateTransactionResults(
 		ctx,
 		event.Id,

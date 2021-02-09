@@ -76,19 +76,19 @@ func NewDistKeyGenerator(
 
 func (g *DistKeyGenerator) ListenAndProcess(ctx context.Context) error {
 	go func() {
-		if err := g.watchAndHandleDistKeyGenerationLog(ctx); err != nil {
+		if err := g.WatchAndHandleDistKeyGenerationLog(ctx); err != nil {
 			log.Errorf("watch and handle dkg log: %v", err)
 		}
 	}()
 	go func() {
-		if err := g.listenAndProcessResponse(); err != nil {
+		if err := g.ListenAndProcessResponse(); err != nil {
 			log.Errorf("listen and process response: %v", err)
 		}
 	}()
 	return nil
 }
 
-func (g *DistKeyGenerator) watchAndHandleDistKeyGenerationLog(ctx context.Context) error {
+func (g *DistKeyGenerator) WatchAndHandleDistKeyGenerationLog(ctx context.Context) error {
 	sink := make(chan *DistKeyContractDistKeyGenerationLog)
 	defer close(sink)
 
@@ -107,7 +107,7 @@ func (g *DistKeyGenerator) watchAndHandleDistKeyGenerationLog(ctx context.Contex
 		select {
 		case event := <-sink:
 			log.Infof("Received distributed key generation event with t %s", event.Threshold)
-			if err := g.handleDistributedKeyGenerationLog(event); err != nil {
+			if err := g.HandleDistributedKeyGenerationLog(event); err != nil {
 				log.Errorf("handle dkg log: %v", err)
 			}
 		case err = <-sub.Err():
@@ -118,7 +118,7 @@ func (g *DistKeyGenerator) watchAndHandleDistKeyGenerationLog(ctx context.Contex
 	}
 }
 
-func (g *DistKeyGenerator) handleDistributedKeyGenerationLog(event *DistKeyContractDistKeyGenerationLog) error {
+func (g *DistKeyGenerator) HandleDistributedKeyGenerationLog(event *DistKeyContractDistKeyGenerationLog) error {
 
 	nodes, err := g.registryContract.FindOracleNodes()
 	if err != nil {
@@ -157,7 +157,7 @@ func (g *DistKeyGenerator) handleDistributedKeyGenerationLog(event *DistKeyContr
 		return fmt.Errorf("deals: %w", err)
 	}
 
-	g.sendDeals(nodes, deals)
+	g.SendDeals(nodes, deals)
 
 	timeout := time.After(DkgTimeout)
 loop:
@@ -196,7 +196,7 @@ loop:
 	return nil
 }
 
-func (g *DistKeyGenerator) sendDeals(nodes []RegistryContractOracleNode, deals map[int]*dkg.Deal) {
+func (g *DistKeyGenerator) SendDeals(nodes []RegistryContractOracleNode, deals map[int]*dkg.Deal) {
 	for i, deal := range deals {
 		conn, err := g.connectionManager.FindByAddress(nodes[i].Addr)
 		if err != nil {
@@ -206,7 +206,7 @@ func (g *DistKeyGenerator) sendDeals(nodes []RegistryContractOracleNode, deals m
 		client := NewOracleNodeClient(conn)
 		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		request := &SendDealRequest{
-			Deal: dealToPb(deal),
+			Deal: DealToPb(deal),
 		}
 		log.Infof("Sending deal to node %d", i)
 		if _, err := client.SendDeal(ctx, request); err != nil {
@@ -216,7 +216,7 @@ func (g *DistKeyGenerator) sendDeals(nodes []RegistryContractOracleNode, deals m
 	}
 }
 
-func (g *DistKeyGenerator) listenAndProcessResponse() error {
+func (g *DistKeyGenerator) ListenAndProcessResponse() error {
 	if err := g.zmqClient.SetSubscribe(g.address[:81]); err != nil {
 		return fmt.Errorf("subscribe to address %s: %w", g.address, err)
 	}
@@ -273,13 +273,13 @@ func (g *DistKeyGenerator) ProcessDeal(deal *dkg.Deal) (*dkg.Response, error) {
 		}
 	}
 
-	if err = g.broadcastResponse(response); err != nil {
+	if err = g.BroadcastResponse(response); err != nil {
 		return nil, fmt.Errorf("broadcast response: %w", err)
 	}
 	return response, nil
 }
 
-func (g *DistKeyGenerator) broadcastResponse(response *dkg.Response) error {
+func (g *DistKeyGenerator) BroadcastResponse(response *dkg.Response) error {
 	log.Infof("Broadcasting response for deal from %d", response.Index)
 	b, err := json.Marshal(response)
 	if err != nil {

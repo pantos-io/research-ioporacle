@@ -12,7 +12,7 @@ import (
 )
 
 func (n *OracleNode) SendDeal(_ context.Context, request *SendDealRequest) (*SendDealResponse, error) {
-	_, err := n.dkg.ProcessDeal(pbToDeal(request.Deal))
+	_, err := n.dkg.ProcessDeal(PbToDeal(request.Deal))
 	if err != nil {
 		return nil, fmt.Errorf("handle deal: %w", err)
 	}
@@ -29,26 +29,26 @@ func (n *OracleNode) ValidateTransaction(ctx context.Context, request *ValidateT
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "validate transaction: %v", err)
 	}
-	return validateTransactionResultToResponse(result), nil
+	return ValidateTransactionResultToResponse(result), nil
 }
 
-func dealToPb(deal *dkg.Deal) *Deal {
+func DealToPb(deal *dkg.Deal) *Deal {
 	return &Deal{
 		Index:     deal.Index,
-		Deal:      encryptedDealToPb(deal.Deal),
+		Deal:      EncryptedDealToPb(deal.Deal),
 		Signature: deal.Signature,
 	}
 }
 
-func pbToDeal(deal *Deal) *dkg.Deal {
+func PbToDeal(deal *Deal) *dkg.Deal {
 	return &dkg.Deal{
 		Index:     deal.Index,
-		Deal:      pbToEncryptedDeal(deal.Deal),
+		Deal:      PbToEncryptedDeal(deal.Deal),
 		Signature: deal.Signature,
 	}
 }
 
-func encryptedDealToPb(encryptedDeal *vss.EncryptedDeal) *EncryptedDeal {
+func EncryptedDealToPb(encryptedDeal *vss.EncryptedDeal) *EncryptedDeal {
 	return &EncryptedDeal{
 		DhKey:     encryptedDeal.DHKey,
 		Signature: encryptedDeal.Signature,
@@ -57,7 +57,7 @@ func encryptedDealToPb(encryptedDeal *vss.EncryptedDeal) *EncryptedDeal {
 	}
 }
 
-func pbToEncryptedDeal(encryptedDeal *EncryptedDeal) *vss.EncryptedDeal {
+func PbToEncryptedDeal(encryptedDeal *EncryptedDeal) *vss.EncryptedDeal {
 	return &vss.EncryptedDeal{
 		DHKey:     encryptedDeal.DhKey,
 		Signature: encryptedDeal.Signature,
@@ -66,7 +66,7 @@ func pbToEncryptedDeal(encryptedDeal *EncryptedDeal) *vss.EncryptedDeal {
 	}
 }
 
-func validateTransactionResultToResponse(result *ValidateTransactionResult) *ValidateTransactionResponse {
+func ValidateTransactionResultToResponse(result *ValidateTransactionResult) *ValidateTransactionResponse {
 	return &ValidateTransactionResponse{
 		Id:        result.id.Int64(),
 		Valid:     result.valid,
