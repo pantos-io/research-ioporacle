@@ -2,8 +2,6 @@ const RegistryContract = artifacts.require("RegistryContract");
 const OracleContract = artifacts.require("OracleContract");
 const DistKeyContract = artifacts.require("DistKeyContract");
 
-const ECDSAOracleContract = artifacts.require("ECDSAOracleContract");
-
 module.exports = function (deployer) {
   let distKeyContract;
   deployer
@@ -26,8 +24,5 @@ module.exports = function (deployer) {
         RegistryContract.address,
         DistKeyContract.address
       );
-    })
-    .then(function () {
-      return deployer.deploy(ECDSAOracleContract, RegistryContract.address);
     });
 };
