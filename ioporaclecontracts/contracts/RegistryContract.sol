@@ -74,20 +74,28 @@ contract RegistryContract {
         return oracleNodeIndices.length;
     }
 
-    function isAggregator(address addr) public view returns (bool) {
-        OracleNode memory iopNode = findOracleNodeByAddress(addr);
-        uint256 chosen = blockNumberMod();
+    function isAggregator(address _addr) public view returns (bool) {
+        return isAggregatorByBlock(_addr, block.number);
+    }
+
+    function isAggregatorByBlock(address _addr, uint256 _block) public view returns (bool) {
+        OracleNode memory iopNode = findOracleNodeByAddress(_addr);
+        uint256 chosen = blockNumberMod(_block);
         return
-            chosen >= iopNode.index * BLOCK_RANGE &&
-            chosen < (iopNode.index + 1) * BLOCK_RANGE;
+        chosen >= iopNode.index * BLOCK_RANGE &&
+        chosen < (iopNode.index + 1) * BLOCK_RANGE;
     }
 
     function getAggregator() public view returns (OracleNode memory) {
-        uint256 i = blockNumberMod() / BLOCK_RANGE;
+        return getAggregatorByBlock(block.number);
+    }
+
+    function getAggregatorByBlock(uint256 _block) public view returns (OracleNode memory) {
+        uint256 i = blockNumberMod(_block) / BLOCK_RANGE;
         return findOracleNodeByIndex(i);
     }
 
-    function blockNumberMod() internal view returns (uint256) {
-        return block.number % (oracleNodeIndices.length * BLOCK_RANGE);
+    function blockNumberMod(uint256 _block) internal view returns (uint256) {
+        return _block % (oracleNodeIndices.length * BLOCK_RANGE);
     }
 }

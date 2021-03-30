@@ -16,7 +16,6 @@ contract ECDSAOracleContract {
     uint256 private constant FEE = 0.001 ether;
 
     uint256 private requestCounter;
-    uint256 private requestsSinceLastPayout;
 
     mapping(uint256 => ValidationResult) private validationResults;
 
@@ -42,7 +41,10 @@ contract ECDSAOracleContract {
         external
         payable
     {
-        require(msg.value >= FEE, "msg value below total fee");
+        require(
+            msg.value >= FEE * registryContract.countOracleNodes(),
+            "msg value below total fee"
+        );
         emit ValidateTransactionLog(
             msg.sender,
             ++requestCounter,
@@ -50,9 +52,6 @@ contract ECDSAOracleContract {
             _confirmations
         );
     }
-
-    event Test(bytes32 hash);
-    event Witness(address a);
 
     function submitValidationResult(
         uint256 _id,
@@ -73,19 +72,38 @@ contract ECDSAOracleContract {
         bytes32 result = keccak256(encodeResult(_id, _result));
         bytes32 hash = keccak256(abi.encodePacked(prefix, result));
 
-        uint256 witnessCount = 0;
+        address[] memory witnesses = new address[](_signatures.length);
         for (uint256 i = 0; i < _signatures.length; i++) {
             address witness = hash.recover(_signatures[i]);
-            if (registryContract.oracleNodeIsRegistered(witness)) {
-                witnessCount += 1;
-                //address(uint160(witness)).transfer(FEE);
-            }
+            require(
+                registryContract.oracleNodeIsRegistered(witness),
+                "witness not registered"
+            );
+            require(
+                !containsWitness(witnesses, witness),
+                "witness already included"
+            );
+            witnesses[i] = witness;
+            address(uint160(witness)).transfer(FEE);
         }
 
         uint256 majority = registryContract.countOracleNodes() / 2 + 1;
-        require(witnessCount >= majority, "no majority");
+        require(witnesses.length >= majority, "no majority");
 
         emit SubmitValidationResultLog(msg.sender, _id, _result);
+    }
+
+    function containsWitness(address[] memory _witnesses, address _witness)
+        private
+        pure
+        returns (bool)
+    {
+        for (uint256 i = 0; i < _witnesses.length; i++) {
+            if (_witnesses[i] == _witness) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function findValidationResult(uint256 _id)

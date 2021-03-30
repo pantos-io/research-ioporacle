@@ -30,6 +30,15 @@ module.exports = async function (callback) {
       });
     }
 
+    let fee = no_nodes * 0.001;
+    await ecdsaOracleContract.validateTransaction(
+      "0xa67220981e1760824947fb294f65adf47c505c3bfbe5960341d64c7f7512be8a",
+      3,
+      {
+        value: web3.utils.toWei(fee.toString(), "ether"),
+      }
+    );
+
     let result = await ecdsaOracleContract.encodeResult(0, true);
     let hash = web3.utils.keccak256(result);
 
@@ -45,7 +54,8 @@ module.exports = async function (callback) {
       );
     }
 
-    let aggregator = await registryContract.getAggregator();
+    let block = (await web3.eth.getBlockNumber()) + 1;
+    let aggregator = await registryContract.getAggregatorByBlock(block);
     let tx = await ecdsaOracleContract.submitValidationResult(
       0,
       true,
