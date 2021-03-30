@@ -5,7 +5,7 @@ const ECDSAOracleContract = artifacts.require("ECDSAOracleContract");
 
 module.exports = async function (callback) {
   const csvWriter = createCsvWriter({
-    path: "./data/validate-submit-ecdsa.csv",
+    path: "./data/validate-submit-tx-ecdsa.csv",
     header: [
       { id: "no_nodes", title: "no_nodes" },
       { id: "gas", title: "gas" },
@@ -46,15 +46,14 @@ module.exports = async function (callback) {
     }
 
     let aggregator = await registryContract.getAggregator();
-    console.log(aggregator);
-    let a = await ecdsaOracleContract.submitValidationResult(
+    let tx = await ecdsaOracleContract.submitValidationResult(
       0,
       true,
       signatures,
       { from: aggregator.addr }
     );
 
-    records.push({ no_nodes: no_nodes, gas: a.receipt.cumulativeGasUsed });
+    records.push({ no_nodes: no_nodes, gas: tx.receipt.cumulativeGasUsed });
     no_nodes++;
   }
 
