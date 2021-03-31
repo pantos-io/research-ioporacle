@@ -52,8 +52,6 @@ contract OnChainOracleContract {
         );
     }
 
-    event Test(uint256 length, uint256 majority);
-
     function submitValidationResult(uint256 _id, bool _result) public {
         require(
             registryContract.oracleNodeIsRegistered(msg.sender),
@@ -63,7 +61,6 @@ contract OnChainOracleContract {
         votes[_id][_result].push(msg.sender);
 
         uint256 majority = registryContract.countOracleNodes() / 2 + 1;
-        emit Test(votes[_id][_result].length, majority);
         if (votes[_id][_result].length >= majority) {
             ValidationResult storage validationResult = validationResults[_id];
             validationResult.id = _id;
@@ -72,6 +69,7 @@ contract OnChainOracleContract {
             for (uint256 i = 0; i < votes[_id][_result].length; i++) {
                 address(uint160(votes[_id][_result][i])).transfer(FEE);
             }
+
             emit SubmitValidationResultLog(msg.sender, _id, _result);
         }
     }
