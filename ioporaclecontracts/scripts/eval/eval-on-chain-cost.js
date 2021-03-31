@@ -4,7 +4,7 @@ const RegistryContract = artifacts.require("RegistryContract");
 const DistKeyContract = artifacts.require("DistKeyContract");
 const OnChainOracleContract = artifacts.require("OnChainOracleContract");
 
-module.exports = async function (callback) {
+module.exports = async function () {
   let dir = "./data";
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);

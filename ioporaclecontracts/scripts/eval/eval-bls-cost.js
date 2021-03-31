@@ -1,8 +1,12 @@
+const fs = require("fs");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 const OracleContract = artifacts.require("OracleContract");
 
 module.exports = async function () {
-  let records = [];
+  let dir = "./data";
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
   const csvWriter = createCsvWriter({
     path: "./data/bls-cost.csv",
     header: [
@@ -10,6 +14,7 @@ module.exports = async function () {
       { id: "gas", title: "gas" },
     ],
   });
+  let records = [];
 
   let topic;
   let eventName = "SubmitValidationResultLog";
