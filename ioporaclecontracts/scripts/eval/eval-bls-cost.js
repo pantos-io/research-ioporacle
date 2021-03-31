@@ -4,7 +4,7 @@ const OracleContract = artifacts.require("OracleContract");
 module.exports = async function () {
   let records = [];
   const csvWriter = createCsvWriter({
-    path: "./data/validate-submit-tx.csv",
+    path: "./data/bls-cost.csv",
     header: [
       { id: "id", title: "id" },
       { id: "gas", title: "gas" },
