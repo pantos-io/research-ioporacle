@@ -1,7 +1,8 @@
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 const OracleContract = artifacts.require("OracleContract");
 
-module.exports = async function (callback) {
+module.exports = async function () {
+  let records = [];
   const csvWriter = createCsvWriter({
     path: "./data/validate-submit-tx.csv",
     header: [
@@ -9,20 +10,19 @@ module.exports = async function (callback) {
       { id: "gas", title: "gas" },
     ],
   });
-  let records = [];
 
-  let topic, eventInterface;
+  let topic;
   let eventName = "SubmitValidationResultLog";
   for (const [key, value] of Object.entries(OracleContract.events)) {
     if (value.name === eventName) {
       topic = key;
-      eventInterface = value;
     }
   }
 
   let counter = 0;
   let oracleContract = await OracleContract.deployed();
   let tx = "0xa67220981e1760824947fb294f65adf47c505c3bfbe5960341d64c7f7512be8a";
+  let fee = await oracleContract.TOTAL_FEE();
 
   await web3.eth.subscribe(
     "logs",
@@ -45,7 +45,7 @@ module.exports = async function (callback) {
         }
 
         await oracleContract.validateTransaction(tx, 3, {
-          value: web3.utils.toWei("0.0011", "ether"),
+          value: fee,
         });
         counter++;
       }
@@ -53,6 +53,6 @@ module.exports = async function (callback) {
   );
 
   await oracleContract.validateTransaction(tx, 3, {
-    value: web3.utils.toWei("0.0011", "ether"),
+    value: fee,
   });
 };

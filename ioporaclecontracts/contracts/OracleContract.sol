@@ -13,9 +13,9 @@ contract OracleContract {
         bool result;
     }
 
-    uint256 private constant BASE_FEE = 0.001 ether;
-    uint256 private constant VALIDATOR_FEE = 0.0001 ether;
-    uint256 private constant TOTAL_FEE = BASE_FEE + VALIDATOR_FEE;
+    uint256 public constant BASE_FEE = 0.001 ether;
+    uint256 public constant VALIDATOR_FEE = 0.0001 ether;
+    uint256 public constant TOTAL_FEE = BASE_FEE + VALIDATOR_FEE;
 
     uint256 private requestCounter;
     uint256 private requestsSinceLastPayout;
