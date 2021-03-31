@@ -1,11 +1,16 @@
+const fs = require("fs");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 const RegistryContract = artifacts.require("RegistryContract");
 const DistKeyContract = artifacts.require("DistKeyContract");
 const ECDSAOracleContract = artifacts.require("ECDSAOracleContract");
 
 module.exports = async function (callback) {
+  let dir = "./data";
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
   const csvWriter = createCsvWriter({
-    path: "./data/validate-submit-tx-ecdsa.csv",
+    path: "./data/ecdsa-cost.csv",
     header: [
       { id: "no_nodes", title: "no_nodes" },
       { id: "gas", title: "gas" },
@@ -30,12 +35,13 @@ module.exports = async function (callback) {
       });
     }
 
-    let fee = no_nodes * 0.001;
+    let fee = await oracleContract.FEE();
+    let fees = no_nodes * fee;
     await ecdsaOracleContract.validateTransaction(
       "0xa67220981e1760824947fb294f65adf47c505c3bfbe5960341d64c7f7512be8a",
       3,
       {
-        value: web3.utils.toWei(fee.toString(), "ether"),
+        value: fees,
       }
     );
 
