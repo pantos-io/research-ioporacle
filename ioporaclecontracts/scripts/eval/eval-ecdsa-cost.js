@@ -35,7 +35,7 @@ module.exports = async function (callback) {
       });
     }
 
-    let fee = await oracleContract.FEE();
+    let fee = await ecdsaOracleContract.FEE();
     let fees = no_nodes * fee;
     await ecdsaOracleContract.validateTransaction(
       "0xa67220981e1760824947fb294f65adf47c505c3bfbe5960341d64c7f7512be8a",
