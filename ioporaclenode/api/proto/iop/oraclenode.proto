@@ -12,8 +12,6 @@ message SendDealResponse {
 
 message ValidateTransactionRequest {
   int64 id = 1;
-  string tx = 2;
-  uint64 confirmations = 3;
 }
 
 message Deal {

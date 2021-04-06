@@ -3,7 +3,6 @@ package iop
 import (
 	"context"
 	"fmt"
-	"github.com/ethereum/go-ethereum/common"
 	dkg "go.dedis.ch/kyber/v3/share/dkg/pedersen"
 	vss "go.dedis.ch/kyber/v3/share/vss/pedersen"
 	"google.golang.org/grpc/codes"
@@ -23,8 +22,6 @@ func (n *OracleNode) ValidateTransaction(ctx context.Context, request *ValidateT
 	result, err := n.validator.ValidateTransaction(
 		ctx,
 		big.NewInt(request.Id),
-		common.HexToHash(request.Tx),
-		request.Confirmations,
 	)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "validate transaction: %v", err)

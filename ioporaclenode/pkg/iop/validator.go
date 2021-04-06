@@ -5,11 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/ethclient"
+	log "github.com/sirupsen/logrus"
 	"go.dedis.ch/kyber/v3/pairing"
 	"go.dedis.ch/kyber/v3/sign/tbls"
 	"math/big"
+	"sync"
+	"time"
 )
 
 type ValidateTransactionResult struct {
@@ -19,20 +22,77 @@ type ValidateTransactionResult struct {
 }
 
 type Validator struct {
-	suite     pairing.Suite
-	dkg       *DistKeyGenerator
-	ethClient *ethclient.Client
+	sync.RWMutex
+	suite          pairing.Suite
+	oracleContract *OracleContract
+	requests       map[uint64]*OracleContractValidateTransactionLog
+	dkg            *DistKeyGenerator
+	ethClient      *ethclient.Client
 }
 
-func NewValidator(suite pairing.Suite, ethClient *ethclient.Client) *Validator {
+func NewValidator(suite pairing.Suite, oracleContract *OracleContract, ethClient *ethclient.Client) *Validator {
 	return &Validator{
-		suite:     suite,
-		ethClient: ethClient,
+		suite:          suite,
+		oracleContract: oracleContract,
+		requests:       make(map[uint64]*OracleContractValidateTransactionLog),
+		ethClient:      ethClient,
 	}
 }
 
-func (v *Validator) ValidateTransaction(ctx context.Context, id *big.Int, txHash common.Hash, confirmations uint64) (*ValidateTransactionResult, error) {
-	receipt, err := v.ethClient.TransactionReceipt(ctx, txHash)
+func (v *Validator) WatchAndHandleValidateTransactionLog(ctx context.Context) error {
+	sink := make(chan *OracleContractValidateTransactionLog)
+	defer close(sink)
+
+	sub, err := v.oracleContract.WatchValidateTransactionLog(
+		&bind.WatchOpts{
+			Context: context.Background(),
+		},
+		sink,
+		nil,
+		nil,
+	)
+	if err != nil {
+		return err
+	}
+	defer sub.Unsubscribe()
+
+	for {
+		select {
+		case event := <-sink:
+			v.Lock()
+			v.requests[event.Id.Uint64()] = event
+			v.Unlock()
+			log.Infof("Stored request %d", event.Id.Uint64())
+		case err = <-sub.Err():
+			return err
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
+}
+
+func (v *Validator) ValidateTransaction(ctx context.Context, id *big.Int) (*ValidateTransactionResult, error) {
+
+	var request *OracleContractValidateTransactionLog
+
+loop:
+	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+			v.RLock()
+			if r, ok := v.requests[id.Uint64()]; ok {
+				request = r
+				v.RUnlock()
+				break loop
+			}
+			v.RUnlock()
+			time.Sleep(500 * time.Millisecond)
+		}
+	}
+
+	receipt, err := v.ethClient.TransactionReceipt(ctx, request.Hash)
 	found := !errors.Is(err, ethereum.NotFound)
 	if err != nil && found {
 		return nil, fmt.Errorf("transaction receipt: %w", err)
@@ -46,7 +106,7 @@ func (v *Validator) ValidateTransaction(ctx context.Context, id *big.Int, txHash
 	valid := false
 	if found {
 		confirmed := blockNumber - receipt.BlockNumber.Uint64()
-		valid = confirmed >= confirmations
+		valid = confirmed >= request.Confirmations.Uint64()
 	}
 
 	message, err := encodeValidateTransactionResult(id, valid)

@@ -103,7 +103,7 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 	account := common.HexToAddress(hexAddress)
 
 	connectionManager := NewConnectionManager(registryContractWrapper, account)
-	validator := NewValidator(suite, ethClient)
+	validator := NewValidator(suite, oracleContract, ethClient)
 	aggregator := NewAggregator(
 		suite,
 		ethClient,
@@ -173,6 +173,12 @@ func (n *OracleNode) Run() error {
 
 	go func() {
 		if err := n.aggregator.WatchAndHandleValidateTransactionLog(context.Background()); err != nil {
+			log.Errorf("watch and handle validate transaction log: %v", err)
+		}
+	}()
+
+	go func() {
+		if err := n.validator.WatchAndHandleValidateTransactionLog(context.Background()); err != nil {
 			log.Errorf("watch and handle validate transaction log: %v", err)
 		}
 	}()

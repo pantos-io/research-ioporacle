@@ -78,7 +78,7 @@ func (a *Aggregator) WatchAndHandleValidateTransactionLog(ctx context.Context) e
 				continue
 			}
 			if err := a.HandleValidateTransactionLog(ctx, event); err != nil {
-				log.Errorf("handle verify transaction log: %v", err)
+				log.Errorf("handle validate transaction log: %v", err)
 			}
 		case err = <-sub.Err():
 			return err
@@ -139,9 +139,7 @@ func (a *Aggregator) AggregateValidateTransactionResults(ctx context.Context, id
 			client := NewOracleNodeClient(conn)
 			ctxTimeout, cancel := context.WithTimeout(ctx, 3*time.Second)
 			result, err := client.ValidateTransaction(ctxTimeout, &ValidateTransactionRequest{
-				Id:            id.Int64(),
-				Tx:            txHash.String(),
-				Confirmations: confirmations,
+				Id: id.Int64(),
 			})
 			cancel()
 			if err != nil {
