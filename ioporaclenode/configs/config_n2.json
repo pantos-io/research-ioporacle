@@ -2,9 +2,9 @@
   "bindAddress": "127.0.0.1:25566",
   "privateKey": "1e72b6eea22b5a00b0a838d79f66d040a4c79e25d24f3a5ae2b7c4af96cb9e20",
   "contracts": {
-    "registryContractAddress": "0x06D69F54Bc9b187dc869c36f71c195781BAcfc70",
-    "oracleContractAddress": "0xe5aDD60BB841d95db4e4B8fe9f428A3fe8052030",
-    "distKeyContractAddress": "0x2c27bac6CBC4e7af6EFA462D93fBc49515d0c37a"
+    "registryContractAddress": "0xb67f39a80dD86C240d8C32d04dbca98a4fAAfab8",
+    "oracleContractAddress": "0xebfd3EC184a46f350FD171253bbd7918e5A17a63",
+    "distKeyContractAddress": "0xFa7B5232F522085a6d7fa97F911153Ff1E983bC2"
   },
   "ethereum": {
     "address": "ws://127.0.0.1:7545",

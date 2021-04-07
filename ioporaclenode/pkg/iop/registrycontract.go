@@ -31,11 +31,12 @@ type RegistryContractOracleNode struct {
 	Addr   common.Address
 	IpAddr string
 	PubKey []byte
+	Stake  *big.Int
 	Index  *big.Int
 }
 
 // RegistryContractABI is the input ABI used to generate the binding from.
-const RegistryContractABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_distKeyContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RegisterOracleNodeLog\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"_pubKey\",\"type\":\"bytes\"}],\"name\":\"registerOracleNode\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\",\"payable\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"oracleNodeIsRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"findOracleNodeByAddress\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"findOracleNodeByIndex\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"countOracleNodes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"isAggregator\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"getAggregator\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true}]"
+const RegistryContractABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_distKeyContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RegisterOracleNodeLog\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"MIN_STAKE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"_pubKey\",\"type\":\"bytes\"}],\"name\":\"registerOracleNode\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"oracleNodeIsRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"findOracleNodeByAddress\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"findOracleNodeByIndex\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"countOracleNodes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"isAggregator\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_block\",\"type\":\"uint256\"}],\"name\":\"isAggregatorByBlock\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAggregator\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_block\",\"type\":\"uint256\"}],\"name\":\"getAggregatorByBlock\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // RegistryContract is an auto generated Go binding around an Ethereum contract.
 type RegistryContract struct {
@@ -179,6 +180,37 @@ func (_RegistryContract *RegistryContractTransactorRaw) Transact(opts *bind.Tran
 	return _RegistryContract.Contract.contract.Transact(opts, method, params...)
 }
 
+// MINSTAKE is a free data retrieval call binding the contract method 0xcb1c2b5c.
+//
+// Solidity: function MIN_STAKE() view returns(uint256)
+func (_RegistryContract *RegistryContractCaller) MINSTAKE(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _RegistryContract.contract.Call(opts, &out, "MIN_STAKE")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// MINSTAKE is a free data retrieval call binding the contract method 0xcb1c2b5c.
+//
+// Solidity: function MIN_STAKE() view returns(uint256)
+func (_RegistryContract *RegistryContractSession) MINSTAKE() (*big.Int, error) {
+	return _RegistryContract.Contract.MINSTAKE(&_RegistryContract.CallOpts)
+}
+
+// MINSTAKE is a free data retrieval call binding the contract method 0xcb1c2b5c.
+//
+// Solidity: function MIN_STAKE() view returns(uint256)
+func (_RegistryContract *RegistryContractCallerSession) MINSTAKE() (*big.Int, error) {
+	return _RegistryContract.Contract.MINSTAKE(&_RegistryContract.CallOpts)
+}
+
 // CountOracleNodes is a free data retrieval call binding the contract method 0x836f187a.
 //
 // Solidity: function countOracleNodes() view returns(uint256)
@@ -212,7 +244,7 @@ func (_RegistryContract *RegistryContractCallerSession) CountOracleNodes() (*big
 
 // FindOracleNodeByAddress is a free data retrieval call binding the contract method 0x655a102f.
 //
-// Solidity: function findOracleNodeByAddress(address _addr) view returns((address,string,bytes,uint256))
+// Solidity: function findOracleNodeByAddress(address _addr) view returns((address,string,bytes,uint256,uint256))
 func (_RegistryContract *RegistryContractCaller) FindOracleNodeByAddress(opts *bind.CallOpts, _addr common.Address) (RegistryContractOracleNode, error) {
 	var out []interface{}
 	err := _RegistryContract.contract.Call(opts, &out, "findOracleNodeByAddress", _addr)
@@ -229,21 +261,21 @@ func (_RegistryContract *RegistryContractCaller) FindOracleNodeByAddress(opts *b
 
 // FindOracleNodeByAddress is a free data retrieval call binding the contract method 0x655a102f.
 //
-// Solidity: function findOracleNodeByAddress(address _addr) view returns((address,string,bytes,uint256))
+// Solidity: function findOracleNodeByAddress(address _addr) view returns((address,string,bytes,uint256,uint256))
 func (_RegistryContract *RegistryContractSession) FindOracleNodeByAddress(_addr common.Address) (RegistryContractOracleNode, error) {
 	return _RegistryContract.Contract.FindOracleNodeByAddress(&_RegistryContract.CallOpts, _addr)
 }
 
 // FindOracleNodeByAddress is a free data retrieval call binding the contract method 0x655a102f.
 //
-// Solidity: function findOracleNodeByAddress(address _addr) view returns((address,string,bytes,uint256))
+// Solidity: function findOracleNodeByAddress(address _addr) view returns((address,string,bytes,uint256,uint256))
 func (_RegistryContract *RegistryContractCallerSession) FindOracleNodeByAddress(_addr common.Address) (RegistryContractOracleNode, error) {
 	return _RegistryContract.Contract.FindOracleNodeByAddress(&_RegistryContract.CallOpts, _addr)
 }
 
 // FindOracleNodeByIndex is a free data retrieval call binding the contract method 0x272132e9.
 //
-// Solidity: function findOracleNodeByIndex(uint256 _index) view returns((address,string,bytes,uint256))
+// Solidity: function findOracleNodeByIndex(uint256 _index) view returns((address,string,bytes,uint256,uint256))
 func (_RegistryContract *RegistryContractCaller) FindOracleNodeByIndex(opts *bind.CallOpts, _index *big.Int) (RegistryContractOracleNode, error) {
 	var out []interface{}
 	err := _RegistryContract.contract.Call(opts, &out, "findOracleNodeByIndex", _index)
@@ -260,21 +292,21 @@ func (_RegistryContract *RegistryContractCaller) FindOracleNodeByIndex(opts *bin
 
 // FindOracleNodeByIndex is a free data retrieval call binding the contract method 0x272132e9.
 //
-// Solidity: function findOracleNodeByIndex(uint256 _index) view returns((address,string,bytes,uint256))
+// Solidity: function findOracleNodeByIndex(uint256 _index) view returns((address,string,bytes,uint256,uint256))
 func (_RegistryContract *RegistryContractSession) FindOracleNodeByIndex(_index *big.Int) (RegistryContractOracleNode, error) {
 	return _RegistryContract.Contract.FindOracleNodeByIndex(&_RegistryContract.CallOpts, _index)
 }
 
 // FindOracleNodeByIndex is a free data retrieval call binding the contract method 0x272132e9.
 //
-// Solidity: function findOracleNodeByIndex(uint256 _index) view returns((address,string,bytes,uint256))
+// Solidity: function findOracleNodeByIndex(uint256 _index) view returns((address,string,bytes,uint256,uint256))
 func (_RegistryContract *RegistryContractCallerSession) FindOracleNodeByIndex(_index *big.Int) (RegistryContractOracleNode, error) {
 	return _RegistryContract.Contract.FindOracleNodeByIndex(&_RegistryContract.CallOpts, _index)
 }
 
 // GetAggregator is a free data retrieval call binding the contract method 0x3ad59dbc.
 //
-// Solidity: function getAggregator() view returns((address,string,bytes,uint256))
+// Solidity: function getAggregator() view returns((address,string,bytes,uint256,uint256))
 func (_RegistryContract *RegistryContractCaller) GetAggregator(opts *bind.CallOpts) (RegistryContractOracleNode, error) {
 	var out []interface{}
 	err := _RegistryContract.contract.Call(opts, &out, "getAggregator")
@@ -291,24 +323,55 @@ func (_RegistryContract *RegistryContractCaller) GetAggregator(opts *bind.CallOp
 
 // GetAggregator is a free data retrieval call binding the contract method 0x3ad59dbc.
 //
-// Solidity: function getAggregator() view returns((address,string,bytes,uint256))
+// Solidity: function getAggregator() view returns((address,string,bytes,uint256,uint256))
 func (_RegistryContract *RegistryContractSession) GetAggregator() (RegistryContractOracleNode, error) {
 	return _RegistryContract.Contract.GetAggregator(&_RegistryContract.CallOpts)
 }
 
 // GetAggregator is a free data retrieval call binding the contract method 0x3ad59dbc.
 //
-// Solidity: function getAggregator() view returns((address,string,bytes,uint256))
+// Solidity: function getAggregator() view returns((address,string,bytes,uint256,uint256))
 func (_RegistryContract *RegistryContractCallerSession) GetAggregator() (RegistryContractOracleNode, error) {
 	return _RegistryContract.Contract.GetAggregator(&_RegistryContract.CallOpts)
 }
 
+// GetAggregatorByBlock is a free data retrieval call binding the contract method 0x59798dfd.
+//
+// Solidity: function getAggregatorByBlock(uint256 _block) view returns((address,string,bytes,uint256,uint256))
+func (_RegistryContract *RegistryContractCaller) GetAggregatorByBlock(opts *bind.CallOpts, _block *big.Int) (RegistryContractOracleNode, error) {
+	var out []interface{}
+	err := _RegistryContract.contract.Call(opts, &out, "getAggregatorByBlock", _block)
+
+	if err != nil {
+		return *new(RegistryContractOracleNode), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(RegistryContractOracleNode)).(*RegistryContractOracleNode)
+
+	return out0, err
+
+}
+
+// GetAggregatorByBlock is a free data retrieval call binding the contract method 0x59798dfd.
+//
+// Solidity: function getAggregatorByBlock(uint256 _block) view returns((address,string,bytes,uint256,uint256))
+func (_RegistryContract *RegistryContractSession) GetAggregatorByBlock(_block *big.Int) (RegistryContractOracleNode, error) {
+	return _RegistryContract.Contract.GetAggregatorByBlock(&_RegistryContract.CallOpts, _block)
+}
+
+// GetAggregatorByBlock is a free data retrieval call binding the contract method 0x59798dfd.
+//
+// Solidity: function getAggregatorByBlock(uint256 _block) view returns((address,string,bytes,uint256,uint256))
+func (_RegistryContract *RegistryContractCallerSession) GetAggregatorByBlock(_block *big.Int) (RegistryContractOracleNode, error) {
+	return _RegistryContract.Contract.GetAggregatorByBlock(&_RegistryContract.CallOpts, _block)
+}
+
 // IsAggregator is a free data retrieval call binding the contract method 0x1e8f3c95.
 //
-// Solidity: function isAggregator(address addr) view returns(bool)
-func (_RegistryContract *RegistryContractCaller) IsAggregator(opts *bind.CallOpts, addr common.Address) (bool, error) {
+// Solidity: function isAggregator(address _addr) view returns(bool)
+func (_RegistryContract *RegistryContractCaller) IsAggregator(opts *bind.CallOpts, _addr common.Address) (bool, error) {
 	var out []interface{}
-	err := _RegistryContract.contract.Call(opts, &out, "isAggregator", addr)
+	err := _RegistryContract.contract.Call(opts, &out, "isAggregator", _addr)
 
 	if err != nil {
 		return *new(bool), err
@@ -322,16 +385,47 @@ func (_RegistryContract *RegistryContractCaller) IsAggregator(opts *bind.CallOpt
 
 // IsAggregator is a free data retrieval call binding the contract method 0x1e8f3c95.
 //
-// Solidity: function isAggregator(address addr) view returns(bool)
-func (_RegistryContract *RegistryContractSession) IsAggregator(addr common.Address) (bool, error) {
-	return _RegistryContract.Contract.IsAggregator(&_RegistryContract.CallOpts, addr)
+// Solidity: function isAggregator(address _addr) view returns(bool)
+func (_RegistryContract *RegistryContractSession) IsAggregator(_addr common.Address) (bool, error) {
+	return _RegistryContract.Contract.IsAggregator(&_RegistryContract.CallOpts, _addr)
 }
 
 // IsAggregator is a free data retrieval call binding the contract method 0x1e8f3c95.
 //
-// Solidity: function isAggregator(address addr) view returns(bool)
-func (_RegistryContract *RegistryContractCallerSession) IsAggregator(addr common.Address) (bool, error) {
-	return _RegistryContract.Contract.IsAggregator(&_RegistryContract.CallOpts, addr)
+// Solidity: function isAggregator(address _addr) view returns(bool)
+func (_RegistryContract *RegistryContractCallerSession) IsAggregator(_addr common.Address) (bool, error) {
+	return _RegistryContract.Contract.IsAggregator(&_RegistryContract.CallOpts, _addr)
+}
+
+// IsAggregatorByBlock is a free data retrieval call binding the contract method 0x68982668.
+//
+// Solidity: function isAggregatorByBlock(address _addr, uint256 _block) view returns(bool)
+func (_RegistryContract *RegistryContractCaller) IsAggregatorByBlock(opts *bind.CallOpts, _addr common.Address, _block *big.Int) (bool, error) {
+	var out []interface{}
+	err := _RegistryContract.contract.Call(opts, &out, "isAggregatorByBlock", _addr, _block)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// IsAggregatorByBlock is a free data retrieval call binding the contract method 0x68982668.
+//
+// Solidity: function isAggregatorByBlock(address _addr, uint256 _block) view returns(bool)
+func (_RegistryContract *RegistryContractSession) IsAggregatorByBlock(_addr common.Address, _block *big.Int) (bool, error) {
+	return _RegistryContract.Contract.IsAggregatorByBlock(&_RegistryContract.CallOpts, _addr, _block)
+}
+
+// IsAggregatorByBlock is a free data retrieval call binding the contract method 0x68982668.
+//
+// Solidity: function isAggregatorByBlock(address _addr, uint256 _block) view returns(bool)
+func (_RegistryContract *RegistryContractCallerSession) IsAggregatorByBlock(_addr common.Address, _block *big.Int) (bool, error) {
+	return _RegistryContract.Contract.IsAggregatorByBlock(&_RegistryContract.CallOpts, _addr, _block)
 }
 
 // OracleNodeIsRegistered is a free data retrieval call binding the contract method 0x140f3daa.

@@ -33,7 +33,7 @@ type OracleContractValidationResult struct {
 }
 
 // OracleContractABI is the input ABI used to generate the binding from.
-const OracleContractABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_distKeyContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"name\":\"SubmitValidationResultLog\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"hash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"confirmations\",\"type\":\"uint256\"}],\"name\":\"ValidateTransactionLog\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_confirmations\",\"type\":\"uint256\"}],\"name\":\"validateTransaction\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\",\"payable\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"},{\"internalType\":\"uint256[2]\",\"name\":\"_signature\",\"type\":\"uint256[2]\"}],\"name\":\"submitValidationResult\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"findValidationResult\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"internalType\":\"structOracleContract.ValidationResult\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"validationResultExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true}]"
+const OracleContractABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_distKeyContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"fee\",\"type\":\"uint256\"}],\"name\":\"SubmitValidationResultLog\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"hash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"confirmations\",\"type\":\"uint256\"}],\"name\":\"ValidateTransactionLog\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BASE_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"TOTAL_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATOR_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_confirmations\",\"type\":\"uint256\"}],\"name\":\"validateTransaction\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"},{\"internalType\":\"uint256[2]\",\"name\":\"_signature\",\"type\":\"uint256[2]\"}],\"name\":\"submitValidationResult\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"findValidationResult\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"internalType\":\"structOracleContract.ValidationResult\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"validationResultExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // OracleContract is an auto generated Go binding around an Ethereum contract.
 type OracleContract struct {
@@ -175,6 +175,99 @@ func (_OracleContract *OracleContractTransactorRaw) Transfer(opts *bind.Transact
 // Transact invokes the (paid) contract method with params as input values.
 func (_OracleContract *OracleContractTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
 	return _OracleContract.Contract.contract.Transact(opts, method, params...)
+}
+
+// BASEFEE is a free data retrieval call binding the contract method 0x3d18651e.
+//
+// Solidity: function BASE_FEE() view returns(uint256)
+func (_OracleContract *OracleContractCaller) BASEFEE(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _OracleContract.contract.Call(opts, &out, "BASE_FEE")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// BASEFEE is a free data retrieval call binding the contract method 0x3d18651e.
+//
+// Solidity: function BASE_FEE() view returns(uint256)
+func (_OracleContract *OracleContractSession) BASEFEE() (*big.Int, error) {
+	return _OracleContract.Contract.BASEFEE(&_OracleContract.CallOpts)
+}
+
+// BASEFEE is a free data retrieval call binding the contract method 0x3d18651e.
+//
+// Solidity: function BASE_FEE() view returns(uint256)
+func (_OracleContract *OracleContractCallerSession) BASEFEE() (*big.Int, error) {
+	return _OracleContract.Contract.BASEFEE(&_OracleContract.CallOpts)
+}
+
+// TOTALFEE is a free data retrieval call binding the contract method 0x63db7eae.
+//
+// Solidity: function TOTAL_FEE() view returns(uint256)
+func (_OracleContract *OracleContractCaller) TOTALFEE(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _OracleContract.contract.Call(opts, &out, "TOTAL_FEE")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// TOTALFEE is a free data retrieval call binding the contract method 0x63db7eae.
+//
+// Solidity: function TOTAL_FEE() view returns(uint256)
+func (_OracleContract *OracleContractSession) TOTALFEE() (*big.Int, error) {
+	return _OracleContract.Contract.TOTALFEE(&_OracleContract.CallOpts)
+}
+
+// TOTALFEE is a free data retrieval call binding the contract method 0x63db7eae.
+//
+// Solidity: function TOTAL_FEE() view returns(uint256)
+func (_OracleContract *OracleContractCallerSession) TOTALFEE() (*big.Int, error) {
+	return _OracleContract.Contract.TOTALFEE(&_OracleContract.CallOpts)
+}
+
+// VALIDATORFEE is a free data retrieval call binding the contract method 0x7da83e2b.
+//
+// Solidity: function VALIDATOR_FEE() view returns(uint256)
+func (_OracleContract *OracleContractCaller) VALIDATORFEE(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _OracleContract.contract.Call(opts, &out, "VALIDATOR_FEE")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// VALIDATORFEE is a free data retrieval call binding the contract method 0x7da83e2b.
+//
+// Solidity: function VALIDATOR_FEE() view returns(uint256)
+func (_OracleContract *OracleContractSession) VALIDATORFEE() (*big.Int, error) {
+	return _OracleContract.Contract.VALIDATORFEE(&_OracleContract.CallOpts)
+}
+
+// VALIDATORFEE is a free data retrieval call binding the contract method 0x7da83e2b.
+//
+// Solidity: function VALIDATOR_FEE() view returns(uint256)
+func (_OracleContract *OracleContractCallerSession) VALIDATORFEE() (*big.Int, error) {
+	return _OracleContract.Contract.VALIDATORFEE(&_OracleContract.CallOpts)
 }
 
 // FindValidationResult is a free data retrieval call binding the contract method 0x953bde29.
@@ -353,12 +446,13 @@ type OracleContractSubmitValidationResultLog struct {
 	Sender common.Address
 	Id     *big.Int
 	Result bool
+	Fee    *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterSubmitValidationResultLog is a free log retrieval operation binding the contract event 0x36cf801fa1e8739e3bf8426bba2c30eca735b965ef2ab047727480e5bf49847a.
+// FilterSubmitValidationResultLog is a free log retrieval operation binding the contract event 0x5a30fdd13b280f41539a4412ba85d8b7ab460fac5d7d1cdfd4043c77321b2abb.
 //
-// Solidity: event SubmitValidationResultLog(address indexed sender, uint256 id, bool result)
+// Solidity: event SubmitValidationResultLog(address indexed sender, uint256 id, bool result, uint256 fee)
 func (_OracleContract *OracleContractFilterer) FilterSubmitValidationResultLog(opts *bind.FilterOpts, sender []common.Address) (*OracleContractSubmitValidationResultLogIterator, error) {
 
 	var senderRule []interface{}
@@ -373,9 +467,9 @@ func (_OracleContract *OracleContractFilterer) FilterSubmitValidationResultLog(o
 	return &OracleContractSubmitValidationResultLogIterator{contract: _OracleContract.contract, event: "SubmitValidationResultLog", logs: logs, sub: sub}, nil
 }
 
-// WatchSubmitValidationResultLog is a free log subscription operation binding the contract event 0x36cf801fa1e8739e3bf8426bba2c30eca735b965ef2ab047727480e5bf49847a.
+// WatchSubmitValidationResultLog is a free log subscription operation binding the contract event 0x5a30fdd13b280f41539a4412ba85d8b7ab460fac5d7d1cdfd4043c77321b2abb.
 //
-// Solidity: event SubmitValidationResultLog(address indexed sender, uint256 id, bool result)
+// Solidity: event SubmitValidationResultLog(address indexed sender, uint256 id, bool result, uint256 fee)
 func (_OracleContract *OracleContractFilterer) WatchSubmitValidationResultLog(opts *bind.WatchOpts, sink chan<- *OracleContractSubmitValidationResultLog, sender []common.Address) (event.Subscription, error) {
 
 	var senderRule []interface{}
@@ -415,9 +509,9 @@ func (_OracleContract *OracleContractFilterer) WatchSubmitValidationResultLog(op
 	}), nil
 }
 
-// ParseSubmitValidationResultLog is a log parse operation binding the contract event 0x36cf801fa1e8739e3bf8426bba2c30eca735b965ef2ab047727480e5bf49847a.
+// ParseSubmitValidationResultLog is a log parse operation binding the contract event 0x5a30fdd13b280f41539a4412ba85d8b7ab460fac5d7d1cdfd4043c77321b2abb.
 //
-// Solidity: event SubmitValidationResultLog(address indexed sender, uint256 id, bool result)
+// Solidity: event SubmitValidationResultLog(address indexed sender, uint256 id, bool result, uint256 fee)
 func (_OracleContract *OracleContractFilterer) ParseSubmitValidationResultLog(log types.Log) (*OracleContractSubmitValidationResultLog, error) {
 	event := new(OracleContractSubmitValidationResultLog)
 	if err := _OracleContract.contract.UnpackLog(event, "SubmitValidationResultLog", log); err != nil {

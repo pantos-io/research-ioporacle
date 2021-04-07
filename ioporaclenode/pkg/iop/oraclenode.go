@@ -202,7 +202,14 @@ func (n *OracleNode) register(ipAddr string) error {
 		return fmt.Errorf("marshal bls public key: %v", err)
 	}
 
+	minStake, err := n.registryContract.MINSTAKE(nil)
+	if err != nil {
+		return fmt.Errorf("min stake: %v", err)
+	}
+
 	auth := bind.NewKeyedTransactor(n.ecdsaPrivateKey)
+	auth.Value = minStake
+
 	if !isRegistered {
 		_, err = n.registryContract.RegisterOracleNode(auth, ipAddr, b)
 		if err != nil {
