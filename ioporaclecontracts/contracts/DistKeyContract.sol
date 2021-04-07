@@ -10,24 +10,36 @@ contract DistKeyContract {
     event DistKeyGenerationLog(uint256 threshold);
 
     uint256[4] private publicKey;
+    uint256 private numberOfValidators;
 
     RegistryContract private registryContract;
 
     function generate() external {
         require(msg.sender == address(registryContract), "invalid sender");
-        emit DistKeyGenerationLog(threshold());
+        emit DistKeyGenerationLog(signatureThreshold());
     }
 
-    function threshold() private view returns (uint256) {
+    function signatureThreshold() private view returns (uint256) {
         return (registryContract.countOracleNodes() + 1) / 2;
+    }
+
+    function validatorThreshold() private view returns (uint256) {
+        uint256 threshold = signatureThreshold();
+        return threshold + ((registryContract.countOracleNodes() - threshold) / 2);
     }
 
     function getPublicKey() external view returns (uint256[4] memory) {
         return publicKey;
     }
 
-    function setPublicKey(uint256[4] calldata _publicKey) external {
+    function getNumberOfValidators() external view returns (uint256) {
+        return numberOfValidators;
+    }
+
+    function setPublicKey(uint256[4] calldata _publicKey, uint256 _numberOfValidators) external {
+        require(_numberOfValidators >= validatorThreshold(), "too few validators");
         publicKey = _publicKey;
+        numberOfValidators = _numberOfValidators;
     }
 
     function setRegistryContract(address _registryContract) external {

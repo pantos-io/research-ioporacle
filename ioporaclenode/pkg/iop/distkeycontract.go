@@ -27,7 +27,7 @@ var (
 )
 
 // DistKeyContractABI is the input ABI used to generate the binding from.
-const DistKeyContractABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"threshold\",\"type\":\"uint256\"}],\"name\":\"DistKeyGenerationLog\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"KEY_GEN_INTERVAL\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"generate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPublicKey\",\"outputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"\",\"type\":\"uint256[4]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"_publicKey\",\"type\":\"uint256[4]\"}],\"name\":\"setPublicKey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"}],\"name\":\"setRegistryContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+const DistKeyContractABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"threshold\",\"type\":\"uint256\"}],\"name\":\"DistKeyGenerationLog\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"KEY_GEN_INTERVAL\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"generate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPublicKey\",\"outputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"\",\"type\":\"uint256[4]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getNumberOfValidators\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"_publicKey\",\"type\":\"uint256[4]\"},{\"internalType\":\"uint256\",\"name\":\"_numberOfValidators\",\"type\":\"uint256\"}],\"name\":\"setPublicKey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"}],\"name\":\"setRegistryContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // DistKeyContract is an auto generated Go binding around an Ethereum contract.
 type DistKeyContract struct {
@@ -202,6 +202,37 @@ func (_DistKeyContract *DistKeyContractCallerSession) KEYGENINTERVAL() (*big.Int
 	return _DistKeyContract.Contract.KEYGENINTERVAL(&_DistKeyContract.CallOpts)
 }
 
+// GetNumberOfValidators is a free data retrieval call binding the contract method 0x9031d913.
+//
+// Solidity: function getNumberOfValidators() view returns(uint256)
+func (_DistKeyContract *DistKeyContractCaller) GetNumberOfValidators(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _DistKeyContract.contract.Call(opts, &out, "getNumberOfValidators")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetNumberOfValidators is a free data retrieval call binding the contract method 0x9031d913.
+//
+// Solidity: function getNumberOfValidators() view returns(uint256)
+func (_DistKeyContract *DistKeyContractSession) GetNumberOfValidators() (*big.Int, error) {
+	return _DistKeyContract.Contract.GetNumberOfValidators(&_DistKeyContract.CallOpts)
+}
+
+// GetNumberOfValidators is a free data retrieval call binding the contract method 0x9031d913.
+//
+// Solidity: function getNumberOfValidators() view returns(uint256)
+func (_DistKeyContract *DistKeyContractCallerSession) GetNumberOfValidators() (*big.Int, error) {
+	return _DistKeyContract.Contract.GetNumberOfValidators(&_DistKeyContract.CallOpts)
+}
+
 // GetPublicKey is a free data retrieval call binding the contract method 0x2e334452.
 //
 // Solidity: function getPublicKey() view returns(uint256[4])
@@ -254,25 +285,25 @@ func (_DistKeyContract *DistKeyContractTransactorSession) Generate() (*types.Tra
 	return _DistKeyContract.Contract.Generate(&_DistKeyContract.TransactOpts)
 }
 
-// SetPublicKey is a paid mutator transaction binding the contract method 0xaba94a66.
+// SetPublicKey is a paid mutator transaction binding the contract method 0xf4cc18a3.
 //
-// Solidity: function setPublicKey(uint256[4] _publicKey) returns()
-func (_DistKeyContract *DistKeyContractTransactor) SetPublicKey(opts *bind.TransactOpts, _publicKey [4]*big.Int) (*types.Transaction, error) {
-	return _DistKeyContract.contract.Transact(opts, "setPublicKey", _publicKey)
+// Solidity: function setPublicKey(uint256[4] _publicKey, uint256 _numberOfValidators) returns()
+func (_DistKeyContract *DistKeyContractTransactor) SetPublicKey(opts *bind.TransactOpts, _publicKey [4]*big.Int, _numberOfValidators *big.Int) (*types.Transaction, error) {
+	return _DistKeyContract.contract.Transact(opts, "setPublicKey", _publicKey, _numberOfValidators)
 }
 
-// SetPublicKey is a paid mutator transaction binding the contract method 0xaba94a66.
+// SetPublicKey is a paid mutator transaction binding the contract method 0xf4cc18a3.
 //
-// Solidity: function setPublicKey(uint256[4] _publicKey) returns()
-func (_DistKeyContract *DistKeyContractSession) SetPublicKey(_publicKey [4]*big.Int) (*types.Transaction, error) {
-	return _DistKeyContract.Contract.SetPublicKey(&_DistKeyContract.TransactOpts, _publicKey)
+// Solidity: function setPublicKey(uint256[4] _publicKey, uint256 _numberOfValidators) returns()
+func (_DistKeyContract *DistKeyContractSession) SetPublicKey(_publicKey [4]*big.Int, _numberOfValidators *big.Int) (*types.Transaction, error) {
+	return _DistKeyContract.Contract.SetPublicKey(&_DistKeyContract.TransactOpts, _publicKey, _numberOfValidators)
 }
 
-// SetPublicKey is a paid mutator transaction binding the contract method 0xaba94a66.
+// SetPublicKey is a paid mutator transaction binding the contract method 0xf4cc18a3.
 //
-// Solidity: function setPublicKey(uint256[4] _publicKey) returns()
-func (_DistKeyContract *DistKeyContractTransactorSession) SetPublicKey(_publicKey [4]*big.Int) (*types.Transaction, error) {
-	return _DistKeyContract.Contract.SetPublicKey(&_DistKeyContract.TransactOpts, _publicKey)
+// Solidity: function setPublicKey(uint256[4] _publicKey, uint256 _numberOfValidators) returns()
+func (_DistKeyContract *DistKeyContractTransactorSession) SetPublicKey(_publicKey [4]*big.Int, _numberOfValidators *big.Int) (*types.Transaction, error) {
+	return _DistKeyContract.Contract.SetPublicKey(&_DistKeyContract.TransactOpts, _publicKey, _numberOfValidators)
 }
 
 // SetRegistryContract is a paid mutator transaction binding the contract method 0x028ebc44.

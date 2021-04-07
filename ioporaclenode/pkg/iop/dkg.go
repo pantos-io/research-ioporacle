@@ -17,6 +17,7 @@ import (
 	"go.dedis.ch/kyber/v3"
 	dkg "go.dedis.ch/kyber/v3/share/dkg/pedersen"
 	"go.dedis.ch/kyber/v3/suites"
+	"math/big"
 	"strings"
 	"sync"
 	"time"
@@ -120,6 +121,9 @@ func (g *DistKeyGenerator) WatchAndHandleDistKeyGenerationLog(ctx context.Contex
 
 func (g *DistKeyGenerator) HandleDistributedKeyGenerationLog(event *DistKeyContractDistKeyGenerationLog) error {
 
+	g.deals = make(map[uint32]*dkg.Deal)
+	g.pendingResp = make(map[uint32][]*dkg.Response)
+
 	nodes, err := g.registryContract.FindOracleNodes()
 	if err != nil {
 		return fmt.Errorf("find nodes: %w", err)
@@ -187,9 +191,9 @@ loop:
 	if err != nil {
 		return fmt.Errorf("public key to big int: %w", err)
 	}
-
+	numberOfValidators := len(g.dkg.QUAL())
 	auth := bind.NewKeyedTransactor(g.ecdsaPrivateKey)
-	if _, err = g.distKeyContract.SetPublicKey(auth, pubKey); err != nil {
+	if _, err = g.distKeyContract.SetPublicKey(auth, pubKey, big.NewInt(int64(numberOfValidators))); err != nil {
 		return fmt.Errorf("set public key: %w", err)
 	}
 

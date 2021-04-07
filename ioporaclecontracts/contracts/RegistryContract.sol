@@ -14,7 +14,6 @@ contract RegistryContract {
     }
 
     uint256 private constant BLOCK_RANGE = 6;
-    uint256 private constant KEY_GEN_INTERVAL = 3;
     uint256 public constant MIN_STAKE = 1 ether;
 
     mapping(address => OracleNode) private oracleNodes;

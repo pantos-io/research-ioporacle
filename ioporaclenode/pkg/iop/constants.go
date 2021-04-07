@@ -2,4 +2,4 @@ package iop
 
 import "time"
 
-const DkgTimeout = 30 * time.Second
+const DkgTimeout = 60 * time.Second
