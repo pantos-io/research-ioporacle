@@ -7,8 +7,9 @@
     "distKeyContractAddress": "0x6849702411C0486606BfDd53f854F00b18462BE9"
   },
   "ethereum": {
-    "address": "ws://127.0.0.1:7545",
-    "privateKey": "89dda8e85e37c870f270ec592e93f692dc42c9e3ec48f598826d8a73598e4d49"
+    "sourceAddress": "ws://127.0.0.1:7545",
+    "targetAddress": "ws://127.0.0.1:7545",
+    "privateKey": "4728e333a11fe827dce5119988320686fcd31a8ba6114009bf161fddc50b8c3e"
   },
   "iota": {
     "address": "http://128.131.57.124:14265",

@@ -15,8 +15,9 @@ type ContractsConfig struct {
 }
 
 type EthereumConfig struct {
-	Address    string
-	PrivateKey string
+	TargetAddress string
+	SourceAddress string
+	PrivateKey    string
 }
 
 type IOTAConfig struct {

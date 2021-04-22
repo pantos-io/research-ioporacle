@@ -23,7 +23,8 @@ type OracleNode struct {
 	UnimplementedOracleNodeServer
 	server            *grpc.Server
 	serverLis         net.Listener
-	ethClient         *ethclient.Client
+	targetEthClient   *ethclient.Client
+	sourceEthClient   *ethclient.Client
 	iotaAPI           *iota.API
 	zmqSocket         *zmq.Socket
 	registryContract  *RegistryContractWrapper
@@ -47,7 +48,12 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 		return nil, fmt.Errorf("listen on %s: %v", c.BindAddress, err)
 	}
 
-	ethClient, err := ethclient.Dial(c.Ethereum.Address)
+	targetEthClient, err := ethclient.Dial(c.Ethereum.TargetAddress)
+	if err != nil {
+		return nil, fmt.Errorf("dial eth client: %v", err)
+	}
+
+	sourceEthClient, err := ethclient.Dial(c.Ethereum.SourceAddress)
 	if err != nil {
 		return nil, fmt.Errorf("dial eth client: %v", err)
 	}
@@ -65,7 +71,7 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 		return nil, fmt.Errorf("connect zmq: %v", err)
 	}
 
-	registryContract, err := NewRegistryContract(common.HexToAddress(c.Contracts.RegistryContractAddress), ethClient)
+	registryContract, err := NewRegistryContract(common.HexToAddress(c.Contracts.RegistryContractAddress), targetEthClient)
 	if err != nil {
 		return nil, fmt.Errorf("registry contract: %v", err)
 	}
@@ -74,12 +80,12 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 		RegistryContract: registryContract,
 	}
 
-	oracleContract, err := NewOracleContract(common.HexToAddress(c.Contracts.OracleContractAddress), ethClient)
+	oracleContract, err := NewOracleContract(common.HexToAddress(c.Contracts.OracleContractAddress), targetEthClient)
 	if err != nil {
 		return nil, fmt.Errorf("oracle contract: %v", err)
 	}
 
-	distKeyContract, err := NewDistKeyContract(common.HexToAddress(c.Contracts.DistKeyContractAddress), ethClient)
+	distKeyContract, err := NewDistKeyContract(common.HexToAddress(c.Contracts.DistKeyContractAddress), targetEthClient)
 	if err != nil {
 		return nil, fmt.Errorf("dist key contract: %v", err)
 	}
@@ -103,10 +109,10 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 	account := common.HexToAddress(hexAddress)
 
 	connectionManager := NewConnectionManager(registryContractWrapper, account)
-	validator := NewValidator(suite, oracleContract, ethClient)
+	validator := NewValidator(suite, oracleContract, sourceEthClient)
 	aggregator := NewAggregator(
 		suite,
-		ethClient,
+		targetEthClient,
 		connectionManager,
 		oracleContract,
 		registryContractWrapper,
@@ -133,7 +139,8 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 	node := &OracleNode{
 		server:            server,
 		serverLis:         serverLis,
-		ethClient:         ethClient,
+		targetEthClient:   targetEthClient,
+		sourceEthClient:   sourceEthClient,
 		iotaAPI:           iotaAPI,
 		zmqSocket:         zmqSocket,
 		registryContract:  registryContractWrapper,
@@ -222,6 +229,7 @@ func (n *OracleNode) register(ipAddr string) error {
 func (n *OracleNode) Stop() {
 	n.server.Stop()
 	_ = n.zmqSocket.Close()
-	n.ethClient.Close()
+	n.targetEthClient.Close()
+	n.sourceEthClient.Close()
 	n.connectionManager.Close()
 }
