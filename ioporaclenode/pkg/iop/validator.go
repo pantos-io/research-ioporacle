@@ -16,9 +16,10 @@ import (
 )
 
 type ValidateTransactionResult struct {
-	id        *big.Int
-	valid     bool
-	signature []byte
+	id          *big.Int
+	valid       bool
+	blockNumber *big.Int
+	signature   []byte
 }
 
 type Validator struct {
@@ -127,6 +128,7 @@ loop:
 	return &ValidateTransactionResult{
 		id,
 		valid,
+		receipt.BlockNumber,
 		sig,
 	}, nil
 }

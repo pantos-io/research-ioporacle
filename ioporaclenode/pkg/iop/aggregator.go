@@ -147,6 +147,7 @@ func (a *Aggregator) AggregateValidateTransactionResults(ctx context.Context, id
 				return
 			}
 
+			//TODO: Check block number and signature before adding the result
 			mutex.Lock()
 			if result.Valid {
 				positiveResults = append(positiveResults, result.Signature)

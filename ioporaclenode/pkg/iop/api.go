@@ -65,8 +65,9 @@ func PbToEncryptedDeal(encryptedDeal *EncryptedDeal) *vss.EncryptedDeal {
 
 func ValidateTransactionResultToResponse(result *ValidateTransactionResult) *ValidateTransactionResponse {
 	return &ValidateTransactionResponse{
-		Id:        result.id.Int64(),
-		Valid:     result.valid,
-		Signature: result.signature,
+		Id:          result.id.Int64(),
+		Valid:       result.valid,
+		BlockNumber: result.blockNumber.Int64(),
+		Signature:   result.signature,
 	}
 }

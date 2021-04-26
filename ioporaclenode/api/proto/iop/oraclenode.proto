@@ -30,7 +30,8 @@ message EncryptedDeal {
 message ValidateTransactionResponse {
   int64 id = 1;
   bool valid = 2;
-  bytes signature = 3;
+  int64 blockNumber = 3;
+  bytes signature = 4;
 }
 
 service OracleNode {
