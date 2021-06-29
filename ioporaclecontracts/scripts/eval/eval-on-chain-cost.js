@@ -29,9 +29,11 @@ module.exports = async function () {
     await distKeyContract.setRegistryContract(registryContract.address);
 
     let accounts = await web3.eth.getAccounts();
+    let stake = await registryContract.MIN_STAKE();
     for (let i = 0; i < no_nodes; i++) {
       await registryContract.registerOracleNode("127.0.0.1", "0x0", {
         from: accounts[i],
+        value: stake
       });
     }
 

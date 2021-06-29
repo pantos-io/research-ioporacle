@@ -4,8 +4,8 @@ pragma experimental ABIEncoderV2;
 
 import "./RegistryContract.sol";
 import "./DistKeyContract.sol";
-import "cdlbot-solidity/contracts/crypto/BN256G1.sol";
-import "cdlbot-solidity/contracts/crypto/BN256G2.sol";
+import "./crypto/BN256G1.sol";
+import "./crypto/BN256G2.sol";
 
 contract OracleContract {
     struct ValidationResult {

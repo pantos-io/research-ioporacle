@@ -21,6 +21,7 @@ module.exports = async function () {
   let no_nodes = 3;
 
   while (no_nodes < 64) {
+    console.log(no_nodes);
     let distKeyContract = await DistKeyContract.new();
     let registryContract = await RegistryContract.new(distKeyContract.address);
     let ecdsaOracleContract = await ECDSAOracleContract.new(
@@ -28,10 +29,12 @@ module.exports = async function () {
     );
     await distKeyContract.setRegistryContract(registryContract.address);
 
+    let stake = await registryContract.MIN_STAKE();
     let accounts = await web3.eth.getAccounts();
     for (let i = 0; i < no_nodes; i++) {
       await registryContract.registerOracleNode("127.0.0.1", "0x0", {
         from: accounts[i],
+        value: stake,
       });
     }
 

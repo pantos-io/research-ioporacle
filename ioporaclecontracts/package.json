@@ -16,10 +16,9 @@
     "test": "truffle test"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@openzeppelin/contracts": "^3.2.0",
-    "cdlbot-solidity": "file:../../../cdlbot-solidity",
     "elliptic-curve-solidity": "^0.2.4"
   },
   "devDependencies": {

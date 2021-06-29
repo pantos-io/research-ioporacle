@@ -10,7 +10,7 @@ contract OnChainOracleContract {
         bool result;
     }
 
-    uint256 public constant FEE = 0.001 ether;
+    uint256 public constant FEE = 0.00001 ether;
 
     uint256 private requestCounter;
 

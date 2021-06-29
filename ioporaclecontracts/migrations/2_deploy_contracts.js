@@ -15,9 +15,6 @@ module.exports = function (deployer) {
       });
     })
     .then(function () {
-      return deployer.deploy(RegistryContract, DistKeyContract.address);
-    })
-    .then(function () {
       distKeyContract.setRegistryContract(RegistryContract.address);
       return deployer.deploy(
         OracleContract,
