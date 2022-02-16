@@ -12,9 +12,8 @@
     "privateKey": "8a05bb924a19a3f4b85d9b0a50e67988fef09bf813b25e679f2e3ff5135c7b14"
   },
   "iota": {
-    "address": "http://128.131.57.124:14265",
-    "zmq": "tcp://128.131.57.124:5556",
-    "seed": "KQXMQNRFGVQECXKURNQUYZKDLZLNWJEMABXSHMREMSGRLDUHCCAWPFFZIQFCAWK9ZVQXJEYLINJ9WRCNZ",
-    "broadcastAddress": "DIIBHRZJLNIYTGFRCTHRYOHOJMJIGB9JXLFCUZLXDUCLOEPOEPRSHQDYZKEFDJPCOSQ9VMDSAMYMZPIDDAS9SKHSFX"
+    "rest": "https://api.lb-0.h.chrysalis-devnet.iota.cafe",
+    "mqtt": "tcp://mqtt.lb-0.h.chrysalis-devnet.iota.cafe:1883",
+    "topic": "iop"
   }
 }

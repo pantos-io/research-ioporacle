@@ -14,7 +14,6 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/iotaledger/hive.go/serializer"
-	"github.com/iotaledger/iota.go/trinary"
 	iota "github.com/iotaledger/iota.go/v2"
 	log "github.com/sirupsen/logrus"
 	"go.dedis.ch/kyber/v3"
@@ -29,14 +28,13 @@ type DistKeyGenerator struct {
 	connectionManager *ConnectionManager
 	aggregator        *Aggregator
 	mqttClient        mqtt.Client
+	mqttTopic         []byte
 	iotaClient        *iota.NodeHTTPAPIClient
 	registryContract  *RegistryContractWrapper
 	distKeyContract   *DistKeyContract
 	ecdsaPrivateKey   *ecdsa.PrivateKey
 	blsPrivateKey     kyber.Scalar
 	account           common.Address
-	seed              trinary.Trytes
-	address           trinary.Trytes
 	deals             map[uint32]*dkg.Deal
 	pendingResp       map[uint32][]*dkg.Response
 	index             uint32
@@ -47,28 +45,26 @@ func NewDistKeyGenerator(
 	connectionManager *ConnectionManager,
 	aggregator *Aggregator,
 	mqttClient mqtt.Client,
+	mqttTopic []byte,
 	iotaClient *iota.NodeHTTPAPIClient,
 	registryContract *RegistryContractWrapper,
 	distKeyContract *DistKeyContract,
 	ecdsaPrivateKey *ecdsa.PrivateKey,
 	blsPrivateKey kyber.Scalar,
 	account common.Address,
-	seed trinary.Trytes,
-	address trinary.Trytes,
 ) *DistKeyGenerator {
 	return &DistKeyGenerator{
 		suite:             suite,
 		connectionManager: connectionManager,
 		aggregator:        aggregator,
 		mqttClient:        mqttClient,
+		mqttTopic:         mqttTopic,
 		iotaClient:        iotaClient,
 		registryContract:  registryContract,
 		distKeyContract:   distKeyContract,
 		ecdsaPrivateKey:   ecdsaPrivateKey,
 		blsPrivateKey:     blsPrivateKey,
 		account:           account,
-		seed:              seed,
-		address:           address,
 		deals:             make(map[uint32]*dkg.Deal),
 		pendingResp:       make(map[uint32][]*dkg.Response),
 	}
@@ -224,7 +220,7 @@ func (g *DistKeyGenerator) ListenAndProcessResponse() error {
 		return fmt.Errorf("connect to broker: %w", token.Error())
 	}
 
-	topic := fmt.Sprintf("messages/indexation/%s", hex.EncodeToString([]byte("iop")))
+	topic := fmt.Sprintf("messages/indexation/%s", hex.EncodeToString(g.mqttTopic))
 	if token := g.mqttClient.Subscribe(topic, 1, func(c mqtt.Client, m mqtt.Message) {
 		g.publishHandler(c, m)
 	}); token.Wait() && token.Error() != nil {
@@ -286,7 +282,7 @@ func (g *DistKeyGenerator) BroadcastResponse(response *dkg.Response) error {
 	}
 
 	payload := &iota.Indexation{
-		Index: 	[]byte("iop"),
+		Index: 	g.mqttTopic,
 		Data:	b,
 	}
 

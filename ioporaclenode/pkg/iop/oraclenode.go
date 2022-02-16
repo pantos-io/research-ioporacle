@@ -12,7 +12,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/iotaledger/iota.go/trinary"
 	iota "github.com/iotaledger/iota.go/v2"
 	log "github.com/sirupsen/logrus"
 	"go.dedis.ch/kyber/v3"
@@ -33,7 +32,6 @@ type OracleNode struct {
 	ecdsaPrivateKey   *ecdsa.PrivateKey
 	blsPrivateKey     kyber.Scalar
 	account           common.Address
-	seed              trinary.Trytes
 	dkg               *DistKeyGenerator
 	connectionManager *ConnectionManager
 	validator         *Validator
@@ -57,14 +55,16 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 		return nil, fmt.Errorf("dial eth client: %v", err)
 	}
 
-	iotaAPI := iota.NewNodeHTTPAPIClient("https://api.lb-0.h.chrysalis-devnet.iota.cafe")
+	iotaAPI := iota.NewNodeHTTPAPIClient(c.IOTA.Rest)
 	if err != nil {
 		return nil, fmt.Errorf("iota client: %v", err)
 	}
 
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker("mqtt.lb-0.h.chrysalis-devnet.iota.cafe:1883")
+	opts.AddBroker(c.IOTA.Mqtt)
 	mqttClient := mqtt.NewClient(opts)
+
+	mqttTopic := []byte(c.IOTA.Topic)
 
 	registryContract, err := NewRegistryContract(common.HexToAddress(c.Contracts.RegistryContractAddress), targetEthClient)
 	if err != nil {
@@ -119,14 +119,13 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 		connectionManager,
 		aggregator,
 		mqttClient,
+		mqttTopic,
 		iotaAPI,
 		registryContractWrapper,
 		distKeyContract,
 		ecdsaPrivateKey,
 		blsPrivateKey,
 		account,
-		c.IOTA.Seed,
-		c.IOTA.BroadcastAddress,
 	)
 	validator.SetDistKeyGenerator(dkg)
 	aggregator.SetDistKeyGenerator(dkg)
@@ -143,7 +142,6 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 		ecdsaPrivateKey:   ecdsaPrivateKey,
 		blsPrivateKey:     blsPrivateKey,
 		account:           account,
-		seed:              c.IOTA.Seed,
 		dkg:               dkg,
 		connectionManager: connectionManager,
 		validator:         validator,

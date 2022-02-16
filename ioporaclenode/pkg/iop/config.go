@@ -21,8 +21,7 @@ type EthereumConfig struct {
 }
 
 type IOTAConfig struct {
-	Address          string
-	Zmq              string
-	Seed             string
-	BroadcastAddress string
+	Rest  string
+	Mqtt  string
+	Topic string
 }
