@@ -4,19 +4,20 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
+	"ioporaclenode/internal/pkg/kyber/pairing/bn256"
+	"net"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-	iota "github.com/iotaledger/iota.go/api"
 	"github.com/iotaledger/iota.go/trinary"
-	zmq "github.com/pebbe/zmq4"
+	iota "github.com/iotaledger/iota.go/v2"
 	log "github.com/sirupsen/logrus"
 	"go.dedis.ch/kyber/v3"
 	"go.dedis.ch/kyber/v3/suites"
 	"google.golang.org/grpc"
-	"ioporaclenode/internal/pkg/kyber/pairing/bn256"
-	"net"
 )
 
 type OracleNode struct {
@@ -25,8 +26,6 @@ type OracleNode struct {
 	serverLis         net.Listener
 	targetEthClient   *ethclient.Client
 	sourceEthClient   *ethclient.Client
-	iotaAPI           *iota.API
-	zmqSocket         *zmq.Socket
 	registryContract  *RegistryContractWrapper
 	oracleContract    *OracleContract
 	distKeyContract   *DistKeyContract
@@ -58,18 +57,14 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 		return nil, fmt.Errorf("dial eth client: %v", err)
 	}
 
-	iotaAPI, err := iota.ComposeAPI(iota.HTTPClientSettings{URI: c.IOTA.Address})
+	iotaAPI := iota.NewNodeHTTPAPIClient("https://api.lb-0.h.chrysalis-devnet.iota.cafe")
 	if err != nil {
 		return nil, fmt.Errorf("iota client: %v", err)
 	}
 
-	zmqSocket, err := zmq.NewSocket(zmq.SUB)
-	if err != nil {
-		return nil, fmt.Errorf("zmq client: %v", err)
-	}
-	if err := zmqSocket.Connect(c.IOTA.Zmq); err != nil {
-		return nil, fmt.Errorf("connect zmq: %v", err)
-	}
+	opts := mqtt.NewClientOptions()
+	opts.AddBroker("mqtt.lb-0.h.chrysalis-devnet.iota.cafe:1883")
+	mqttClient := mqtt.NewClient(opts)
 
 	registryContract, err := NewRegistryContract(common.HexToAddress(c.Contracts.RegistryContractAddress), targetEthClient)
 	if err != nil {
@@ -123,7 +118,7 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 		suite,
 		connectionManager,
 		aggregator,
-		zmqSocket,
+		mqttClient,
 		iotaAPI,
 		registryContractWrapper,
 		distKeyContract,
@@ -141,8 +136,6 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 		serverLis:         serverLis,
 		targetEthClient:   targetEthClient,
 		sourceEthClient:   sourceEthClient,
-		iotaAPI:           iotaAPI,
-		zmqSocket:         zmqSocket,
 		registryContract:  registryContractWrapper,
 		oracleContract:    oracleContract,
 		distKeyContract:   distKeyContract,
@@ -228,7 +221,6 @@ func (n *OracleNode) register(ipAddr string) error {
 
 func (n *OracleNode) Stop() {
 	n.server.Stop()
-	_ = n.zmqSocket.Close()
 	n.targetEthClient.Close()
 	n.sourceEthClient.Close()
 	n.connectionManager.Close()

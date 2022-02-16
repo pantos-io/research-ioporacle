@@ -3,24 +3,23 @@ package iop
 import (
 	"context"
 	"crypto/ecdsa"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math/big"
+	"sync"
+	"time"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	iota "github.com/iotaledger/iota.go/api"
-	"github.com/iotaledger/iota.go/bundle"
-	"github.com/iotaledger/iota.go/converter"
-	"github.com/iotaledger/iota.go/transaction"
+	"github.com/iotaledger/hive.go/serializer"
 	"github.com/iotaledger/iota.go/trinary"
-	zmq "github.com/pebbe/zmq4"
+	iota "github.com/iotaledger/iota.go/v2"
 	log "github.com/sirupsen/logrus"
 	"go.dedis.ch/kyber/v3"
 	dkg "go.dedis.ch/kyber/v3/share/dkg/pedersen"
 	"go.dedis.ch/kyber/v3/suites"
-	"math/big"
-	"strings"
-	"sync"
-	"time"
 )
 
 type DistKeyGenerator struct {
@@ -29,8 +28,8 @@ type DistKeyGenerator struct {
 	suite             suites.Suite
 	connectionManager *ConnectionManager
 	aggregator        *Aggregator
-	zmqClient         *zmq.Socket
-	iotaClient        *iota.API
+	mqttClient        mqtt.Client
+	iotaClient        *iota.NodeHTTPAPIClient
 	registryContract  *RegistryContractWrapper
 	distKeyContract   *DistKeyContract
 	ecdsaPrivateKey   *ecdsa.PrivateKey
@@ -47,8 +46,8 @@ func NewDistKeyGenerator(
 	suite suites.Suite,
 	connectionManager *ConnectionManager,
 	aggregator *Aggregator,
-	zmqClient *zmq.Socket,
-	iotaClient *iota.API,
+	mqttClient mqtt.Client,
+	iotaClient *iota.NodeHTTPAPIClient,
 	registryContract *RegistryContractWrapper,
 	distKeyContract *DistKeyContract,
 	ecdsaPrivateKey *ecdsa.PrivateKey,
@@ -61,7 +60,7 @@ func NewDistKeyGenerator(
 		suite:             suite,
 		connectionManager: connectionManager,
 		aggregator:        aggregator,
-		zmqClient:         zmqClient,
+		mqttClient:        mqttClient,
 		iotaClient:        iotaClient,
 		registryContract:  registryContract,
 		distKeyContract:   distKeyContract,
@@ -221,41 +220,37 @@ func (g *DistKeyGenerator) SendDeals(nodes []RegistryContractOracleNode, deals m
 }
 
 func (g *DistKeyGenerator) ListenAndProcessResponse() error {
-	if err := g.zmqClient.SetSubscribe(g.address[:81]); err != nil {
-		return fmt.Errorf("subscribe to address %s: %w", g.address, err)
+	if token := g.mqttClient.Connect(); token.Wait() && token.Error() != nil {
+		return fmt.Errorf("connect to broker: %w", token.Error())
 	}
-	for {
-		msg, err := g.zmqClient.RecvMessage(0)
-		if err != nil {
-			log.Errorf("receive zmq message: %v", err)
-			continue
-		}
-		for _, str := range msg {
-			words := strings.Fields(str)
-			tx, err := g.iotaClient.GetTransactionObjects(words[1])
-			if err != nil {
-				log.Errorf("get transaction %s: %v", words[1], err)
-				break
-			}
-			jsonResp, err := transaction.ExtractJSON(tx)
-			if err != nil {
-				log.Errorf("extract json: %v", err)
-				break
-			}
-			var response dkg.Response
-			err = json.Unmarshal([]byte(jsonResp), &response)
-			if err != nil {
-				log.Errorf("unmarshal resp: %v", err)
-				break
-			}
-			go func() {
-				err = g.ProcessResponse(&response)
-				if err != nil {
-					log.Errorf("handle response: %v", err)
-				}
-			}()
-		}
+
+	topic := fmt.Sprintf("messages/indexation/%s", hex.EncodeToString([]byte("iop")))
+	if token := g.mqttClient.Subscribe(topic, 1, func(c mqtt.Client, m mqtt.Message) {
+		g.publishHandler(c, m)
+	}); token.Wait() && token.Error() != nil {
+		return fmt.Errorf("subscribe to topic: %w", token.Error())
 	}
+
+	return nil
+}
+
+func (g *DistKeyGenerator) publishHandler(c mqtt.Client, msg mqtt.Message) {
+	iotaMsg := &iota.Message{}
+	if _, err := iotaMsg.Deserialize(msg.Payload(), serializer.DeSeriModeNoValidation); err != nil {
+		log.Errorf("malformed mqtt message: %w", err)
+		return
+	}
+
+	var response dkg.Response
+	if err := json.Unmarshal(iotaMsg.Payload.(*iota.Indexation).Data, &response); err != nil {
+		log.Errorf("unmarshal response: %w", err)
+	}
+
+	go func() {
+		if err := g.ProcessResponse(&response); err != nil {
+			log.Errorf("handle response: %w", err)
+		}
+	}()
 }
 
 func (g *DistKeyGenerator) ProcessDeal(deal *dkg.Deal) (*dkg.Response, error) {
@@ -290,21 +285,20 @@ func (g *DistKeyGenerator) BroadcastResponse(response *dkg.Response) error {
 		return fmt.Errorf("marshal response: %w", err)
 	}
 
-	message, err := converter.ASCIIToTrytes(string(b))
-	if err != nil {
-		return fmt.Errorf("response to trytes: %w", err)
+	payload := &iota.Indexation{
+		Index: 	[]byte("iop"),
+		Data:	b,
 	}
 
-	transfers := bundle.Transfers{{Address: g.address, Value: 0, Message: message}}
-	prepTransferOpts := iota.PrepareTransfersOptions{}
-
-	trytes, err := g.iotaClient.PrepareTransfers(g.seed, transfers, prepTransferOpts)
+	msg, err := iota.NewMessageBuilder().
+		Payload(payload).
+		Build()
 	if err != nil {
-		return fmt.Errorf("prepare transfers: %w", err)
+		return fmt.Errorf("build iota message: %w", err)
 	}
 
-	if _, err = g.iotaClient.SendTrytes(trytes, 3, 9); err != nil {
-		return fmt.Errorf("send trytes: %w", err)
+	if _, err := g.iotaClient.SubmitMessage(context.Background(), msg); err != nil {
+		return fmt.Errorf("submit message: %w", err)
 	}
 	return nil
 }
