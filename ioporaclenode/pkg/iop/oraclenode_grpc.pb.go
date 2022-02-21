@@ -23,8 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OracleNodeClient interface {
 	SendDeal(ctx context.Context, in *SendDealRequest, opts ...grpc.CallOption) (*SendDealResponse, error)
-	ValidateTransaction(ctx context.Context, in *ValidateRequest, opts ...grpc.CallOption) (*ValidateResponse, error)
-	ValidateBlock(ctx context.Context, in *ValidateRequest, opts ...grpc.CallOption) (*ValidateResponse, error)
+	Validate(ctx context.Context, in *ValidateRequest, opts ...grpc.CallOption) (*ValidateResponse, error)
 }
 
 type oracleNodeClient struct {
@@ -44,18 +43,9 @@ func (c *oracleNodeClient) SendDeal(ctx context.Context, in *SendDealRequest, op
 	return out, nil
 }
 
-func (c *oracleNodeClient) ValidateTransaction(ctx context.Context, in *ValidateRequest, opts ...grpc.CallOption) (*ValidateResponse, error) {
+func (c *oracleNodeClient) Validate(ctx context.Context, in *ValidateRequest, opts ...grpc.CallOption) (*ValidateResponse, error) {
 	out := new(ValidateResponse)
-	err := c.cc.Invoke(ctx, "/iop.OracleNode/ValidateTransaction", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *oracleNodeClient) ValidateBlock(ctx context.Context, in *ValidateRequest, opts ...grpc.CallOption) (*ValidateResponse, error) {
-	out := new(ValidateResponse)
-	err := c.cc.Invoke(ctx, "/iop.OracleNode/ValidateBlock", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/iop.OracleNode/Validate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,8 +57,7 @@ func (c *oracleNodeClient) ValidateBlock(ctx context.Context, in *ValidateReques
 // for forward compatibility
 type OracleNodeServer interface {
 	SendDeal(context.Context, *SendDealRequest) (*SendDealResponse, error)
-	ValidateTransaction(context.Context, *ValidateRequest) (*ValidateResponse, error)
-	ValidateBlock(context.Context, *ValidateRequest) (*ValidateResponse, error)
+	Validate(context.Context, *ValidateRequest) (*ValidateResponse, error)
 	mustEmbedUnimplementedOracleNodeServer()
 }
 
@@ -79,11 +68,8 @@ type UnimplementedOracleNodeServer struct {
 func (UnimplementedOracleNodeServer) SendDeal(context.Context, *SendDealRequest) (*SendDealResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendDeal not implemented")
 }
-func (UnimplementedOracleNodeServer) ValidateTransaction(context.Context, *ValidateRequest) (*ValidateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ValidateTransaction not implemented")
-}
-func (UnimplementedOracleNodeServer) ValidateBlock(context.Context, *ValidateRequest) (*ValidateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ValidateBlock not implemented")
+func (UnimplementedOracleNodeServer) Validate(context.Context, *ValidateRequest) (*ValidateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Validate not implemented")
 }
 func (UnimplementedOracleNodeServer) mustEmbedUnimplementedOracleNodeServer() {}
 
@@ -116,38 +102,20 @@ func _OracleNode_SendDeal_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OracleNode_ValidateTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _OracleNode_Validate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ValidateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OracleNodeServer).ValidateTransaction(ctx, in)
+		return srv.(OracleNodeServer).Validate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/iop.OracleNode/ValidateTransaction",
+		FullMethod: "/iop.OracleNode/Validate",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OracleNodeServer).ValidateTransaction(ctx, req.(*ValidateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OracleNode_ValidateBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ValidateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OracleNodeServer).ValidateBlock(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/iop.OracleNode/ValidateBlock",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OracleNodeServer).ValidateBlock(ctx, req.(*ValidateRequest))
+		return srv.(OracleNodeServer).Validate(ctx, req.(*ValidateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -164,12 +132,8 @@ var OracleNode_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OracleNode_SendDeal_Handler,
 		},
 		{
-			MethodName: "ValidateTransaction",
-			Handler:    _OracleNode_ValidateTransaction_Handler,
-		},
-		{
-			MethodName: "ValidateBlock",
-			Handler:    _OracleNode_ValidateBlock_Handler,
+			MethodName: "Validate",
+			Handler:    _OracleNode_Validate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

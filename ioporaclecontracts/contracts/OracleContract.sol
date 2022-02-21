@@ -8,9 +8,10 @@ import "./crypto/BN256G2.sol";
 import "./TxInclusionVerifier.sol";
 
 contract OracleContract is TxInclusionVerifier {
+
     struct ValidationResult {
-        bytes32 _hash;
-        bool result;
+        bool isRequested; // Used to differentiate between the boolean default value false and a negative validation result
+        bool valid;
     }
 
     uint256 public constant BASE_FEE = 0.001 ether;
@@ -29,16 +30,15 @@ contract OracleContract is TxInclusionVerifier {
     uint256 private requestCounter;
     uint256 private requestsSinceLastPayout;
 
-    mapping(bytes32 => ValidationResult) private txValidationResults;
-    mapping(bytes32 => ValidationResult) private blockValidationResults;
+    mapping(bytes32 => ValidationResult) private validationResults;
 
-    event ValidateTransactionLog(address indexed sender, bytes32 _hash);
-    event ValidateBlockLog(address indexed sender, bytes32 _hash);
+    event ValidationRequest(uint8 typ, address indexed from, bytes32 hash);
 
-    event SubmitValidationResultLog(
-        address indexed sender,
-        bytes32 _hash,
-        bool result,
+    event ValidationResponse(
+        uint8 typ,
+        address indexed aggregator,
+        bytes32 hash,
+        bool valid,
         uint256 fee
     );
 
@@ -50,34 +50,37 @@ contract OracleContract is TxInclusionVerifier {
         distKeyContract = DistKeyContract(_distKeyContract);
     }
 
-    modifier feeCheck {
-        require(msg.value >= TOTAL_FEE, "msg value below total fee");
+    modifier minFee(uint _min) {
+        require(msg.value >= _min, "too few fee amount");
         _;
     }
 
-    function validateTransaction(bytes32 _hash) external payable feeCheck {
-        emit ValidateTransactionLog(msg.sender, _hash);
+    modifier noValidationResult(bytes32 _hash) {
+        require(!validationResultExists(_hash), "validation result already submitted");
+        _;
     }
 
-    function validateBlock(bytes32 _hash) external payable feeCheck {
-        emit ValidateBlockLog(msg.sender, _hash);
+    function validateBlock(bytes32 _hash) external payable minFee(TOTAL_FEE) {
+        emit ValidationRequest(1, msg.sender, _hash);
     }
 
-    function submitTransactionValidationResult(bytes32 _hash, bool _result, uint256[2] calldata _signature) external {
-        require(!txValidationResultExists(_hash), "already exists");
-        submitValidationResult(_hash, _result, _signature, txValidationResults);
+    function validateTransaction(bytes32 _hash) external payable minFee(TOTAL_FEE) {
+        emit ValidationRequest(2, msg.sender, _hash);
     }
 
-    function submitBlockValidationResult(bytes32 _hash, bool _result, uint256[2] calldata _signature) external {
-        require(!blockValidationResultExists(_hash), "already exists");
-        submitValidationResult(_hash, _result, _signature, blockValidationResults);
+    function submitBlockValidationResult(bytes32 _hash, bool _result, uint256[2] calldata _signature) external noValidationResult(_hash) {
+        submitValidationResult(1, _hash, _result, _signature);
+    }
+
+    function submitTransactionValidationResult(bytes32 _hash, bool _result, uint256[2] calldata _signature) external noValidationResult(_hash) {
+        submitValidationResult(2, _hash, _result, _signature);
     }
 
     function submitValidationResult(
+        uint8 _typ,
         bytes32 _hash,
         bool _result,
-        uint256[2] calldata _signature,
-        mapping(bytes32 => ValidationResult) storage validationResults
+        uint256[2] calldata _signature
     ) private {
         RegistryContract.OracleNode memory aggregator =
             registryContract.getAggregator();
@@ -107,14 +110,14 @@ contract OracleContract is TxInclusionVerifier {
         payable(msg.sender).transfer(fee);
 
         ValidationResult storage validationResult = validationResults[_hash];
-        validationResult._hash = _hash;
-        validationResult.result = _result;
+        validationResult.isRequested = true;
+        validationResult.valid = _result;
 
-        emit SubmitValidationResultLog(msg.sender, _hash, _result, fee);
+        emit ValidationResponse(_typ, msg.sender, _hash, _result, fee);
     }
 
-    function calculateFee(uint256 stake, uint256 seed) private returns (uint256) {
-        if (isValidationFeeReceiver(stake, seed)) {
+    function calculateFee(uint256 _stake, uint256 _seed) private returns (uint256) {
+        if (isValidationFeeReceiver(_stake, _seed)) {
             uint256 totalFee =
                 BASE_FEE + VALIDATOR_FEE * requestsSinceLastPayout;
             requestsSinceLastPayout = 0;
@@ -124,31 +127,22 @@ contract OracleContract is TxInclusionVerifier {
         return BASE_FEE;
     }
 
-    function isValidationFeeReceiver(uint256 stake, uint256 seed) public pure returns (bool) {
-        uint256 scalingFactor = (stake / 1 ether)**2; //the exp should be smaller something like 10/9
-        return (seed % (1000 / scalingFactor)) == 1;
+    function isValidationFeeReceiver(uint256 _stake, uint256 _seed) public pure returns (bool) {
+        uint256 scalingFactor = (_stake / 1 ether)**2; //the exp should be smaller something like 10/9
+        return (_seed % (1000 / scalingFactor)) == 1;
     }
 
-    function findTxValidationResult(bytes32 _hash) public view returns (ValidationResult memory) {
-        require(txValidationResultExists(_hash), "not found");
-        return txValidationResults[_hash];
+    function findValidationResult(bytes32 _hash) public view returns (bool) {
+        require(validationResultExists(_hash), "validation result not existent");
+        return validationResults[_hash].valid;
     }
 
-    function findBlockValidationResult(bytes32 _hash) public view returns (ValidationResult memory) {
-        require(blockValidationResultExists(_hash), "not found");
-        return blockValidationResults[_hash];
-    }
-
-    function txValidationResultExists(bytes32 _hash) public view returns (bool) {
-        return txValidationResults[_hash]._hash != 0;
-    }
-
-    function blockValidationResultExists(bytes32 _hash) public view returns (bool) {
-        return blockValidationResults[_hash]._hash != 0;
+    function validationResultExists(bytes32 _hash) public view returns (bool) {
+        return validationResults[_hash].isRequested;
     }
 
     function isBlockConfirmed(uint /*feeInWei*/, bytes32 blockHash, uint /*requiredConfirmations*/) payable public override returns (bool) {
-        return findBlockValidationResult(blockHash).result;
+        return findValidationResult(blockHash);
     }
 
     function verifyTransaction(uint /*feeInWei*/, bytes memory /*rlpHeader*/, uint8 /*noOfConfirmations*/, bytes memory /*rlpEncodedTx*/,

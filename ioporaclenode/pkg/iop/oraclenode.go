@@ -20,7 +20,7 @@ import (
 )
 
 type OracleNode struct {
-	UnimplementedOracleNodeServer
+	UnsafeOracleNodeServer
 	server            *grpc.Server
 	serverLis         net.Listener
 	targetEthClient   *ethclient.Client
@@ -170,26 +170,8 @@ func (n *OracleNode) Run() error {
 	}()
 
 	go func() {
-		if err := n.aggregator.WatchAndHandleValidateTransactionLog(context.Background()); err != nil {
-			log.Errorf("Watch and handle validate transaction log: %v", err)
-		}
-	}()
-
-	go func() {
-		if err := n.aggregator.WatchAndHandleValidateBlockLog(context.Background()); err != nil {
-			log.Errorf("Watch and handle validate block log: %v", err)
-		}
-	}()
-
-	go func() {
-		if err := n.validator.WatchAndHandleValidateTransactionLog(context.Background()); err != nil {
-			log.Errorf("Watch and handle validate transaction log: %v", err)
-		}
-	}()
-
-	go func() {
-		if err := n.validator.WatchAndHandleValidateBlockLog(context.Background()); err != nil {
-			log.Errorf("Watch and handle validate block log: %v", err)
+		if err := n.aggregator.WatchAndHandleValidationRequests(context.Background()); err != nil {
+			log.Errorf("Watch and handle ValidationRequest log: %v", err)
 		}
 	}()
 

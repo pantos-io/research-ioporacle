@@ -11,7 +11,13 @@ message SendDealResponse {
 }
 
 message ValidateRequest {
-  bytes hash = 1;
+  enum Type {
+    unknown = 0;
+    block = 1;
+    transaction = 2;
+  }
+  Type type = 1;
+  bytes hash = 2;
 }
 
 message Deal {
@@ -35,10 +41,6 @@ message ValidateResponse {
 }
 
 service OracleNode {
-  rpc SendDeal(SendDealRequest) returns (SendDealResponse){
-  }
-  rpc ValidateTransaction(ValidateRequest) returns (ValidateResponse) {
-  }
-  rpc ValidateBlock(ValidateRequest) returns (ValidateResponse) {
-  }
+  rpc SendDeal(SendDealRequest) returns (SendDealResponse);
+  rpc Validate(ValidateRequest) returns (ValidateResponse);
 }

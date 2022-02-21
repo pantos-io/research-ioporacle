@@ -19,24 +19,26 @@ func (n *OracleNode) SendDeal(_ context.Context, request *SendDealRequest) (*Sen
 	return &SendDealResponse{}, nil
 }
 
-func (n *OracleNode) ValidateTransaction(ctx context.Context, request *ValidateRequest) (*ValidateResponse, error) {
-	result, err := n.validator.ValidateTransaction(
-		ctx,
-		common.BytesToHash(request.Hash),
-	)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "validate transaction: %v", err)
-	}
-	return ValidateResultToResponse(result), nil
-}
+func (n *OracleNode) Validate(ctx context.Context, request *ValidateRequest) (*ValidateResponse, error) {
 
-func (n *OracleNode) ValidateBlock(ctx context.Context, request *ValidateRequest) (*ValidateResponse, error) {
-	result, err := n.validator.ValidateBlock(
-		ctx,
-		common.BytesToHash(request.Hash),
-	)
+	var result *ValidateResult
+	var err error
+
+	switch request.Type {
+	case ValidateRequest_block:
+		result, err = n.validator.ValidateBlock(
+			ctx,
+			common.BytesToHash(request.Hash),
+		)
+	case ValidateRequest_transaction:
+		result, err = n.validator.ValidateTransaction(
+			ctx,
+			common.BytesToHash(request.Hash),
+		)
+	}
+	
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "validate block: %v", err)
+		return nil, status.Errorf(codes.Internal, "validate %s: %v", request.Type, err)
 	}
 	return ValidateResultToResponse(result), nil
 }
