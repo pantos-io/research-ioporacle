@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.22 <0.8.0;
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.8.0;
 
 import "./RegistryContract.sol";
 import "./DistKeyContract.sol";
 import "./crypto/BN256G1.sol";
 import "./crypto/BN256G2.sol";
+import "./TxInclusionVerifier.sol";
 
-contract OracleContract {
+contract OracleContract is TxInclusionVerifier {
     struct ValidationResult {
-        uint256 id;
+        bytes32 _hash;
         bool result;
     }
 
@@ -29,17 +29,15 @@ contract OracleContract {
     uint256 private requestCounter;
     uint256 private requestsSinceLastPayout;
 
-    mapping(uint256 => ValidationResult) private validationResults;
+    mapping(bytes32 => ValidationResult) private txValidationResults;
+    mapping(bytes32 => ValidationResult) private blockValidationResults;
 
-    event ValidateTransactionLog(
-        address indexed sender,
-        uint256 indexed id,
-        bytes32 hash,
-        uint256 confirmations
-    );
+    event ValidateTransactionLog(address indexed sender, bytes32 _hash);
+    event ValidateBlockLog(address indexed sender, bytes32 _hash);
+
     event SubmitValidationResultLog(
         address indexed sender,
-        uint256 id,
+        bytes32 _hash,
         bool result,
         uint256 fee
     );
@@ -47,37 +45,46 @@ contract OracleContract {
     RegistryContract private registryContract;
     DistKeyContract private distKeyContract;
 
-    constructor(address _registryContract, address _distKeyContract) public {
+    constructor(address _registryContract, address _distKeyContract) {
         registryContract = RegistryContract(_registryContract);
         distKeyContract = DistKeyContract(_distKeyContract);
     }
 
-    function validateTransaction(bytes32 _hash, uint256 _confirmations)
-        external
-        payable
-    {
+    modifier feeCheck {
         require(msg.value >= TOTAL_FEE, "msg value below total fee");
-        emit ValidateTransactionLog(
-            msg.sender,
-            ++requestCounter,
-            _hash,
-            _confirmations
-        );
+        _;
+    }
+
+    function validateTransaction(bytes32 _hash) external payable feeCheck {
+        emit ValidateTransactionLog(msg.sender, _hash);
+    }
+
+    function validateBlock(bytes32 _hash) external payable feeCheck {
+        emit ValidateBlockLog(msg.sender, _hash);
+    }
+
+    function submitTransactionValidationResult(bytes32 _hash, bool _result, uint256[2] calldata _signature) external {
+        require(!txValidationResultExists(_hash), "already exists");
+        submitValidationResult(_hash, _result, _signature, txValidationResults);
+    }
+
+    function submitBlockValidationResult(bytes32 _hash, bool _result, uint256[2] calldata _signature) external {
+        require(!blockValidationResultExists(_hash), "already exists");
+        submitValidationResult(_hash, _result, _signature, blockValidationResults);
     }
 
     function submitValidationResult(
-        uint256 _id,
+        bytes32 _hash,
         bool _result,
-        uint256[2] calldata _signature
-    ) external {
-        require(!validationResultExists(_id), "already exists");
-
+        uint256[2] calldata _signature,
+        mapping(bytes32 => ValidationResult) storage validationResults
+    ) private {
         RegistryContract.OracleNode memory aggregator =
             registryContract.getAggregator();
         require(aggregator.addr == msg.sender, "not the aggregator");
 
         uint256[2] memory hash =
-            BN256G1.hashToPointSha256(abi.encode(_id, _result));
+            BN256G1.hashToPointSha256(abi.encode(_hash, _result));
         uint256[4] memory publicKey = distKeyContract.getPublicKey();
         uint256[12] memory input =
             [
@@ -99,17 +106,14 @@ contract OracleContract {
         uint256 fee = calculateFee(aggregator.stake, _signature[0]);
         payable(msg.sender).transfer(fee);
 
-        ValidationResult storage validationResult = validationResults[_id];
-        validationResult.id = _id;
+        ValidationResult storage validationResult = validationResults[_hash];
+        validationResult._hash = _hash;
         validationResult.result = _result;
 
-        emit SubmitValidationResultLog(msg.sender, _id, _result, fee);
+        emit SubmitValidationResultLog(msg.sender, _hash, _result, fee);
     }
 
-    function calculateFee(uint256 stake, uint256 seed)
-        private
-        returns (uint256)
-    {
+    function calculateFee(uint256 stake, uint256 seed) private returns (uint256) {
         if (isValidationFeeReceiver(stake, seed)) {
             uint256 totalFee =
                 BASE_FEE + VALIDATOR_FEE * requestsSinceLastPayout;
@@ -120,25 +124,45 @@ contract OracleContract {
         return BASE_FEE;
     }
 
-    function isValidationFeeReceiver(uint256 stake, uint256 seed)
-        public
-        pure
-        returns (bool)
-    {
+    function isValidationFeeReceiver(uint256 stake, uint256 seed) public pure returns (bool) {
         uint256 scalingFactor = (stake / 1 ether)**2; //the exp should be smaller something like 10/9
         return (seed % (1000 / scalingFactor)) == 1;
     }
 
-    function findValidationResult(uint256 _id)
-        public
-        view
-        returns (ValidationResult memory)
-    {
-        require(validationResultExists(_id), "not found");
-        return validationResults[_id];
+    function findTxValidationResult(bytes32 _hash) public view returns (ValidationResult memory) {
+        require(txValidationResultExists(_hash), "not found");
+        return txValidationResults[_hash];
     }
 
-    function validationResultExists(uint256 _id) public view returns (bool) {
-        return validationResults[_id].id != 0;
+    function findBlockValidationResult(bytes32 _hash) public view returns (ValidationResult memory) {
+        require(blockValidationResultExists(_hash), "not found");
+        return blockValidationResults[_hash];
+    }
+
+    function txValidationResultExists(bytes32 _hash) public view returns (bool) {
+        return txValidationResults[_hash]._hash != 0;
+    }
+
+    function blockValidationResultExists(bytes32 _hash) public view returns (bool) {
+        return blockValidationResults[_hash]._hash != 0;
+    }
+
+    function isBlockConfirmed(uint /*feeInWei*/, bytes32 blockHash, uint /*requiredConfirmations*/) payable public override returns (bool) {
+        return findBlockValidationResult(blockHash).result;
+    }
+
+    function verifyTransaction(uint /*feeInWei*/, bytes memory /*rlpHeader*/, uint8 /*noOfConfirmations*/, bytes memory /*rlpEncodedTx*/,
+        bytes memory /*path*/, bytes memory /*rlpEncodedNodes*/) payable public override returns (uint8) {
+        return 0;
+    }
+
+    function verifyReceipt(uint /*feeInWei*/, bytes memory /*rlpHeader*/, uint8 /*noOfConfirmations*/, bytes memory /*rlpEncodedReceipt*/,
+        bytes memory /*path*/, bytes memory /*rlpEncodedNodes*/) payable public override returns (uint8) {
+        return 0;
+    }
+
+    function verifyState(uint /*feeInWei*/, bytes memory /*rlpHeader*/, uint8 /*noOfConfirmations*/, bytes memory /*rlpEncodedState*/,
+        bytes memory /*path*/, bytes memory /*rlpEncodedNodes*/) payable public override returns (uint8) {
+        return 0;
     }
 }

@@ -4,6 +4,7 @@
 package iop
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -26,8 +28,14 @@ var (
 	_ = event.NewSubscription
 )
 
+// DistKeyContractMetaData contains all meta data concerning the DistKeyContract contract.
+var DistKeyContractMetaData = &bind.MetaData{
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"threshold\",\"type\":\"uint256\"}],\"name\":\"DistKeyGenerationLog\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"KEY_FINAL_TIME\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"KEY_GEN_INTERVAL\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"disputePublicKey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"generate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getNumberOfValidators\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPublicKey\",\"outputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"\",\"type\":\"uint256[4]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"_publicKey\",\"type\":\"uint256[4]\"},{\"internalType\":\"uint256\",\"name\":\"_numberOfValidators\",\"type\":\"uint256\"}],\"name\":\"setPublicKey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"}],\"name\":\"setRegistryContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+}
+
 // DistKeyContractABI is the input ABI used to generate the binding from.
-const DistKeyContractABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"threshold\",\"type\":\"uint256\"}],\"name\":\"DistKeyGenerationLog\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"KEY_GEN_INTERVAL\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"generate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPublicKey\",\"outputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"\",\"type\":\"uint256[4]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getNumberOfValidators\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"_publicKey\",\"type\":\"uint256[4]\"},{\"internalType\":\"uint256\",\"name\":\"_numberOfValidators\",\"type\":\"uint256\"}],\"name\":\"setPublicKey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"}],\"name\":\"setRegistryContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+// Deprecated: Use DistKeyContractMetaData.ABI instead.
+var DistKeyContractABI = DistKeyContractMetaData.ABI
 
 // DistKeyContract is an auto generated Go binding around an Ethereum contract.
 type DistKeyContract struct {
@@ -171,6 +179,37 @@ func (_DistKeyContract *DistKeyContractTransactorRaw) Transact(opts *bind.Transa
 	return _DistKeyContract.Contract.contract.Transact(opts, method, params...)
 }
 
+// KEYFINALTIME is a free data retrieval call binding the contract method 0xc09cd231.
+//
+// Solidity: function KEY_FINAL_TIME() view returns(uint256)
+func (_DistKeyContract *DistKeyContractCaller) KEYFINALTIME(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _DistKeyContract.contract.Call(opts, &out, "KEY_FINAL_TIME")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// KEYFINALTIME is a free data retrieval call binding the contract method 0xc09cd231.
+//
+// Solidity: function KEY_FINAL_TIME() view returns(uint256)
+func (_DistKeyContract *DistKeyContractSession) KEYFINALTIME() (*big.Int, error) {
+	return _DistKeyContract.Contract.KEYFINALTIME(&_DistKeyContract.CallOpts)
+}
+
+// KEYFINALTIME is a free data retrieval call binding the contract method 0xc09cd231.
+//
+// Solidity: function KEY_FINAL_TIME() view returns(uint256)
+func (_DistKeyContract *DistKeyContractCallerSession) KEYFINALTIME() (*big.Int, error) {
+	return _DistKeyContract.Contract.KEYFINALTIME(&_DistKeyContract.CallOpts)
+}
+
 // KEYGENINTERVAL is a free data retrieval call binding the contract method 0xfcb0801e.
 //
 // Solidity: function KEY_GEN_INTERVAL() view returns(uint256)
@@ -262,6 +301,27 @@ func (_DistKeyContract *DistKeyContractSession) GetPublicKey() ([4]*big.Int, err
 // Solidity: function getPublicKey() view returns(uint256[4])
 func (_DistKeyContract *DistKeyContractCallerSession) GetPublicKey() ([4]*big.Int, error) {
 	return _DistKeyContract.Contract.GetPublicKey(&_DistKeyContract.CallOpts)
+}
+
+// DisputePublicKey is a paid mutator transaction binding the contract method 0x3a12141d.
+//
+// Solidity: function disputePublicKey() returns()
+func (_DistKeyContract *DistKeyContractTransactor) DisputePublicKey(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _DistKeyContract.contract.Transact(opts, "disputePublicKey")
+}
+
+// DisputePublicKey is a paid mutator transaction binding the contract method 0x3a12141d.
+//
+// Solidity: function disputePublicKey() returns()
+func (_DistKeyContract *DistKeyContractSession) DisputePublicKey() (*types.Transaction, error) {
+	return _DistKeyContract.Contract.DisputePublicKey(&_DistKeyContract.TransactOpts)
+}
+
+// DisputePublicKey is a paid mutator transaction binding the contract method 0x3a12141d.
+//
+// Solidity: function disputePublicKey() returns()
+func (_DistKeyContract *DistKeyContractTransactorSession) DisputePublicKey() (*types.Transaction, error) {
+	return _DistKeyContract.Contract.DisputePublicKey(&_DistKeyContract.TransactOpts)
 }
 
 // Generate is a paid mutator transaction binding the contract method 0x2a1bbc34.

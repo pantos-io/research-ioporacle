@@ -159,25 +159,37 @@ func (n *OracleNode) Run() error {
 
 	go func() {
 		if err := n.dkg.ListenAndProcess(context.Background()); err != nil {
-			log.Errorf("watch and handle dkg log: %v", err)
+			log.Errorf("Watch and handle dkg log: %v", err)
 		}
 	}()
 
 	go func() {
 		if err := n.connectionManager.WatchAndHandleRegisterOracleNodeLog(context.Background()); err != nil {
-			log.Errorf("watch and handle register oracle node log: %v", err)
+			log.Errorf("Watch and handle register oracle node log: %v", err)
 		}
 	}()
 
 	go func() {
 		if err := n.aggregator.WatchAndHandleValidateTransactionLog(context.Background()); err != nil {
-			log.Errorf("watch and handle validate transaction log: %v", err)
+			log.Errorf("Watch and handle validate transaction log: %v", err)
+		}
+	}()
+
+	go func() {
+		if err := n.aggregator.WatchAndHandleValidateBlockLog(context.Background()); err != nil {
+			log.Errorf("Watch and handle validate block log: %v", err)
 		}
 	}()
 
 	go func() {
 		if err := n.validator.WatchAndHandleValidateTransactionLog(context.Background()); err != nil {
-			log.Errorf("watch and handle validate transaction log: %v", err)
+			log.Errorf("Watch and handle validate transaction log: %v", err)
+		}
+	}()
+
+	go func() {
+		if err := n.validator.WatchAndHandleValidateBlockLog(context.Background()); err != nil {
+			log.Errorf("Watch and handle validate block log: %v", err)
 		}
 	}()
 

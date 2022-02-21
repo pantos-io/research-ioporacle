@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.22 <0.8.0;
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.8.0;
 
 import "./DistKeyContract.sol";
 
@@ -23,7 +22,7 @@ contract RegistryContract {
 
     DistKeyContract private distKeyContract;
 
-    constructor(address _distKeyContract) public {
+    constructor(address _distKeyContract) {
         distKeyContract = DistKeyContract(_distKeyContract);
     }
 

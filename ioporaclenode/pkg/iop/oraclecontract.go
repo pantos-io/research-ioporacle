@@ -4,6 +4,7 @@
 package iop
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -28,12 +30,18 @@ var (
 
 // OracleContractValidationResult is an auto generated low-level Go binding around an user-defined struct.
 type OracleContractValidationResult struct {
-	Id     *big.Int
+	Hash   [32]byte
 	Result bool
 }
 
+// OracleContractMetaData contains all meta data concerning the OracleContract contract.
+var OracleContractMetaData = &bind.MetaData{
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_distKeyContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"fee\",\"type\":\"uint256\"}],\"name\":\"SubmitValidationResultLog\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"ValidateBlockLog\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"ValidateTransactionLog\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BASE_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"TOTAL_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATOR_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"blockValidationResultExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"findBlockValidationResult\",\"outputs\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"internalType\":\"structOracleContract.ValidationResult\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"findTxValidationResult\",\"outputs\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"internalType\":\"structOracleContract.ValidationResult\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"isBlockConfirmed\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"seed\",\"type\":\"uint256\"}],\"name\":\"isValidationFeeReceiver\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"},{\"internalType\":\"uint256[2]\",\"name\":\"_signature\",\"type\":\"uint256[2]\"}],\"name\":\"submitBlockValidationResult\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"},{\"internalType\":\"uint256[2]\",\"name\":\"_signature\",\"type\":\"uint256[2]\"}],\"name\":\"submitTransactionValidationResult\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"txValidationResultExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"validateBlock\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"validateTransaction\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"feeInWei\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"rlpHeader\",\"type\":\"bytes\"},{\"internalType\":\"uint8\",\"name\":\"noOfConfirmations\",\"type\":\"uint8\"},{\"internalType\":\"bytes\",\"name\":\"rlpEncodedReceipt\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"path\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"rlpEncodedNodes\",\"type\":\"bytes\"}],\"name\":\"verifyReceipt\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"feeInWei\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"rlpHeader\",\"type\":\"bytes\"},{\"internalType\":\"uint8\",\"name\":\"noOfConfirmations\",\"type\":\"uint8\"},{\"internalType\":\"bytes\",\"name\":\"rlpEncodedState\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"path\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"rlpEncodedNodes\",\"type\":\"bytes\"}],\"name\":\"verifyState\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"feeInWei\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"rlpHeader\",\"type\":\"bytes\"},{\"internalType\":\"uint8\",\"name\":\"noOfConfirmations\",\"type\":\"uint8\"},{\"internalType\":\"bytes\",\"name\":\"rlpEncodedTx\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"path\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"rlpEncodedNodes\",\"type\":\"bytes\"}],\"name\":\"verifyTransaction\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
+}
+
 // OracleContractABI is the input ABI used to generate the binding from.
-const OracleContractABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_distKeyContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"fee\",\"type\":\"uint256\"}],\"name\":\"SubmitValidationResultLog\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"hash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"confirmations\",\"type\":\"uint256\"}],\"name\":\"ValidateTransactionLog\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BASE_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"TOTAL_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATOR_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_confirmations\",\"type\":\"uint256\"}],\"name\":\"validateTransaction\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"},{\"internalType\":\"uint256[2]\",\"name\":\"_signature\",\"type\":\"uint256[2]\"}],\"name\":\"submitValidationResult\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"seed\",\"type\":\"uint256\"}],\"name\":\"isValidationFeeReceiver\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"findValidationResult\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"internalType\":\"structOracleContract.ValidationResult\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"validationResultExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]"
+// Deprecated: Use OracleContractMetaData.ABI instead.
+var OracleContractABI = OracleContractMetaData.ABI
 
 // OracleContract is an auto generated Go binding around an Ethereum contract.
 type OracleContract struct {
@@ -270,12 +278,43 @@ func (_OracleContract *OracleContractCallerSession) VALIDATORFEE() (*big.Int, er
 	return _OracleContract.Contract.VALIDATORFEE(&_OracleContract.CallOpts)
 }
 
-// FindValidationResult is a free data retrieval call binding the contract method 0x953bde29.
+// BlockValidationResultExists is a free data retrieval call binding the contract method 0x72e3de18.
 //
-// Solidity: function findValidationResult(uint256 _id) view returns((uint256,bool))
-func (_OracleContract *OracleContractCaller) FindValidationResult(opts *bind.CallOpts, _id *big.Int) (OracleContractValidationResult, error) {
+// Solidity: function blockValidationResultExists(bytes32 _hash) view returns(bool)
+func (_OracleContract *OracleContractCaller) BlockValidationResultExists(opts *bind.CallOpts, _hash [32]byte) (bool, error) {
 	var out []interface{}
-	err := _OracleContract.contract.Call(opts, &out, "findValidationResult", _id)
+	err := _OracleContract.contract.Call(opts, &out, "blockValidationResultExists", _hash)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// BlockValidationResultExists is a free data retrieval call binding the contract method 0x72e3de18.
+//
+// Solidity: function blockValidationResultExists(bytes32 _hash) view returns(bool)
+func (_OracleContract *OracleContractSession) BlockValidationResultExists(_hash [32]byte) (bool, error) {
+	return _OracleContract.Contract.BlockValidationResultExists(&_OracleContract.CallOpts, _hash)
+}
+
+// BlockValidationResultExists is a free data retrieval call binding the contract method 0x72e3de18.
+//
+// Solidity: function blockValidationResultExists(bytes32 _hash) view returns(bool)
+func (_OracleContract *OracleContractCallerSession) BlockValidationResultExists(_hash [32]byte) (bool, error) {
+	return _OracleContract.Contract.BlockValidationResultExists(&_OracleContract.CallOpts, _hash)
+}
+
+// FindBlockValidationResult is a free data retrieval call binding the contract method 0x3d27ef97.
+//
+// Solidity: function findBlockValidationResult(bytes32 _hash) view returns((bytes32,bool))
+func (_OracleContract *OracleContractCaller) FindBlockValidationResult(opts *bind.CallOpts, _hash [32]byte) (OracleContractValidationResult, error) {
+	var out []interface{}
+	err := _OracleContract.contract.Call(opts, &out, "findBlockValidationResult", _hash)
 
 	if err != nil {
 		return *new(OracleContractValidationResult), err
@@ -287,18 +326,49 @@ func (_OracleContract *OracleContractCaller) FindValidationResult(opts *bind.Cal
 
 }
 
-// FindValidationResult is a free data retrieval call binding the contract method 0x953bde29.
+// FindBlockValidationResult is a free data retrieval call binding the contract method 0x3d27ef97.
 //
-// Solidity: function findValidationResult(uint256 _id) view returns((uint256,bool))
-func (_OracleContract *OracleContractSession) FindValidationResult(_id *big.Int) (OracleContractValidationResult, error) {
-	return _OracleContract.Contract.FindValidationResult(&_OracleContract.CallOpts, _id)
+// Solidity: function findBlockValidationResult(bytes32 _hash) view returns((bytes32,bool))
+func (_OracleContract *OracleContractSession) FindBlockValidationResult(_hash [32]byte) (OracleContractValidationResult, error) {
+	return _OracleContract.Contract.FindBlockValidationResult(&_OracleContract.CallOpts, _hash)
 }
 
-// FindValidationResult is a free data retrieval call binding the contract method 0x953bde29.
+// FindBlockValidationResult is a free data retrieval call binding the contract method 0x3d27ef97.
 //
-// Solidity: function findValidationResult(uint256 _id) view returns((uint256,bool))
-func (_OracleContract *OracleContractCallerSession) FindValidationResult(_id *big.Int) (OracleContractValidationResult, error) {
-	return _OracleContract.Contract.FindValidationResult(&_OracleContract.CallOpts, _id)
+// Solidity: function findBlockValidationResult(bytes32 _hash) view returns((bytes32,bool))
+func (_OracleContract *OracleContractCallerSession) FindBlockValidationResult(_hash [32]byte) (OracleContractValidationResult, error) {
+	return _OracleContract.Contract.FindBlockValidationResult(&_OracleContract.CallOpts, _hash)
+}
+
+// FindTxValidationResult is a free data retrieval call binding the contract method 0x7b47a02a.
+//
+// Solidity: function findTxValidationResult(bytes32 _hash) view returns((bytes32,bool))
+func (_OracleContract *OracleContractCaller) FindTxValidationResult(opts *bind.CallOpts, _hash [32]byte) (OracleContractValidationResult, error) {
+	var out []interface{}
+	err := _OracleContract.contract.Call(opts, &out, "findTxValidationResult", _hash)
+
+	if err != nil {
+		return *new(OracleContractValidationResult), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(OracleContractValidationResult)).(*OracleContractValidationResult)
+
+	return out0, err
+
+}
+
+// FindTxValidationResult is a free data retrieval call binding the contract method 0x7b47a02a.
+//
+// Solidity: function findTxValidationResult(bytes32 _hash) view returns((bytes32,bool))
+func (_OracleContract *OracleContractSession) FindTxValidationResult(_hash [32]byte) (OracleContractValidationResult, error) {
+	return _OracleContract.Contract.FindTxValidationResult(&_OracleContract.CallOpts, _hash)
+}
+
+// FindTxValidationResult is a free data retrieval call binding the contract method 0x7b47a02a.
+//
+// Solidity: function findTxValidationResult(bytes32 _hash) view returns((bytes32,bool))
+func (_OracleContract *OracleContractCallerSession) FindTxValidationResult(_hash [32]byte) (OracleContractValidationResult, error) {
+	return _OracleContract.Contract.FindTxValidationResult(&_OracleContract.CallOpts, _hash)
 }
 
 // IsValidationFeeReceiver is a free data retrieval call binding the contract method 0xf5ba1d3d.
@@ -332,12 +402,12 @@ func (_OracleContract *OracleContractCallerSession) IsValidationFeeReceiver(stak
 	return _OracleContract.Contract.IsValidationFeeReceiver(&_OracleContract.CallOpts, stake, seed)
 }
 
-// ValidationResultExists is a free data retrieval call binding the contract method 0xef915125.
+// TxValidationResultExists is a free data retrieval call binding the contract method 0xdabfc4e6.
 //
-// Solidity: function validationResultExists(uint256 _id) view returns(bool)
-func (_OracleContract *OracleContractCaller) ValidationResultExists(opts *bind.CallOpts, _id *big.Int) (bool, error) {
+// Solidity: function txValidationResultExists(bytes32 _hash) view returns(bool)
+func (_OracleContract *OracleContractCaller) TxValidationResultExists(opts *bind.CallOpts, _hash [32]byte) (bool, error) {
 	var out []interface{}
-	err := _OracleContract.contract.Call(opts, &out, "validationResultExists", _id)
+	err := _OracleContract.contract.Call(opts, &out, "txValidationResultExists", _hash)
 
 	if err != nil {
 		return *new(bool), err
@@ -349,60 +419,186 @@ func (_OracleContract *OracleContractCaller) ValidationResultExists(opts *bind.C
 
 }
 
-// ValidationResultExists is a free data retrieval call binding the contract method 0xef915125.
+// TxValidationResultExists is a free data retrieval call binding the contract method 0xdabfc4e6.
 //
-// Solidity: function validationResultExists(uint256 _id) view returns(bool)
-func (_OracleContract *OracleContractSession) ValidationResultExists(_id *big.Int) (bool, error) {
-	return _OracleContract.Contract.ValidationResultExists(&_OracleContract.CallOpts, _id)
+// Solidity: function txValidationResultExists(bytes32 _hash) view returns(bool)
+func (_OracleContract *OracleContractSession) TxValidationResultExists(_hash [32]byte) (bool, error) {
+	return _OracleContract.Contract.TxValidationResultExists(&_OracleContract.CallOpts, _hash)
 }
 
-// ValidationResultExists is a free data retrieval call binding the contract method 0xef915125.
+// TxValidationResultExists is a free data retrieval call binding the contract method 0xdabfc4e6.
 //
-// Solidity: function validationResultExists(uint256 _id) view returns(bool)
-func (_OracleContract *OracleContractCallerSession) ValidationResultExists(_id *big.Int) (bool, error) {
-	return _OracleContract.Contract.ValidationResultExists(&_OracleContract.CallOpts, _id)
+// Solidity: function txValidationResultExists(bytes32 _hash) view returns(bool)
+func (_OracleContract *OracleContractCallerSession) TxValidationResultExists(_hash [32]byte) (bool, error) {
+	return _OracleContract.Contract.TxValidationResultExists(&_OracleContract.CallOpts, _hash)
 }
 
-// SubmitValidationResult is a paid mutator transaction binding the contract method 0x4c281081.
+// IsBlockConfirmed is a paid mutator transaction binding the contract method 0x9dc29d89.
 //
-// Solidity: function submitValidationResult(uint256 _id, bool _result, uint256[2] _signature) returns()
-func (_OracleContract *OracleContractTransactor) SubmitValidationResult(opts *bind.TransactOpts, _id *big.Int, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
-	return _OracleContract.contract.Transact(opts, "submitValidationResult", _id, _result, _signature)
+// Solidity: function isBlockConfirmed(uint256 , bytes32 blockHash, uint256 ) payable returns(bool)
+func (_OracleContract *OracleContractTransactor) IsBlockConfirmed(opts *bind.TransactOpts, arg0 *big.Int, blockHash [32]byte, arg2 *big.Int) (*types.Transaction, error) {
+	return _OracleContract.contract.Transact(opts, "isBlockConfirmed", arg0, blockHash, arg2)
 }
 
-// SubmitValidationResult is a paid mutator transaction binding the contract method 0x4c281081.
+// IsBlockConfirmed is a paid mutator transaction binding the contract method 0x9dc29d89.
 //
-// Solidity: function submitValidationResult(uint256 _id, bool _result, uint256[2] _signature) returns()
-func (_OracleContract *OracleContractSession) SubmitValidationResult(_id *big.Int, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
-	return _OracleContract.Contract.SubmitValidationResult(&_OracleContract.TransactOpts, _id, _result, _signature)
+// Solidity: function isBlockConfirmed(uint256 , bytes32 blockHash, uint256 ) payable returns(bool)
+func (_OracleContract *OracleContractSession) IsBlockConfirmed(arg0 *big.Int, blockHash [32]byte, arg2 *big.Int) (*types.Transaction, error) {
+	return _OracleContract.Contract.IsBlockConfirmed(&_OracleContract.TransactOpts, arg0, blockHash, arg2)
 }
 
-// SubmitValidationResult is a paid mutator transaction binding the contract method 0x4c281081.
+// IsBlockConfirmed is a paid mutator transaction binding the contract method 0x9dc29d89.
 //
-// Solidity: function submitValidationResult(uint256 _id, bool _result, uint256[2] _signature) returns()
-func (_OracleContract *OracleContractTransactorSession) SubmitValidationResult(_id *big.Int, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
-	return _OracleContract.Contract.SubmitValidationResult(&_OracleContract.TransactOpts, _id, _result, _signature)
+// Solidity: function isBlockConfirmed(uint256 , bytes32 blockHash, uint256 ) payable returns(bool)
+func (_OracleContract *OracleContractTransactorSession) IsBlockConfirmed(arg0 *big.Int, blockHash [32]byte, arg2 *big.Int) (*types.Transaction, error) {
+	return _OracleContract.Contract.IsBlockConfirmed(&_OracleContract.TransactOpts, arg0, blockHash, arg2)
 }
 
-// ValidateTransaction is a paid mutator transaction binding the contract method 0x5f6c680d.
+// SubmitBlockValidationResult is a paid mutator transaction binding the contract method 0x3dd14279.
 //
-// Solidity: function validateTransaction(bytes32 _hash, uint256 _confirmations) payable returns()
-func (_OracleContract *OracleContractTransactor) ValidateTransaction(opts *bind.TransactOpts, _hash [32]byte, _confirmations *big.Int) (*types.Transaction, error) {
-	return _OracleContract.contract.Transact(opts, "validateTransaction", _hash, _confirmations)
+// Solidity: function submitBlockValidationResult(bytes32 _hash, bool _result, uint256[2] _signature) returns()
+func (_OracleContract *OracleContractTransactor) SubmitBlockValidationResult(opts *bind.TransactOpts, _hash [32]byte, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
+	return _OracleContract.contract.Transact(opts, "submitBlockValidationResult", _hash, _result, _signature)
 }
 
-// ValidateTransaction is a paid mutator transaction binding the contract method 0x5f6c680d.
+// SubmitBlockValidationResult is a paid mutator transaction binding the contract method 0x3dd14279.
 //
-// Solidity: function validateTransaction(bytes32 _hash, uint256 _confirmations) payable returns()
-func (_OracleContract *OracleContractSession) ValidateTransaction(_hash [32]byte, _confirmations *big.Int) (*types.Transaction, error) {
-	return _OracleContract.Contract.ValidateTransaction(&_OracleContract.TransactOpts, _hash, _confirmations)
+// Solidity: function submitBlockValidationResult(bytes32 _hash, bool _result, uint256[2] _signature) returns()
+func (_OracleContract *OracleContractSession) SubmitBlockValidationResult(_hash [32]byte, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
+	return _OracleContract.Contract.SubmitBlockValidationResult(&_OracleContract.TransactOpts, _hash, _result, _signature)
 }
 
-// ValidateTransaction is a paid mutator transaction binding the contract method 0x5f6c680d.
+// SubmitBlockValidationResult is a paid mutator transaction binding the contract method 0x3dd14279.
 //
-// Solidity: function validateTransaction(bytes32 _hash, uint256 _confirmations) payable returns()
-func (_OracleContract *OracleContractTransactorSession) ValidateTransaction(_hash [32]byte, _confirmations *big.Int) (*types.Transaction, error) {
-	return _OracleContract.Contract.ValidateTransaction(&_OracleContract.TransactOpts, _hash, _confirmations)
+// Solidity: function submitBlockValidationResult(bytes32 _hash, bool _result, uint256[2] _signature) returns()
+func (_OracleContract *OracleContractTransactorSession) SubmitBlockValidationResult(_hash [32]byte, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
+	return _OracleContract.Contract.SubmitBlockValidationResult(&_OracleContract.TransactOpts, _hash, _result, _signature)
+}
+
+// SubmitTransactionValidationResult is a paid mutator transaction binding the contract method 0x25f08549.
+//
+// Solidity: function submitTransactionValidationResult(bytes32 _hash, bool _result, uint256[2] _signature) returns()
+func (_OracleContract *OracleContractTransactor) SubmitTransactionValidationResult(opts *bind.TransactOpts, _hash [32]byte, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
+	return _OracleContract.contract.Transact(opts, "submitTransactionValidationResult", _hash, _result, _signature)
+}
+
+// SubmitTransactionValidationResult is a paid mutator transaction binding the contract method 0x25f08549.
+//
+// Solidity: function submitTransactionValidationResult(bytes32 _hash, bool _result, uint256[2] _signature) returns()
+func (_OracleContract *OracleContractSession) SubmitTransactionValidationResult(_hash [32]byte, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
+	return _OracleContract.Contract.SubmitTransactionValidationResult(&_OracleContract.TransactOpts, _hash, _result, _signature)
+}
+
+// SubmitTransactionValidationResult is a paid mutator transaction binding the contract method 0x25f08549.
+//
+// Solidity: function submitTransactionValidationResult(bytes32 _hash, bool _result, uint256[2] _signature) returns()
+func (_OracleContract *OracleContractTransactorSession) SubmitTransactionValidationResult(_hash [32]byte, _result bool, _signature [2]*big.Int) (*types.Transaction, error) {
+	return _OracleContract.Contract.SubmitTransactionValidationResult(&_OracleContract.TransactOpts, _hash, _result, _signature)
+}
+
+// ValidateBlock is a paid mutator transaction binding the contract method 0xdd5e22df.
+//
+// Solidity: function validateBlock(bytes32 _hash) payable returns()
+func (_OracleContract *OracleContractTransactor) ValidateBlock(opts *bind.TransactOpts, _hash [32]byte) (*types.Transaction, error) {
+	return _OracleContract.contract.Transact(opts, "validateBlock", _hash)
+}
+
+// ValidateBlock is a paid mutator transaction binding the contract method 0xdd5e22df.
+//
+// Solidity: function validateBlock(bytes32 _hash) payable returns()
+func (_OracleContract *OracleContractSession) ValidateBlock(_hash [32]byte) (*types.Transaction, error) {
+	return _OracleContract.Contract.ValidateBlock(&_OracleContract.TransactOpts, _hash)
+}
+
+// ValidateBlock is a paid mutator transaction binding the contract method 0xdd5e22df.
+//
+// Solidity: function validateBlock(bytes32 _hash) payable returns()
+func (_OracleContract *OracleContractTransactorSession) ValidateBlock(_hash [32]byte) (*types.Transaction, error) {
+	return _OracleContract.Contract.ValidateBlock(&_OracleContract.TransactOpts, _hash)
+}
+
+// ValidateTransaction is a paid mutator transaction binding the contract method 0x344829c8.
+//
+// Solidity: function validateTransaction(bytes32 _hash) payable returns()
+func (_OracleContract *OracleContractTransactor) ValidateTransaction(opts *bind.TransactOpts, _hash [32]byte) (*types.Transaction, error) {
+	return _OracleContract.contract.Transact(opts, "validateTransaction", _hash)
+}
+
+// ValidateTransaction is a paid mutator transaction binding the contract method 0x344829c8.
+//
+// Solidity: function validateTransaction(bytes32 _hash) payable returns()
+func (_OracleContract *OracleContractSession) ValidateTransaction(_hash [32]byte) (*types.Transaction, error) {
+	return _OracleContract.Contract.ValidateTransaction(&_OracleContract.TransactOpts, _hash)
+}
+
+// ValidateTransaction is a paid mutator transaction binding the contract method 0x344829c8.
+//
+// Solidity: function validateTransaction(bytes32 _hash) payable returns()
+func (_OracleContract *OracleContractTransactorSession) ValidateTransaction(_hash [32]byte) (*types.Transaction, error) {
+	return _OracleContract.Contract.ValidateTransaction(&_OracleContract.TransactOpts, _hash)
+}
+
+// VerifyReceipt is a paid mutator transaction binding the contract method 0xed315dfa.
+//
+// Solidity: function verifyReceipt(uint256 feeInWei, bytes rlpHeader, uint8 noOfConfirmations, bytes rlpEncodedReceipt, bytes path, bytes rlpEncodedNodes) payable returns(uint8)
+func (_OracleContract *OracleContractTransactor) VerifyReceipt(opts *bind.TransactOpts, feeInWei *big.Int, rlpHeader []byte, noOfConfirmations uint8, rlpEncodedReceipt []byte, path []byte, rlpEncodedNodes []byte) (*types.Transaction, error) {
+	return _OracleContract.contract.Transact(opts, "verifyReceipt", feeInWei, rlpHeader, noOfConfirmations, rlpEncodedReceipt, path, rlpEncodedNodes)
+}
+
+// VerifyReceipt is a paid mutator transaction binding the contract method 0xed315dfa.
+//
+// Solidity: function verifyReceipt(uint256 feeInWei, bytes rlpHeader, uint8 noOfConfirmations, bytes rlpEncodedReceipt, bytes path, bytes rlpEncodedNodes) payable returns(uint8)
+func (_OracleContract *OracleContractSession) VerifyReceipt(feeInWei *big.Int, rlpHeader []byte, noOfConfirmations uint8, rlpEncodedReceipt []byte, path []byte, rlpEncodedNodes []byte) (*types.Transaction, error) {
+	return _OracleContract.Contract.VerifyReceipt(&_OracleContract.TransactOpts, feeInWei, rlpHeader, noOfConfirmations, rlpEncodedReceipt, path, rlpEncodedNodes)
+}
+
+// VerifyReceipt is a paid mutator transaction binding the contract method 0xed315dfa.
+//
+// Solidity: function verifyReceipt(uint256 feeInWei, bytes rlpHeader, uint8 noOfConfirmations, bytes rlpEncodedReceipt, bytes path, bytes rlpEncodedNodes) payable returns(uint8)
+func (_OracleContract *OracleContractTransactorSession) VerifyReceipt(feeInWei *big.Int, rlpHeader []byte, noOfConfirmations uint8, rlpEncodedReceipt []byte, path []byte, rlpEncodedNodes []byte) (*types.Transaction, error) {
+	return _OracleContract.Contract.VerifyReceipt(&_OracleContract.TransactOpts, feeInWei, rlpHeader, noOfConfirmations, rlpEncodedReceipt, path, rlpEncodedNodes)
+}
+
+// VerifyState is a paid mutator transaction binding the contract method 0xaddd9b38.
+//
+// Solidity: function verifyState(uint256 feeInWei, bytes rlpHeader, uint8 noOfConfirmations, bytes rlpEncodedState, bytes path, bytes rlpEncodedNodes) payable returns(uint8)
+func (_OracleContract *OracleContractTransactor) VerifyState(opts *bind.TransactOpts, feeInWei *big.Int, rlpHeader []byte, noOfConfirmations uint8, rlpEncodedState []byte, path []byte, rlpEncodedNodes []byte) (*types.Transaction, error) {
+	return _OracleContract.contract.Transact(opts, "verifyState", feeInWei, rlpHeader, noOfConfirmations, rlpEncodedState, path, rlpEncodedNodes)
+}
+
+// VerifyState is a paid mutator transaction binding the contract method 0xaddd9b38.
+//
+// Solidity: function verifyState(uint256 feeInWei, bytes rlpHeader, uint8 noOfConfirmations, bytes rlpEncodedState, bytes path, bytes rlpEncodedNodes) payable returns(uint8)
+func (_OracleContract *OracleContractSession) VerifyState(feeInWei *big.Int, rlpHeader []byte, noOfConfirmations uint8, rlpEncodedState []byte, path []byte, rlpEncodedNodes []byte) (*types.Transaction, error) {
+	return _OracleContract.Contract.VerifyState(&_OracleContract.TransactOpts, feeInWei, rlpHeader, noOfConfirmations, rlpEncodedState, path, rlpEncodedNodes)
+}
+
+// VerifyState is a paid mutator transaction binding the contract method 0xaddd9b38.
+//
+// Solidity: function verifyState(uint256 feeInWei, bytes rlpHeader, uint8 noOfConfirmations, bytes rlpEncodedState, bytes path, bytes rlpEncodedNodes) payable returns(uint8)
+func (_OracleContract *OracleContractTransactorSession) VerifyState(feeInWei *big.Int, rlpHeader []byte, noOfConfirmations uint8, rlpEncodedState []byte, path []byte, rlpEncodedNodes []byte) (*types.Transaction, error) {
+	return _OracleContract.Contract.VerifyState(&_OracleContract.TransactOpts, feeInWei, rlpHeader, noOfConfirmations, rlpEncodedState, path, rlpEncodedNodes)
+}
+
+// VerifyTransaction is a paid mutator transaction binding the contract method 0x5e29b7da.
+//
+// Solidity: function verifyTransaction(uint256 feeInWei, bytes rlpHeader, uint8 noOfConfirmations, bytes rlpEncodedTx, bytes path, bytes rlpEncodedNodes) payable returns(uint8)
+func (_OracleContract *OracleContractTransactor) VerifyTransaction(opts *bind.TransactOpts, feeInWei *big.Int, rlpHeader []byte, noOfConfirmations uint8, rlpEncodedTx []byte, path []byte, rlpEncodedNodes []byte) (*types.Transaction, error) {
+	return _OracleContract.contract.Transact(opts, "verifyTransaction", feeInWei, rlpHeader, noOfConfirmations, rlpEncodedTx, path, rlpEncodedNodes)
+}
+
+// VerifyTransaction is a paid mutator transaction binding the contract method 0x5e29b7da.
+//
+// Solidity: function verifyTransaction(uint256 feeInWei, bytes rlpHeader, uint8 noOfConfirmations, bytes rlpEncodedTx, bytes path, bytes rlpEncodedNodes) payable returns(uint8)
+func (_OracleContract *OracleContractSession) VerifyTransaction(feeInWei *big.Int, rlpHeader []byte, noOfConfirmations uint8, rlpEncodedTx []byte, path []byte, rlpEncodedNodes []byte) (*types.Transaction, error) {
+	return _OracleContract.Contract.VerifyTransaction(&_OracleContract.TransactOpts, feeInWei, rlpHeader, noOfConfirmations, rlpEncodedTx, path, rlpEncodedNodes)
+}
+
+// VerifyTransaction is a paid mutator transaction binding the contract method 0x5e29b7da.
+//
+// Solidity: function verifyTransaction(uint256 feeInWei, bytes rlpHeader, uint8 noOfConfirmations, bytes rlpEncodedTx, bytes path, bytes rlpEncodedNodes) payable returns(uint8)
+func (_OracleContract *OracleContractTransactorSession) VerifyTransaction(feeInWei *big.Int, rlpHeader []byte, noOfConfirmations uint8, rlpEncodedTx []byte, path []byte, rlpEncodedNodes []byte) (*types.Transaction, error) {
+	return _OracleContract.Contract.VerifyTransaction(&_OracleContract.TransactOpts, feeInWei, rlpHeader, noOfConfirmations, rlpEncodedTx, path, rlpEncodedNodes)
 }
 
 // OracleContractSubmitValidationResultLogIterator is returned from FilterSubmitValidationResultLog and is used to iterate over the raw logs and unpacked data for SubmitValidationResultLog events raised by the OracleContract contract.
@@ -475,15 +671,15 @@ func (it *OracleContractSubmitValidationResultLogIterator) Close() error {
 // OracleContractSubmitValidationResultLog represents a SubmitValidationResultLog event raised by the OracleContract contract.
 type OracleContractSubmitValidationResultLog struct {
 	Sender common.Address
-	Id     *big.Int
+	Hash   [32]byte
 	Result bool
 	Fee    *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterSubmitValidationResultLog is a free log retrieval operation binding the contract event 0x5a30fdd13b280f41539a4412ba85d8b7ab460fac5d7d1cdfd4043c77321b2abb.
+// FilterSubmitValidationResultLog is a free log retrieval operation binding the contract event 0xf7c4db3475526b6d9da982668512fe2b688df43ef777e449da121e71da154608.
 //
-// Solidity: event SubmitValidationResultLog(address indexed sender, uint256 id, bool result, uint256 fee)
+// Solidity: event SubmitValidationResultLog(address indexed sender, bytes32 _hash, bool result, uint256 fee)
 func (_OracleContract *OracleContractFilterer) FilterSubmitValidationResultLog(opts *bind.FilterOpts, sender []common.Address) (*OracleContractSubmitValidationResultLogIterator, error) {
 
 	var senderRule []interface{}
@@ -498,9 +694,9 @@ func (_OracleContract *OracleContractFilterer) FilterSubmitValidationResultLog(o
 	return &OracleContractSubmitValidationResultLogIterator{contract: _OracleContract.contract, event: "SubmitValidationResultLog", logs: logs, sub: sub}, nil
 }
 
-// WatchSubmitValidationResultLog is a free log subscription operation binding the contract event 0x5a30fdd13b280f41539a4412ba85d8b7ab460fac5d7d1cdfd4043c77321b2abb.
+// WatchSubmitValidationResultLog is a free log subscription operation binding the contract event 0xf7c4db3475526b6d9da982668512fe2b688df43ef777e449da121e71da154608.
 //
-// Solidity: event SubmitValidationResultLog(address indexed sender, uint256 id, bool result, uint256 fee)
+// Solidity: event SubmitValidationResultLog(address indexed sender, bytes32 _hash, bool result, uint256 fee)
 func (_OracleContract *OracleContractFilterer) WatchSubmitValidationResultLog(opts *bind.WatchOpts, sink chan<- *OracleContractSubmitValidationResultLog, sender []common.Address) (event.Subscription, error) {
 
 	var senderRule []interface{}
@@ -540,12 +736,157 @@ func (_OracleContract *OracleContractFilterer) WatchSubmitValidationResultLog(op
 	}), nil
 }
 
-// ParseSubmitValidationResultLog is a log parse operation binding the contract event 0x5a30fdd13b280f41539a4412ba85d8b7ab460fac5d7d1cdfd4043c77321b2abb.
+// ParseSubmitValidationResultLog is a log parse operation binding the contract event 0xf7c4db3475526b6d9da982668512fe2b688df43ef777e449da121e71da154608.
 //
-// Solidity: event SubmitValidationResultLog(address indexed sender, uint256 id, bool result, uint256 fee)
+// Solidity: event SubmitValidationResultLog(address indexed sender, bytes32 _hash, bool result, uint256 fee)
 func (_OracleContract *OracleContractFilterer) ParseSubmitValidationResultLog(log types.Log) (*OracleContractSubmitValidationResultLog, error) {
 	event := new(OracleContractSubmitValidationResultLog)
 	if err := _OracleContract.contract.UnpackLog(event, "SubmitValidationResultLog", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// OracleContractValidateBlockLogIterator is returned from FilterValidateBlockLog and is used to iterate over the raw logs and unpacked data for ValidateBlockLog events raised by the OracleContract contract.
+type OracleContractValidateBlockLogIterator struct {
+	Event *OracleContractValidateBlockLog // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *OracleContractValidateBlockLogIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(OracleContractValidateBlockLog)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(OracleContractValidateBlockLog)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *OracleContractValidateBlockLogIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *OracleContractValidateBlockLogIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// OracleContractValidateBlockLog represents a ValidateBlockLog event raised by the OracleContract contract.
+type OracleContractValidateBlockLog struct {
+	Sender common.Address
+	Hash   [32]byte
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterValidateBlockLog is a free log retrieval operation binding the contract event 0x7369c156accc2dffc92cb38087ac9ed801757bb90ab4945b0f126b17128a89dd.
+//
+// Solidity: event ValidateBlockLog(address indexed sender, bytes32 _hash)
+func (_OracleContract *OracleContractFilterer) FilterValidateBlockLog(opts *bind.FilterOpts, sender []common.Address) (*OracleContractValidateBlockLogIterator, error) {
+
+	var senderRule []interface{}
+	for _, senderItem := range sender {
+		senderRule = append(senderRule, senderItem)
+	}
+
+	logs, sub, err := _OracleContract.contract.FilterLogs(opts, "ValidateBlockLog", senderRule)
+	if err != nil {
+		return nil, err
+	}
+	return &OracleContractValidateBlockLogIterator{contract: _OracleContract.contract, event: "ValidateBlockLog", logs: logs, sub: sub}, nil
+}
+
+// WatchValidateBlockLog is a free log subscription operation binding the contract event 0x7369c156accc2dffc92cb38087ac9ed801757bb90ab4945b0f126b17128a89dd.
+//
+// Solidity: event ValidateBlockLog(address indexed sender, bytes32 _hash)
+func (_OracleContract *OracleContractFilterer) WatchValidateBlockLog(opts *bind.WatchOpts, sink chan<- *OracleContractValidateBlockLog, sender []common.Address) (event.Subscription, error) {
+
+	var senderRule []interface{}
+	for _, senderItem := range sender {
+		senderRule = append(senderRule, senderItem)
+	}
+
+	logs, sub, err := _OracleContract.contract.WatchLogs(opts, "ValidateBlockLog", senderRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(OracleContractValidateBlockLog)
+				if err := _OracleContract.contract.UnpackLog(event, "ValidateBlockLog", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseValidateBlockLog is a log parse operation binding the contract event 0x7369c156accc2dffc92cb38087ac9ed801757bb90ab4945b0f126b17128a89dd.
+//
+// Solidity: event ValidateBlockLog(address indexed sender, bytes32 _hash)
+func (_OracleContract *OracleContractFilterer) ParseValidateBlockLog(log types.Log) (*OracleContractValidateBlockLog, error) {
+	event := new(OracleContractValidateBlockLog)
+	if err := _OracleContract.contract.UnpackLog(event, "ValidateBlockLog", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
@@ -621,49 +962,39 @@ func (it *OracleContractValidateTransactionLogIterator) Close() error {
 
 // OracleContractValidateTransactionLog represents a ValidateTransactionLog event raised by the OracleContract contract.
 type OracleContractValidateTransactionLog struct {
-	Sender        common.Address
-	Id            *big.Int
-	Hash          [32]byte
-	Confirmations *big.Int
-	Raw           types.Log // Blockchain specific contextual infos
+	Sender common.Address
+	Hash   [32]byte
+	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterValidateTransactionLog is a free log retrieval operation binding the contract event 0xdb3924693edfb1380a509834c8de41c8d57794e3b056a3cc6b0bac025ba57da4.
+// FilterValidateTransactionLog is a free log retrieval operation binding the contract event 0x0d6f8b3dd2cfc880fced8136729f786c893eb0a5776ccc9c0d6d734f77fdbc6e.
 //
-// Solidity: event ValidateTransactionLog(address indexed sender, uint256 indexed id, bytes32 hash, uint256 confirmations)
-func (_OracleContract *OracleContractFilterer) FilterValidateTransactionLog(opts *bind.FilterOpts, sender []common.Address, id []*big.Int) (*OracleContractValidateTransactionLogIterator, error) {
+// Solidity: event ValidateTransactionLog(address indexed sender, bytes32 _hash)
+func (_OracleContract *OracleContractFilterer) FilterValidateTransactionLog(opts *bind.FilterOpts, sender []common.Address) (*OracleContractValidateTransactionLogIterator, error) {
 
 	var senderRule []interface{}
 	for _, senderItem := range sender {
 		senderRule = append(senderRule, senderItem)
 	}
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
 
-	logs, sub, err := _OracleContract.contract.FilterLogs(opts, "ValidateTransactionLog", senderRule, idRule)
+	logs, sub, err := _OracleContract.contract.FilterLogs(opts, "ValidateTransactionLog", senderRule)
 	if err != nil {
 		return nil, err
 	}
 	return &OracleContractValidateTransactionLogIterator{contract: _OracleContract.contract, event: "ValidateTransactionLog", logs: logs, sub: sub}, nil
 }
 
-// WatchValidateTransactionLog is a free log subscription operation binding the contract event 0xdb3924693edfb1380a509834c8de41c8d57794e3b056a3cc6b0bac025ba57da4.
+// WatchValidateTransactionLog is a free log subscription operation binding the contract event 0x0d6f8b3dd2cfc880fced8136729f786c893eb0a5776ccc9c0d6d734f77fdbc6e.
 //
-// Solidity: event ValidateTransactionLog(address indexed sender, uint256 indexed id, bytes32 hash, uint256 confirmations)
-func (_OracleContract *OracleContractFilterer) WatchValidateTransactionLog(opts *bind.WatchOpts, sink chan<- *OracleContractValidateTransactionLog, sender []common.Address, id []*big.Int) (event.Subscription, error) {
+// Solidity: event ValidateTransactionLog(address indexed sender, bytes32 _hash)
+func (_OracleContract *OracleContractFilterer) WatchValidateTransactionLog(opts *bind.WatchOpts, sink chan<- *OracleContractValidateTransactionLog, sender []common.Address) (event.Subscription, error) {
 
 	var senderRule []interface{}
 	for _, senderItem := range sender {
 		senderRule = append(senderRule, senderItem)
 	}
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
 
-	logs, sub, err := _OracleContract.contract.WatchLogs(opts, "ValidateTransactionLog", senderRule, idRule)
+	logs, sub, err := _OracleContract.contract.WatchLogs(opts, "ValidateTransactionLog", senderRule)
 	if err != nil {
 		return nil, err
 	}
@@ -695,9 +1026,9 @@ func (_OracleContract *OracleContractFilterer) WatchValidateTransactionLog(opts 
 	}), nil
 }
 
-// ParseValidateTransactionLog is a log parse operation binding the contract event 0xdb3924693edfb1380a509834c8de41c8d57794e3b056a3cc6b0bac025ba57da4.
+// ParseValidateTransactionLog is a log parse operation binding the contract event 0x0d6f8b3dd2cfc880fced8136729f786c893eb0a5776ccc9c0d6d734f77fdbc6e.
 //
-// Solidity: event ValidateTransactionLog(address indexed sender, uint256 indexed id, bytes32 hash, uint256 confirmations)
+// Solidity: event ValidateTransactionLog(address indexed sender, bytes32 _hash)
 func (_OracleContract *OracleContractFilterer) ParseValidateTransactionLog(log types.Log) (*OracleContractValidateTransactionLog, error) {
 	event := new(OracleContractValidateTransactionLog)
 	if err := _OracleContract.contract.UnpackLog(event, "ValidateTransactionLog", log); err != nil {

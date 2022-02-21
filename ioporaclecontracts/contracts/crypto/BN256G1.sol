@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.5.3 <0.7.0;
+pragma solidity ^0.8.0;
 
-import "elliptic-curve-solidity/contracts/EllipticCurve.sol";
+import "../EllipticCurve.sol";
 
 /**
  * @title BN256G1 Curve Library

@@ -2,20 +2,20 @@ package iop
 
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
-	"math/big"
+	"github.com/ethereum/go-ethereum/common"
 )
 
-func encodeValidateTransactionResult(id *big.Int, result bool) ([]byte, error) {
-	uint256Ty, _ := abi.NewType("uint256", "", nil)
+func encodeValidateResult(hash common.Hash, result bool) ([]byte, error) {
+	bytes32Ty, _ := abi.NewType("bytes32", "", nil)
 	boolTy, _ := abi.NewType("bool", "", nil)
 
 	arguments := abi.Arguments{
 		{
-			Type: uint256Ty,
+			Type: bytes32Ty,
 		},
 		{
 			Type: boolTy,
 		},
 	}
-	return arguments.Pack(id, result)
+	return arguments.Pack(hash, result)
 }

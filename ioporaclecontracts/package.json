@@ -18,8 +18,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@openzeppelin/contracts": "^3.2.0",
-    "elliptic-curve-solidity": "^0.2.4"
+    "@openzeppelin/contracts": "^3.2.0"
   },
   "devDependencies": {
     "@openzeppelin/test-helpers": "^0.5.9",
