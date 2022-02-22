@@ -5,9 +5,8 @@ import "./RegistryContract.sol";
 import "./DistKeyContract.sol";
 import "./crypto/BN256G1.sol";
 import "./crypto/BN256G2.sol";
-import "./TxInclusionVerifier.sol";
 
-contract OracleContract is TxInclusionVerifier {
+contract OracleContract {
 
     uint256 public constant BASE_FEE = 0.001 ether;
     uint256 public constant VALIDATOR_FEE = 0.0001 ether;
@@ -136,24 +135,5 @@ contract OracleContract is TxInclusionVerifier {
 
     function findTransactionValidationResult(bytes32 _hash) public view returns (bool) {
         return txValidationResults[_hash];
-    }
-
-    function isBlockConfirmed(uint /*feeInWei*/, bytes32 blockHash, uint /*requiredConfirmations*/) payable public override returns (bool) {
-        return findBlockValidationResult(blockHash);
-    }
-
-    function verifyTransaction(uint /*feeInWei*/, bytes memory /*rlpHeader*/, uint8 /*noOfConfirmations*/, bytes memory /*rlpEncodedTx*/,
-        bytes memory /*path*/, bytes memory /*rlpEncodedNodes*/) payable public override returns (uint8) {
-        return 0;
-    }
-
-    function verifyReceipt(uint /*feeInWei*/, bytes memory /*rlpHeader*/, uint8 /*noOfConfirmations*/, bytes memory /*rlpEncodedReceipt*/,
-        bytes memory /*path*/, bytes memory /*rlpEncodedNodes*/) payable public override returns (uint8) {
-        return 0;
-    }
-
-    function verifyState(uint /*feeInWei*/, bytes memory /*rlpHeader*/, uint8 /*noOfConfirmations*/, bytes memory /*rlpEncodedState*/,
-        bytes memory /*path*/, bytes memory /*rlpEncodedNodes*/) payable public override returns (uint8) {
-        return 0;
     }
 }
