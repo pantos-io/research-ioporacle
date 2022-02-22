@@ -9,7 +9,7 @@ You need to have the following software installed:
 * [Node.js](https://nodejs.org/) (version >= 15.4.0)
 * [Truffle](https://www.trufflesuite.com/truffle) (version 5.3.7)
 * [Ganache](https://www.trufflesuite.com/ganache) (version >= 2.5.4)
-* [Solidity](https://docs.soliditylang.org/en/latest/installing-solidity.html) (0.8.0 > version >= 0.4.22)
+* [Solidity](https://docs.soliditylang.org/en/latest/installing-solidity.html) (^0.8.0)
 
 ## Installation
 
