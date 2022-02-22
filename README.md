@@ -1,10 +1,11 @@
 # A Voting-based Blockchain Interoperability Oracle
 
-Prototypical implementation of the smart contracts and oracle node for a voting-based blockchain interoperability oracle. The oracle allows  clients  to  verify  that  a  transaction  is  included  in  another  blockchain but is currently limited to Ethereum-based blockchains.
+Prototypical implementation of the smart contracts and oracle node for a voting-based blockchain interoperability oracle. The oracle allows clients to verify that a transaction is included in another blockchain but is currently limited to Ethereum-based blockchains.
 
-##  Prerequisites
+## Prerequisites
 
 You need to have the following software installed:
+
 * [Golang](https://golang.org/doc/install) (version 1.15)
 * [Node.js](https://nodejs.org/) (version >= 15.4.0)
 * [Truffle](https://www.trufflesuite.com/truffle) (version 5.3.7)
@@ -33,14 +34,17 @@ The oracle node uses a configuration file which should be specified through the 
 The project includes two alternative implementations of oracle contracts. One implements an on-chain aggregation mechanism whereas each oracle node calls the oracle contract to submit a result. The second oracle contract makes use of ECDSA signatures to verify the result. To repeat the experiments one can use the provided evaluation scripts. The results are then saved in a CSV file in `./ioporaclecontracts/data`.
 
 ### BLS
+
 1. Run a local Ethereum blockchain (Ganache).
 2. Deploy the smart contracts on the local blockchain with `truffle migrate --reset`.
 3. Run your own [IOTA node](https://github.com/gohornet/hornet) (or use a public node with MQTT enabled).
 4. Create the configuration files for three oracle nodes.
 5. Start the oracle nodes which are able to answer to the requests.
-	- Run `./ioporacle -c ./configs/config_n1.json`
-	- Run `./ioporacle -c ./configs/config_n2.json`
-	- Run `./ioporacle -c ./configs/config_n3.json`
+
+    * Run `./ioporacle -c ./configs/config_n1.json`
+    * Run `./ioporacle -c ./configs/config_n2.json`
+    * Run `./ioporacle -c ./configs/config_n3.json`
+
 6. Run `truffle execute ./scripts/eval/eval-bls-cost.js`
 
 ### ECDSA
