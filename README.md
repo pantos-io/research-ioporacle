@@ -26,7 +26,7 @@ You need to have the following software installed:
 
 ## Configuration
 
-The oracle node uses a configuration file which should be specified through the respective command-line flag. To see what the config file should look like, one can take a look at one of the configuration files which are part of the project.
+The oracle node uses a configuration file which should be specified through the respective command-line flag. To see what the config file should look like, one can take a look at the example configuration file which resides in the `configs` directory.
 
 ## Cost Analysis
 

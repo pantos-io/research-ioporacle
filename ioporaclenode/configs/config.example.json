@@ -1,15 +1,15 @@
 {
-  "bindAddress": "127.0.0.1:25567",
+  "bindAddress": "127.0.0.1:25565",
   "privateKey": "172140aeb37c08cf8e773653b8fd1fca64bbc1f5535c6b9f80b377b977725764",
   "contracts": {
-    "registryContractAddress": "0xee1a797ac6F462059d016362dA1698b957c0e1ee",
-    "oracleContractAddress": "0x7646a50B9C797f3e24126cdC9312759fA05Fa821",
-    "distKeyContractAddress": "0xA72b7F9010baf91f1c8728BF6d4ef974fBA15E9D"
+    "registryContractAddress": "0x6cd17943B5a99244A48C2f526E903E4D23D1013c",
+    "oracleContractAddress": "0xF221A319485F268EA394d11Be19Ba20B7e3429F2",
+    "distKeyContractAddress": "0xdb6daA593C7C016dC3801c97FAF71Bb2ab69f8da"
   },
   "ethereum": {
     "sourceAddress": "ws://127.0.0.1:7545",
     "targetAddress": "ws://127.0.0.1:7545",
-    "privateKey": "8a05bb924a19a3f4b85d9b0a50e67988fef09bf813b25e679f2e3ff5135c7b14"
+    "privateKey": "b38a964f368abad5dc4da5f186136258eb258305bc018a12a25d147f0fe40697"
   },
   "iota": {
     "rest": "https://api.lb-0.h.chrysalis-devnet.iota.cafe",

@@ -118,3 +118,6 @@ yarn.lock
 package-lock.json
 
 # End of https://www.toptal.com/developers/gitignore/api/soliditytruffle,intellij+all
+
+/ioporaclenode/configs/*
+!/ioporaclenode/configs/config.example.json
