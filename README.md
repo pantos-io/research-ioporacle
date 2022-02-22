@@ -35,7 +35,7 @@ The project includes two alternative implementations of oracle contracts. One im
 ### BLS
 1. Run a local Ethereum blockchain (Ganache).
 2. Deploy the smart contracts on the local blockchain with `truffle migrate --reset`.
-3. Run your own [IOTA node](https://github.com/gohornet/hornet) (or use a public node with ZMQ enabled).
+3. Run your own [IOTA node](https://github.com/gohornet/hornet) (or use a public node with MQTT enabled).
 4. Create the configuration files for three oracle nodes.
 5. Start the oracle nodes which are able to answer to the requests.
 	- Run `./ioporacle -c ./configs/config_n1.json`
