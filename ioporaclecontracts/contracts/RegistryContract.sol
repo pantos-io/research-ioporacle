@@ -78,7 +78,12 @@ contract RegistryContract {
     }
 
     function isAggregator(address _addr) public view returns (bool) {
-        return isAggregatorByBlock(_addr, block.number);
+        /**
+         * As this method is a call, block.number refers to an already finalized block.
+         * But aggregators submit transactions that should be included in a new block,
+         * therefore the information of the aggregator of a finalized block is outdated.
+         */
+        return isAggregatorByBlock(_addr, block.number + 1);
     }
 
     function isAggregatorByBlock(address _addr, uint256 _block)
@@ -94,7 +99,12 @@ contract RegistryContract {
     }
 
     function getAggregator() public view returns (OracleNode memory) {
-        return getAggregatorByBlock(block.number);
+        /**
+         * As this method is a call, block.number refers to an already finalized block.
+         * But aggregators submit transactions that should be included in a new block,
+         * therefore the information of the aggregator of a finalized block is outdated.
+         */
+        return getAggregatorByBlock(block.number + 1);
     }
 
     function getAggregatorByBlock(uint256 _block)
