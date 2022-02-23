@@ -3,11 +3,12 @@ package iop
 import (
 	"context"
 	"fmt"
+	"sync"
+
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"sync"
 )
 
 type ConnectionManager struct {
@@ -26,10 +27,10 @@ func NewConnectionManager(registryContract *RegistryContractWrapper, account com
 }
 
 func (m *ConnectionManager) WatchAndHandleRegisterOracleNodeLog(ctx context.Context) error {
-	sink := make(chan *RegistryContractRegisterOracleNodeLog)
+	sink := make(chan *RegistryContractRegisterOracleNode)
 	defer close(sink)
 
-	sub, err := m.registryContract.WatchRegisterOracleNodeLog(
+	sub, err := m.registryContract.WatchRegisterOracleNode(
 		&bind.WatchOpts{
 			Context: context.Background(),
 		},
@@ -46,7 +47,7 @@ func (m *ConnectionManager) WatchAndHandleRegisterOracleNodeLog(ctx context.Cont
 		case event := <-sink:
 			log.Infof("Received register oracle node event %s", event.Sender.String())
 			if err = m.HandleRegisterOracleNodeLog(event); err != nil {
-				log.Errorf("handle register oracle node log: %v", err)
+				log.Errorf("Handle register oracle node log: %v", err)
 			}
 		case err = <-sub.Err():
 			return err
@@ -56,15 +57,14 @@ func (m *ConnectionManager) WatchAndHandleRegisterOracleNodeLog(ctx context.Cont
 	}
 }
 
-func (m *ConnectionManager) HandleRegisterOracleNodeLog(event *RegistryContractRegisterOracleNodeLog) error {
+func (m *ConnectionManager) HandleRegisterOracleNodeLog(event *RegistryContractRegisterOracleNode) error {
 	node, err := m.registryContract.FindOracleNodeByAddress(nil, event.Sender)
 	if err != nil {
 		return fmt.Errorf("find oracle node by address %s: %w", event.Sender, err)
 	}
-	if _, err := m.NewConnection(node); err != nil {
+	if _, err = m.NewConnection(node); err != nil {
 		return fmt.Errorf("new connection: %w", err)
 	}
-	log.Infof("New connection to %s", event.Sender.String())
 	return nil
 }
 
@@ -79,10 +79,9 @@ func (m *ConnectionManager) InitConnections() error {
 			continue
 		}
 		if _, err := m.NewConnection(node); err != nil {
-			log.Errorf("new connection %s: %v", node.IpAddr, err)
+			log.Errorf("New connection %s: %v", node.IpAddr, err)
 			continue
 		}
-		log.Infof("New connection to %s", node.Addr.String())
 	}
 	return nil
 }
@@ -98,6 +97,9 @@ func (m *ConnectionManager) NewConnection(node RegistryContractOracleNode) (*grp
 		return nil, fmt.Errorf("dial %s: %v", node.IpAddr, err)
 	}
 	m.connections[node.Addr] = conn
+
+	log.Infof("New connection to %s with index %d and IP address %s", node.Addr, node.Index, node.IpAddr)
+
 	return conn, nil
 }
 

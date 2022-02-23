@@ -48,7 +48,7 @@ func NewAggregator(
 	}
 }
 
-func (a *Aggregator) WatchAndHandleValidationRequests(ctx context.Context) error {
+func (a *Aggregator) WatchAndHandleValidationRequestsLog(ctx context.Context) error {
 	sink := make(chan *OracleContractValidationRequest)
 	defer close(sink)
 
@@ -72,7 +72,7 @@ func (a *Aggregator) WatchAndHandleValidationRequests(ctx context.Context) error
 			log.Infof("Received ValidationRequest event for %s type with hash %s", typ, common.Hash(event.Hash))
 			isAggregator, err := a.registryContract.IsAggregator(nil, a.account)
 			if err != nil {
-				log.Errorf("is aggregator: %v", err)
+				log.Errorf("Is aggregator: %v", err)
 				continue
 			}
 			if !isAggregator {
@@ -104,6 +104,13 @@ func (a *Aggregator) HandleValidationRequest(ctx context.Context, event *OracleC
 	if _, err = a.oracleContract.SubmitTransactionValidationResult(auth, event.Hash, result, sig); err != nil {
 		return fmt.Errorf("submit verification: %w", err)
 	}
+
+	resultStr := "valid"
+	if (!result) {
+		resultStr = "invalid"
+	}
+	log.Infof("Submitted validation result (%s) for hash %s of type %s", resultStr, common.Hash(event.Hash), typ)
+
 	return nil
 }
 
@@ -124,7 +131,7 @@ func (a *Aggregator) AggregateValidationResults(ctx context.Context, txHash comm
 
 		conn, err := a.connectionManager.FindByAddress(node.Addr)
 		if err != nil {
-			log.Errorf("find connection by address: %v", err)
+			log.Errorf("Find connection by address: %v", err)
 			continue
 		}
 

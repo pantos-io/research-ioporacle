@@ -159,7 +159,7 @@ func (n *OracleNode) Run() error {
 
 	go func() {
 		if err := n.dkg.ListenAndProcess(context.Background()); err != nil {
-			log.Errorf("Watch and handle dkg log: %v", err)
+			log.Errorf("Watch and handle DKG log: %v", err)
 		}
 	}()
 
@@ -170,7 +170,7 @@ func (n *OracleNode) Run() error {
 	}()
 
 	go func() {
-		if err := n.aggregator.WatchAndHandleValidationRequests(context.Background()); err != nil {
+		if err := n.aggregator.WatchAndHandleValidationRequestsLog(context.Background()); err != nil {
 			log.Errorf("Watch and handle ValidationRequest log: %v", err)
 		}
 	}()

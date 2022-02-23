@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ethereum/go-ethereum/common"
+	log "github.com/sirupsen/logrus"
 	dkg "go.dedis.ch/kyber/v3/share/dkg/pedersen"
 	vss "go.dedis.ch/kyber/v3/share/vss/pedersen"
 	"google.golang.org/grpc/codes"
@@ -40,6 +41,13 @@ func (n *OracleNode) Validate(ctx context.Context, request *ValidateRequest) (*V
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "validate %s: %v", request.Type, err)
 	}
+
+	resultStr := "valid"
+	if (!result.valid) {
+		resultStr = "invalid"
+	}
+	log.Infof("Validated hash %s of type %s with result: %s", common.BytesToHash(request.Hash), request.Type, resultStr)
+
 	return ValidateResultToResponse(result), nil
 }
 

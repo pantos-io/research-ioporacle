@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.22 <0.8.0;
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.8.0;
 
 import "../RegistryContract.sol";
 
@@ -32,7 +31,7 @@ contract OnChainOracleContract {
 
     RegistryContract private registryContract;
 
-    constructor(address _registryContract) public {
+    constructor(address _registryContract) {
         registryContract = RegistryContract(_registryContract);
     }
 
@@ -67,7 +66,7 @@ contract OnChainOracleContract {
             validationResult.result = _result;
 
             for (uint256 i = 0; i < votes[_id][_result].length; i++) {
-                address(uint160(votes[_id][_result][i])).transfer(FEE);
+                payable(address(uint160(votes[_id][_result][i]))).transfer(FEE);
             }
 
             emit SubmitValidationResultLog(msg.sender, _id, _result);

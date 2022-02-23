@@ -30,7 +30,7 @@ var (
 
 // OracleContractMetaData contains all meta data concerning the OracleContract contract.
 var OracleContractMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_distKeyContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"enumOracleContract.ValidationType\",\"name\":\"typ\",\"type\":\"uint8\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"ValidationRequest\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"enumOracleContract.ValidationType\",\"name\":\"typ\",\"type\":\"uint8\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"aggregator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"hash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"valid\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"fee\",\"type\":\"uint256\"}],\"name\":\"ValidationResponse\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BASE_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"TOTAL_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATOR_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"findBlockValidationResult\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"findTransactionValidationResult\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"isBlockConfirmed\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_seed\",\"type\":\"uint256\"}],\"name\":\"isValidationFeeReceiver\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"},{\"internalType\":\"uint256[2]\",\"name\":\"_signature\",\"type\":\"uint256[2]\"}],\"name\":\"submitBlockValidationResult\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"},{\"internalType\":\"uint256[2]\",\"name\":\"_signature\",\"type\":\"uint256[2]\"}],\"name\":\"submitTransactionValidationResult\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"validateBlock\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"validateTransaction\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"},{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"verifyReceipt\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"},{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"verifyState\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"},{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"verifyTransaction\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_registryContract\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_distKeyContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"enumOracleContract.ValidationType\",\"name\":\"typ\",\"type\":\"uint8\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"ValidationRequest\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"enumOracleContract.ValidationType\",\"name\":\"typ\",\"type\":\"uint8\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"aggregator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"hash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"valid\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"fee\",\"type\":\"uint256\"}],\"name\":\"ValidationResponse\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BASE_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"TOTAL_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATOR_FEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"findBlockValidationResult\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"findTransactionValidationResult\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_seed\",\"type\":\"uint256\"}],\"name\":\"isValidationFeeReceiver\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"},{\"internalType\":\"uint256[2]\",\"name\":\"_signature\",\"type\":\"uint256[2]\"}],\"name\":\"submitBlockValidationResult\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"internalType\":\"bool\",\"name\":\"_result\",\"type\":\"bool\"},{\"internalType\":\"uint256[2]\",\"name\":\"_signature\",\"type\":\"uint256[2]\"}],\"name\":\"submitTransactionValidationResult\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"validateBlock\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"validateTransaction\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
 }
 
 // OracleContractABI is the input ABI used to generate the binding from.
@@ -365,27 +365,6 @@ func (_OracleContract *OracleContractCallerSession) IsValidationFeeReceiver(_sta
 	return _OracleContract.Contract.IsValidationFeeReceiver(&_OracleContract.CallOpts, _stake, _seed)
 }
 
-// IsBlockConfirmed is a paid mutator transaction binding the contract method 0x9dc29d89.
-//
-// Solidity: function isBlockConfirmed(uint256 , bytes32 blockHash, uint256 ) payable returns(bool)
-func (_OracleContract *OracleContractTransactor) IsBlockConfirmed(opts *bind.TransactOpts, arg0 *big.Int, blockHash [32]byte, arg2 *big.Int) (*types.Transaction, error) {
-	return _OracleContract.contract.Transact(opts, "isBlockConfirmed", arg0, blockHash, arg2)
-}
-
-// IsBlockConfirmed is a paid mutator transaction binding the contract method 0x9dc29d89.
-//
-// Solidity: function isBlockConfirmed(uint256 , bytes32 blockHash, uint256 ) payable returns(bool)
-func (_OracleContract *OracleContractSession) IsBlockConfirmed(arg0 *big.Int, blockHash [32]byte, arg2 *big.Int) (*types.Transaction, error) {
-	return _OracleContract.Contract.IsBlockConfirmed(&_OracleContract.TransactOpts, arg0, blockHash, arg2)
-}
-
-// IsBlockConfirmed is a paid mutator transaction binding the contract method 0x9dc29d89.
-//
-// Solidity: function isBlockConfirmed(uint256 , bytes32 blockHash, uint256 ) payable returns(bool)
-func (_OracleContract *OracleContractTransactorSession) IsBlockConfirmed(arg0 *big.Int, blockHash [32]byte, arg2 *big.Int) (*types.Transaction, error) {
-	return _OracleContract.Contract.IsBlockConfirmed(&_OracleContract.TransactOpts, arg0, blockHash, arg2)
-}
-
 // SubmitBlockValidationResult is a paid mutator transaction binding the contract method 0x3dd14279.
 //
 // Solidity: function submitBlockValidationResult(bytes32 _hash, bool _result, uint256[2] _signature) returns()
@@ -468,69 +447,6 @@ func (_OracleContract *OracleContractSession) ValidateTransaction(_hash [32]byte
 // Solidity: function validateTransaction(bytes32 _hash) payable returns()
 func (_OracleContract *OracleContractTransactorSession) ValidateTransaction(_hash [32]byte) (*types.Transaction, error) {
 	return _OracleContract.Contract.ValidateTransaction(&_OracleContract.TransactOpts, _hash)
-}
-
-// VerifyReceipt is a paid mutator transaction binding the contract method 0xed315dfa.
-//
-// Solidity: function verifyReceipt(uint256 , bytes , uint8 , bytes , bytes , bytes ) payable returns(uint8)
-func (_OracleContract *OracleContractTransactor) VerifyReceipt(opts *bind.TransactOpts, arg0 *big.Int, arg1 []byte, arg2 uint8, arg3 []byte, arg4 []byte, arg5 []byte) (*types.Transaction, error) {
-	return _OracleContract.contract.Transact(opts, "verifyReceipt", arg0, arg1, arg2, arg3, arg4, arg5)
-}
-
-// VerifyReceipt is a paid mutator transaction binding the contract method 0xed315dfa.
-//
-// Solidity: function verifyReceipt(uint256 , bytes , uint8 , bytes , bytes , bytes ) payable returns(uint8)
-func (_OracleContract *OracleContractSession) VerifyReceipt(arg0 *big.Int, arg1 []byte, arg2 uint8, arg3 []byte, arg4 []byte, arg5 []byte) (*types.Transaction, error) {
-	return _OracleContract.Contract.VerifyReceipt(&_OracleContract.TransactOpts, arg0, arg1, arg2, arg3, arg4, arg5)
-}
-
-// VerifyReceipt is a paid mutator transaction binding the contract method 0xed315dfa.
-//
-// Solidity: function verifyReceipt(uint256 , bytes , uint8 , bytes , bytes , bytes ) payable returns(uint8)
-func (_OracleContract *OracleContractTransactorSession) VerifyReceipt(arg0 *big.Int, arg1 []byte, arg2 uint8, arg3 []byte, arg4 []byte, arg5 []byte) (*types.Transaction, error) {
-	return _OracleContract.Contract.VerifyReceipt(&_OracleContract.TransactOpts, arg0, arg1, arg2, arg3, arg4, arg5)
-}
-
-// VerifyState is a paid mutator transaction binding the contract method 0xaddd9b38.
-//
-// Solidity: function verifyState(uint256 , bytes , uint8 , bytes , bytes , bytes ) payable returns(uint8)
-func (_OracleContract *OracleContractTransactor) VerifyState(opts *bind.TransactOpts, arg0 *big.Int, arg1 []byte, arg2 uint8, arg3 []byte, arg4 []byte, arg5 []byte) (*types.Transaction, error) {
-	return _OracleContract.contract.Transact(opts, "verifyState", arg0, arg1, arg2, arg3, arg4, arg5)
-}
-
-// VerifyState is a paid mutator transaction binding the contract method 0xaddd9b38.
-//
-// Solidity: function verifyState(uint256 , bytes , uint8 , bytes , bytes , bytes ) payable returns(uint8)
-func (_OracleContract *OracleContractSession) VerifyState(arg0 *big.Int, arg1 []byte, arg2 uint8, arg3 []byte, arg4 []byte, arg5 []byte) (*types.Transaction, error) {
-	return _OracleContract.Contract.VerifyState(&_OracleContract.TransactOpts, arg0, arg1, arg2, arg3, arg4, arg5)
-}
-
-// VerifyState is a paid mutator transaction binding the contract method 0xaddd9b38.
-//
-// Solidity: function verifyState(uint256 , bytes , uint8 , bytes , bytes , bytes ) payable returns(uint8)
-func (_OracleContract *OracleContractTransactorSession) VerifyState(arg0 *big.Int, arg1 []byte, arg2 uint8, arg3 []byte, arg4 []byte, arg5 []byte) (*types.Transaction, error) {
-	return _OracleContract.Contract.VerifyState(&_OracleContract.TransactOpts, arg0, arg1, arg2, arg3, arg4, arg5)
-}
-
-// VerifyTransaction is a paid mutator transaction binding the contract method 0x5e29b7da.
-//
-// Solidity: function verifyTransaction(uint256 , bytes , uint8 , bytes , bytes , bytes ) payable returns(uint8)
-func (_OracleContract *OracleContractTransactor) VerifyTransaction(opts *bind.TransactOpts, arg0 *big.Int, arg1 []byte, arg2 uint8, arg3 []byte, arg4 []byte, arg5 []byte) (*types.Transaction, error) {
-	return _OracleContract.contract.Transact(opts, "verifyTransaction", arg0, arg1, arg2, arg3, arg4, arg5)
-}
-
-// VerifyTransaction is a paid mutator transaction binding the contract method 0x5e29b7da.
-//
-// Solidity: function verifyTransaction(uint256 , bytes , uint8 , bytes , bytes , bytes ) payable returns(uint8)
-func (_OracleContract *OracleContractSession) VerifyTransaction(arg0 *big.Int, arg1 []byte, arg2 uint8, arg3 []byte, arg4 []byte, arg5 []byte) (*types.Transaction, error) {
-	return _OracleContract.Contract.VerifyTransaction(&_OracleContract.TransactOpts, arg0, arg1, arg2, arg3, arg4, arg5)
-}
-
-// VerifyTransaction is a paid mutator transaction binding the contract method 0x5e29b7da.
-//
-// Solidity: function verifyTransaction(uint256 , bytes , uint8 , bytes , bytes , bytes ) payable returns(uint8)
-func (_OracleContract *OracleContractTransactorSession) VerifyTransaction(arg0 *big.Int, arg1 []byte, arg2 uint8, arg3 []byte, arg4 []byte, arg5 []byte) (*types.Transaction, error) {
-	return _OracleContract.Contract.VerifyTransaction(&_OracleContract.TransactOpts, arg0, arg1, arg2, arg3, arg4, arg5)
 }
 
 // OracleContractValidationRequestIterator is returned from FilterValidationRequest and is used to iterate over the raw logs and unpacked data for ValidationRequest events raised by the OracleContract contract.

@@ -39,7 +39,7 @@ type RegistryContractOracleNode struct {
 
 // RegistryContractMetaData contains all meta data concerning the RegistryContract contract.
 var RegistryContractMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_distKeyContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RegisterOracleNodeLog\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"MIN_STAKE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"countOracleNodes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"findOracleNodeByAddress\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"findOracleNodeByIndex\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAggregator\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_block\",\"type\":\"uint256\"}],\"name\":\"getAggregatorByBlock\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"isAggregator\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_block\",\"type\":\"uint256\"}],\"name\":\"isAggregatorByBlock\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"oracleNodeIsRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"_pubKey\",\"type\":\"bytes\"}],\"name\":\"registerOracleNode\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_distKeyContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RegisterOracleNode\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"MIN_STAKE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"countOracleNodes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"findOracleNodeByAddress\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"findOracleNodeByIndex\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAggregator\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_block\",\"type\":\"uint256\"}],\"name\":\"getAggregatorByBlock\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"stake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"internalType\":\"structRegistryContract.OracleNode\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"isAggregator\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_block\",\"type\":\"uint256\"}],\"name\":\"isAggregatorByBlock\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addr\",\"type\":\"address\"}],\"name\":\"oracleNodeIsRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipAddr\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"_pubKey\",\"type\":\"bytes\"}],\"name\":\"registerOracleNode\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
 }
 
 // RegistryContractABI is the input ABI used to generate the binding from.
@@ -488,9 +488,9 @@ func (_RegistryContract *RegistryContractTransactorSession) RegisterOracleNode(_
 	return _RegistryContract.Contract.RegisterOracleNode(&_RegistryContract.TransactOpts, _ipAddr, _pubKey)
 }
 
-// RegistryContractRegisterOracleNodeLogIterator is returned from FilterRegisterOracleNodeLog and is used to iterate over the raw logs and unpacked data for RegisterOracleNodeLog events raised by the RegistryContract contract.
-type RegistryContractRegisterOracleNodeLogIterator struct {
-	Event *RegistryContractRegisterOracleNodeLog // Event containing the contract specifics and raw log
+// RegistryContractRegisterOracleNodeIterator is returned from FilterRegisterOracleNode and is used to iterate over the raw logs and unpacked data for RegisterOracleNode events raised by the RegistryContract contract.
+type RegistryContractRegisterOracleNodeIterator struct {
+	Event *RegistryContractRegisterOracleNode // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -504,7 +504,7 @@ type RegistryContractRegisterOracleNodeLogIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *RegistryContractRegisterOracleNodeLogIterator) Next() bool {
+func (it *RegistryContractRegisterOracleNodeIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -513,7 +513,7 @@ func (it *RegistryContractRegisterOracleNodeLogIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(RegistryContractRegisterOracleNodeLog)
+			it.Event = new(RegistryContractRegisterOracleNode)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -528,7 +528,7 @@ func (it *RegistryContractRegisterOracleNodeLogIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(RegistryContractRegisterOracleNodeLog)
+		it.Event = new(RegistryContractRegisterOracleNode)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -544,51 +544,51 @@ func (it *RegistryContractRegisterOracleNodeLogIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *RegistryContractRegisterOracleNodeLogIterator) Error() error {
+func (it *RegistryContractRegisterOracleNodeIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *RegistryContractRegisterOracleNodeLogIterator) Close() error {
+func (it *RegistryContractRegisterOracleNodeIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// RegistryContractRegisterOracleNodeLog represents a RegisterOracleNodeLog event raised by the RegistryContract contract.
-type RegistryContractRegisterOracleNodeLog struct {
+// RegistryContractRegisterOracleNode represents a RegisterOracleNode event raised by the RegistryContract contract.
+type RegistryContractRegisterOracleNode struct {
 	Sender common.Address
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterRegisterOracleNodeLog is a free log retrieval operation binding the contract event 0x1e8e81a8a2dad3aa858f8e7f00c25da73b2a1692fc9f7d3dfd7f96412100c309.
+// FilterRegisterOracleNode is a free log retrieval operation binding the contract event 0x463624ffd45713d944420ab743c635b5714b8dbabe9c3ae0045ba085e71fada0.
 //
-// Solidity: event RegisterOracleNodeLog(address indexed sender)
-func (_RegistryContract *RegistryContractFilterer) FilterRegisterOracleNodeLog(opts *bind.FilterOpts, sender []common.Address) (*RegistryContractRegisterOracleNodeLogIterator, error) {
+// Solidity: event RegisterOracleNode(address indexed sender)
+func (_RegistryContract *RegistryContractFilterer) FilterRegisterOracleNode(opts *bind.FilterOpts, sender []common.Address) (*RegistryContractRegisterOracleNodeIterator, error) {
 
 	var senderRule []interface{}
 	for _, senderItem := range sender {
 		senderRule = append(senderRule, senderItem)
 	}
 
-	logs, sub, err := _RegistryContract.contract.FilterLogs(opts, "RegisterOracleNodeLog", senderRule)
+	logs, sub, err := _RegistryContract.contract.FilterLogs(opts, "RegisterOracleNode", senderRule)
 	if err != nil {
 		return nil, err
 	}
-	return &RegistryContractRegisterOracleNodeLogIterator{contract: _RegistryContract.contract, event: "RegisterOracleNodeLog", logs: logs, sub: sub}, nil
+	return &RegistryContractRegisterOracleNodeIterator{contract: _RegistryContract.contract, event: "RegisterOracleNode", logs: logs, sub: sub}, nil
 }
 
-// WatchRegisterOracleNodeLog is a free log subscription operation binding the contract event 0x1e8e81a8a2dad3aa858f8e7f00c25da73b2a1692fc9f7d3dfd7f96412100c309.
+// WatchRegisterOracleNode is a free log subscription operation binding the contract event 0x463624ffd45713d944420ab743c635b5714b8dbabe9c3ae0045ba085e71fada0.
 //
-// Solidity: event RegisterOracleNodeLog(address indexed sender)
-func (_RegistryContract *RegistryContractFilterer) WatchRegisterOracleNodeLog(opts *bind.WatchOpts, sink chan<- *RegistryContractRegisterOracleNodeLog, sender []common.Address) (event.Subscription, error) {
+// Solidity: event RegisterOracleNode(address indexed sender)
+func (_RegistryContract *RegistryContractFilterer) WatchRegisterOracleNode(opts *bind.WatchOpts, sink chan<- *RegistryContractRegisterOracleNode, sender []common.Address) (event.Subscription, error) {
 
 	var senderRule []interface{}
 	for _, senderItem := range sender {
 		senderRule = append(senderRule, senderItem)
 	}
 
-	logs, sub, err := _RegistryContract.contract.WatchLogs(opts, "RegisterOracleNodeLog", senderRule)
+	logs, sub, err := _RegistryContract.contract.WatchLogs(opts, "RegisterOracleNode", senderRule)
 	if err != nil {
 		return nil, err
 	}
@@ -598,8 +598,8 @@ func (_RegistryContract *RegistryContractFilterer) WatchRegisterOracleNodeLog(op
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(RegistryContractRegisterOracleNodeLog)
-				if err := _RegistryContract.contract.UnpackLog(event, "RegisterOracleNodeLog", log); err != nil {
+				event := new(RegistryContractRegisterOracleNode)
+				if err := _RegistryContract.contract.UnpackLog(event, "RegisterOracleNode", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -620,12 +620,12 @@ func (_RegistryContract *RegistryContractFilterer) WatchRegisterOracleNodeLog(op
 	}), nil
 }
 
-// ParseRegisterOracleNodeLog is a log parse operation binding the contract event 0x1e8e81a8a2dad3aa858f8e7f00c25da73b2a1692fc9f7d3dfd7f96412100c309.
+// ParseRegisterOracleNode is a log parse operation binding the contract event 0x463624ffd45713d944420ab743c635b5714b8dbabe9c3ae0045ba085e71fada0.
 //
-// Solidity: event RegisterOracleNodeLog(address indexed sender)
-func (_RegistryContract *RegistryContractFilterer) ParseRegisterOracleNodeLog(log types.Log) (*RegistryContractRegisterOracleNodeLog, error) {
-	event := new(RegistryContractRegisterOracleNodeLog)
-	if err := _RegistryContract.contract.UnpackLog(event, "RegisterOracleNodeLog", log); err != nil {
+// Solidity: event RegisterOracleNode(address indexed sender)
+func (_RegistryContract *RegistryContractFilterer) ParseRegisterOracleNode(log types.Log) (*RegistryContractRegisterOracleNode, error) {
+	event := new(RegistryContractRegisterOracleNode)
+	if err := _RegistryContract.contract.UnpackLog(event, "RegisterOracleNode", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

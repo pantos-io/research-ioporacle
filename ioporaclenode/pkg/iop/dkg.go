@@ -73,12 +73,12 @@ func NewDistKeyGenerator(
 func (g *DistKeyGenerator) ListenAndProcess(ctx context.Context) error {
 	go func() {
 		if err := g.WatchAndHandleDistKeyGenerationLog(ctx); err != nil {
-			log.Errorf("watch and handle dkg log: %v", err)
+			log.Errorf("Watch and handle DKG log: %v", err)
 		}
 	}()
 	go func() {
 		if err := g.ListenAndProcessResponse(); err != nil {
-			log.Errorf("listen and process response: %v", err)
+			log.Errorf("Listen and process response: %v", err)
 		}
 	}()
 	return nil
@@ -102,9 +102,9 @@ func (g *DistKeyGenerator) WatchAndHandleDistKeyGenerationLog(ctx context.Contex
 	for {
 		select {
 		case event := <-sink:
-			log.Infof("Received distributed key generation event with t %s", event.Threshold)
+			log.Infof("Received distributed key generation event with threshold %s", event.Threshold)
 			if err := g.HandleDistributedKeyGenerationLog(event); err != nil {
-				log.Errorf("handle dkg log: %v", err)
+				log.Errorf("Handle DKG log: %v", err)
 			}
 		case err = <-sub.Err():
 			return err
@@ -145,7 +145,7 @@ func (g *DistKeyGenerator) HandleDistributedKeyGenerationLog(event *DistKeyContr
 		threshold,
 	)
 	if err != nil {
-		return fmt.Errorf("new dkg: %w", err)
+		return fmt.Errorf("new DKG: %w", err)
 	}
 
 	//Wait until every participant is prepared. TODO: Wait for head n
@@ -199,7 +199,7 @@ func (g *DistKeyGenerator) SendDeals(nodes []RegistryContractOracleNode, deals m
 	for i, deal := range deals {
 		conn, err := g.connectionManager.FindByAddress(nodes[i].Addr)
 		if err != nil {
-			log.Errorf("find connection by address: %v", err)
+			log.Errorf("Find connection by address: %v", err)
 			continue
 		}
 		client := NewOracleNodeClient(conn)
@@ -209,7 +209,7 @@ func (g *DistKeyGenerator) SendDeals(nodes []RegistryContractOracleNode, deals m
 		}
 		log.Infof("Sending deal to node %d", i)
 		if _, err := client.SendDeal(ctx, request); err != nil {
-			log.Errorf("send deal: %v", err)
+			log.Errorf("Send deal: %v", err)
 		}
 		cancel()
 	}
@@ -233,18 +233,18 @@ func (g *DistKeyGenerator) ListenAndProcessResponse() error {
 func (g *DistKeyGenerator) publishHandler(c mqtt.Client, msg mqtt.Message) {
 	iotaMsg := &iota.Message{}
 	if _, err := iotaMsg.Deserialize(msg.Payload(), serializer.DeSeriModeNoValidation); err != nil {
-		log.Errorf("malformed mqtt message: %w", err)
+		log.Errorf("Malformed mqtt message: %w", err)
 		return
 	}
 
 	var response dkg.Response
 	if err := json.Unmarshal(iotaMsg.Payload.(*iota.Indexation).Data, &response); err != nil {
-		log.Errorf("unmarshal response: %w", err)
+		log.Errorf("Unmarshal response: %w", err)
 	}
 
 	go func() {
 		if err := g.ProcessResponse(&response); err != nil {
-			log.Errorf("handle response: %w", err)
+			log.Errorf("Handle response: %w", err)
 		}
 	}()
 }

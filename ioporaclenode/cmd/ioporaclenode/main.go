@@ -2,11 +2,12 @@ package main
 
 import (
 	"flag"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"ioporaclenode/pkg/iop"
 	"os"
 	"os/signal"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -15,25 +16,25 @@ func main() {
 
 	viper.SetConfigFile(*configFile)
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("read config: %v", err)
+		log.Fatalf("Read config: %v", err)
 	}
 
 	var config iop.Config
 	err := viper.Unmarshal(&config)
 	if err != nil {
-		log.Fatalf("unmarshal config into struct, %v", err)
+		log.Fatalf("Unmarshal config into struct, %v", err)
 	}
 
 	log.Infof("Loaded config file %s", *configFile)
 
 	node, err := iop.NewOracleNode(config)
 	if err != nil {
-		log.Fatalf("new oracle node: %v", err)
+		log.Fatalf("New oracle node: %v", err)
 	}
 
 	go func() {
 		if err := node.Run(); err != nil {
-			log.Fatalf("run node: %v", err)
+			log.Fatalf("Run node: %v", err)
 		}
 	}()
 

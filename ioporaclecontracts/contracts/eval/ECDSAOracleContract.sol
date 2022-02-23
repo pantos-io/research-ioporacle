@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.22 <0.8.0;
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.8.0;
 
 import "../RegistryContract.sol";
-import "@openzeppelin/contracts/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract ECDSAOracleContract {
     using ECDSA for bytes32;
@@ -33,7 +32,7 @@ contract ECDSAOracleContract {
 
     RegistryContract private registryContract;
 
-    constructor(address _registryContract) public {
+    constructor(address _registryContract) {
         registryContract = RegistryContract(_registryContract);
     }
 
@@ -84,7 +83,7 @@ contract ECDSAOracleContract {
                 "witness already included"
             );
             witnesses[i] = witness;
-            address(uint160(witness)).transfer(FEE);
+            payable(address(uint160(witness))).transfer(FEE);
         }
 
         uint256 majority = registryContract.countOracleNodes() / 2 + 1;

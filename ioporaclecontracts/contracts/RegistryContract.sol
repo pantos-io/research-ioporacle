@@ -18,7 +18,7 @@ contract RegistryContract {
     mapping(address => OracleNode) private oracleNodes;
     address[] private oracleNodeIndices;
 
-    event RegisterOracleNodeLog(address indexed sender);
+    event RegisterOracleNode(address indexed sender);
 
     DistKeyContract private distKeyContract;
 
@@ -41,7 +41,7 @@ contract RegistryContract {
         iopNode.index = oracleNodeIndices.length;
         oracleNodeIndices.push(iopNode.addr);
 
-        emit RegisterOracleNodeLog(msg.sender);
+        emit RegisterOracleNode(msg.sender);
 
         if (
             oracleNodeIndices.length % distKeyContract.KEY_GEN_INTERVAL() == 0
