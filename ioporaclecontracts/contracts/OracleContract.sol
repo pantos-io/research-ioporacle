@@ -8,8 +8,8 @@ import "./crypto/BN256G2.sol";
 
 contract OracleContract {
 
-    uint256 public constant BASE_FEE = 0.001 ether;
-    uint256 public constant VALIDATOR_FEE = 0.0001 ether;
+    uint256 public constant BASE_FEE = 0 ether;
+    uint256 public constant VALIDATOR_FEE = 0 ether;
     uint256 public constant TOTAL_FEE = BASE_FEE + VALIDATOR_FEE;
 
     uint256 private constant G2_NEG_X_RE =
@@ -110,7 +110,7 @@ contract OracleContract {
             txValidationResults[_hash] = _result;
         }
 
-        emit ValidationResponse(_typ, msg.sender, _hash, _result, fee);
+        emit ValidationResponse(_typ, msg.sender, _hash, _result, 0);
     }
 
     function calculateFee(uint256 _stake, uint256 _seed) private returns (uint256) {
@@ -125,7 +125,8 @@ contract OracleContract {
     }
 
     function isValidationFeeReceiver(uint256 _stake, uint256 _seed) public pure returns (bool) {
-        uint256 scalingFactor = (_stake / 1 ether)**2; //the exp should be smaller something like 10/9
+        // uint256 scalingFactor = (_stake / 1 ether)**2; //the exp should be smaller something like 10/9
+        uint256 scalingFactor = 1;
         return (_seed % (1000 / scalingFactor)) == 1;
     }
 

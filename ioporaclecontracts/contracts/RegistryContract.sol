@@ -12,8 +12,8 @@ contract RegistryContract {
         uint256 index;
     }
 
-    uint256 private constant BLOCK_RANGE = 6;
-    uint256 public constant MIN_STAKE = 1 ether;
+    uint256 private constant BLOCK_RANGE = 10000000000000000;
+    uint256 public constant MIN_STAKE = 0;
 
     mapping(address => OracleNode) private oracleNodes;
     address[] private oracleNodeIndices;
