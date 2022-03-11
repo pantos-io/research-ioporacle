@@ -38,6 +38,7 @@ type DistKeyGenerator struct {
 	deals             map[uint32]*dkg.Deal
 	pendingResp       map[uint32][]*dkg.Response
 	index             uint32
+	chainId           *big.Int
 }
 
 func NewDistKeyGenerator(
@@ -52,6 +53,7 @@ func NewDistKeyGenerator(
 	ecdsaPrivateKey *ecdsa.PrivateKey,
 	blsPrivateKey kyber.Scalar,
 	account common.Address,
+	chainId *big.Int,
 ) *DistKeyGenerator {
 	return &DistKeyGenerator{
 		suite:             suite,
@@ -67,6 +69,7 @@ func NewDistKeyGenerator(
 		account:           account,
 		deals:             make(map[uint32]*dkg.Deal),
 		pendingResp:       make(map[uint32][]*dkg.Response),
+		chainId:           chainId,
 	}
 }
 
@@ -187,7 +190,11 @@ loop:
 		return fmt.Errorf("public key to big int: %w", err)
 	}
 	numberOfValidators := len(g.dkg.QUAL())
-	auth := bind.NewKeyedTransactor(g.ecdsaPrivateKey)
+	auth, err := bind.NewKeyedTransactorWithChainID(g.ecdsaPrivateKey, g.chainId)
+	if err != nil {
+		return fmt.Errorf("new transactor: %w", err)
+	}
+
 	if _, err = g.distKeyContract.SetPublicKey(auth, pubKey, big.NewInt(int64(numberOfValidators))); err != nil {
 		return fmt.Errorf("set public key: %w", err)
 	}
@@ -203,7 +210,7 @@ func (g *DistKeyGenerator) SendDeals(nodes []RegistryContractOracleNode, deals m
 			continue
 		}
 		client := NewOracleNodeClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 		request := &SendDealRequest{
 			Deal: DealToPb(deal),
 		}
@@ -296,6 +303,9 @@ func (g *DistKeyGenerator) BroadcastResponse(response *dkg.Response) error {
 	if _, err := g.iotaClient.SubmitMessage(context.Background(), msg); err != nil {
 		return fmt.Errorf("submit message: %w", err)
 	}
+
+	log.Infof("Broadcast for deal %d completed", response.Index)
+
 	return nil
 }
 

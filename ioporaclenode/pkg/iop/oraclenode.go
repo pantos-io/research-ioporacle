@@ -5,6 +5,7 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	"ioporaclenode/internal/pkg/kyber/pairing/bn256"
+	"math/big"
 	"net"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -36,6 +37,7 @@ type OracleNode struct {
 	connectionManager *ConnectionManager
 	validator         *Validator
 	aggregator        *Aggregator
+	chainId           *big.Int
 }
 
 func NewOracleNode(c Config) (*OracleNode, error) {
@@ -55,6 +57,8 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 		return nil, fmt.Errorf("dial eth client: %v", err)
 	}
 
+	chainId := big.NewInt(c.Ethereum.ChainID)
+
 	iotaAPI := iota.NewNodeHTTPAPIClient(c.IOTA.Rest)
 	if err != nil {
 		return nil, fmt.Errorf("iota client: %v", err)
@@ -62,6 +66,7 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(c.IOTA.Mqtt)
+	opts.SetClientID(c.BindAddress);
 	mqttClient := mqtt.NewClient(opts)
 
 	mqttTopic := []byte(c.IOTA.Topic)
@@ -113,6 +118,7 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 		registryContractWrapper,
 		account,
 		ecdsaPrivateKey,
+		chainId,
 	)
 	dkg := NewDistKeyGenerator(
 		suite,
@@ -126,6 +132,7 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 		ecdsaPrivateKey,
 		blsPrivateKey,
 		account,
+		chainId,
 	)
 	validator.SetDistKeyGenerator(dkg)
 	aggregator.SetDistKeyGenerator(dkg)
@@ -146,6 +153,7 @@ func NewOracleNode(c Config) (*OracleNode, error) {
 		connectionManager: connectionManager,
 		validator:         validator,
 		aggregator:        aggregator,
+		chainId:           chainId,
 	}
 	RegisterOracleNodeServer(server, node)
 
@@ -199,7 +207,10 @@ func (n *OracleNode) register(ipAddr string) error {
 		return fmt.Errorf("min stake: %v", err)
 	}
 
-	auth := bind.NewKeyedTransactor(n.ecdsaPrivateKey)
+	auth, err := bind.NewKeyedTransactorWithChainID(n.ecdsaPrivateKey, n.chainId)
+	if err != nil {
+		return fmt.Errorf("new transactor: %w", err)
+	}
 	auth.Value = minStake
 
 	if !isRegistered {

@@ -14,7 +14,7 @@ import (
 	"go.dedis.ch/kyber/v3/sign/tbls"
 )
 
-const CONFIRMATIONS uint64 = 6
+const CONFIRMATIONS uint64 = 5
 
 type ValidateResult struct {
 	hash        common.Hash

@@ -18,6 +18,7 @@ type EthereumConfig struct {
 	TargetAddress string
 	SourceAddress string
 	PrivateKey    string
+	ChainID       int64
 }
 
 type IOTAConfig struct {

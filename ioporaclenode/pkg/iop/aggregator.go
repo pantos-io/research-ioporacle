@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
+	"math/big"
 	"sync"
 	"time"
 
@@ -25,6 +26,7 @@ type Aggregator struct {
 	registryContract  *RegistryContractWrapper
 	account           common.Address
 	ecdsaPrivateKey   *ecdsa.PrivateKey
+	chainId           *big.Int
 	t                 int
 }
 
@@ -36,6 +38,7 @@ func NewAggregator(
 	registryContract *RegistryContractWrapper,
 	account common.Address,
 	ecdsaPrivateKey *ecdsa.PrivateKey,
+	chainId *big.Int,
 ) *Aggregator {
 	return &Aggregator{
 		suite:             suite,
@@ -45,6 +48,7 @@ func NewAggregator(
 		registryContract:  registryContract,
 		account:           account,
 		ecdsaPrivateKey:   ecdsaPrivateKey,
+		chainId:           chainId,
 	}
 }
 
@@ -100,8 +104,21 @@ func (a *Aggregator) HandleValidationRequest(ctx context.Context, event *OracleC
 		return fmt.Errorf("signature to big int: %w", err)
 	}
 
-	auth := bind.NewKeyedTransactor(a.ecdsaPrivateKey)
-	if _, err = a.oracleContract.SubmitTransactionValidationResult(auth, event.Hash, result, sig); err != nil {
+	auth, err := bind.NewKeyedTransactorWithChainID(a.ecdsaPrivateKey, a.chainId)
+	if err != nil {
+		return fmt.Errorf("new transactor: %w", err)
+	}
+
+	switch typ {
+	case ValidateRequest_block:
+		_, err = a.oracleContract.SubmitBlockValidationResult(auth, event.Hash, result, sig)
+	case ValidateRequest_transaction:
+		_, err = a.oracleContract.SubmitTransactionValidationResult(auth, event.Hash, result, sig)
+	default:
+		return fmt.Errorf("unknown validation request type %s", typ)
+	}
+
+	if err != nil {
 		return fmt.Errorf("submit verification: %w", err)
 	}
 
