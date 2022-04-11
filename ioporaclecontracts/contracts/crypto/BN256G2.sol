@@ -79,21 +79,20 @@ library BN256G2 {
 
         require(_isOnCurve(pt2xx, pt2xy, pt2yx, pt2yy), "point not in curve");
 
-        uint256[6] memory pt3 =
-            ecTwistAddJacobian(
-                pt1xx,
-                pt1xy,
-                pt1yx,
-                pt1yy,
-                1,
-                0,
-                pt2xx,
-                pt2xy,
-                pt2yx,
-                pt2yy,
-                1,
-                0
-            );
+        uint256[6] memory pt3 = ecTwistAddJacobian(
+            pt1xx,
+            pt1xy,
+            pt1yx,
+            pt1yy,
+            1,
+            0,
+            pt2xx,
+            pt2xy,
+            pt2yx,
+            pt2yy,
+            1,
+            0
+        );
 
         return
             _fromJacobian(
@@ -142,8 +141,15 @@ library BN256G2 {
                 "point not in curve"
             );
         }
-        uint256[6] memory pt2 =
-            _ecTwistMulJacobian(s, pt1xx, pt1xy, pt1yx, pt1yy, pt1zx, 0);
+        uint256[6] memory pt2 = _ecTwistMulJacobian(
+            s,
+            pt1xx,
+            pt1xy,
+            pt1yx,
+            pt1yy,
+            pt1zx,
+            0
+        );
 
         return
             _fromJacobian(
@@ -285,15 +291,14 @@ library BN256G2 {
         view
         returns (uint256, uint256)
     {
-        uint256 inv =
-            _modInv(
-                addmod(
-                    mulmod(y, y, FIELD_MODULUS),
-                    mulmod(x, x, FIELD_MODULUS),
-                    FIELD_MODULUS
-                ),
+        uint256 inv = _modInv(
+            addmod(
+                mulmod(y, y, FIELD_MODULUS),
+                mulmod(x, x, FIELD_MODULUS),
                 FIELD_MODULUS
-            );
+            ),
+            FIELD_MODULUS
+        );
         return (
             mulmod(x, inv, FIELD_MODULUS),
             FIELD_MODULUS - mulmod(y, inv, FIELD_MODULUS)
@@ -610,5 +615,4 @@ library BN256G2 {
         }
         return pt2;
     }
-
 }

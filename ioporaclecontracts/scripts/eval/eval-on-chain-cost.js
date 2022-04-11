@@ -33,7 +33,7 @@ module.exports = async function () {
     for (let i = 0; i < no_nodes; i++) {
       await registryContract.registerOracleNode("127.0.0.1", "0x0", {
         from: accounts[i],
-        value: stake
+        value: stake,
       });
     }
 
