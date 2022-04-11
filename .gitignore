@@ -121,3 +121,4 @@ package-lock.json
 
 /ioporaclenode/configs/*
 !/ioporaclenode/configs/config.example.json
+!package-lock.json
