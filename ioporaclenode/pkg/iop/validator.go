@@ -57,7 +57,7 @@ func (v *Validator) ValidateTransaction(ctx context.Context, hash common.Hash) (
 		valid = confirmed >= CONFIRMATIONS
 	}
 
-	message, err := encodeValidateResult(hash, valid)
+	message, err := encodeValidateResult(hash, valid, ValidateRequest_transaction)
 	if err != nil {
 		return nil, fmt.Errorf("encode result: %w", err)
 	}
@@ -100,7 +100,7 @@ func (v *Validator) ValidateBlock(ctx context.Context, hash common.Hash) (*Valid
 		valid = confirmed >= CONFIRMATIONS
 	}
 
-	message, err := encodeValidateResult(hash, valid)
+	message, err := encodeValidateResult(hash, valid, ValidateRequest_block)
 	if err != nil {
 		return nil, fmt.Errorf("encode result: %w", err)
 	}

@@ -196,7 +196,7 @@ func (a *Aggregator) AggregateValidationResults(ctx context.Context, txHash comm
 		sigShares = positiveResults
 	}
 
-	message, err := encodeValidateResult(txHash, result)
+	message, err := encodeValidateResult(txHash, result, typ)
 	if err != nil {
 		return false, nil, fmt.Errorf("encode validation result: %w", err)
 	}

@@ -82,7 +82,7 @@ contract OracleContract {
         require(aggregator.addr == msg.sender, "not the aggregator");
 
         uint256[2] memory hash =
-            BN256G1.hashToPointSha256(abi.encode(_hash, _result));
+            BN256G1.hashToPointSha256(abi.encode(_hash, _result, _typ));
         uint256[4] memory publicKey = distKeyContract.getPublicKey();
         uint256[12] memory input =
             [
